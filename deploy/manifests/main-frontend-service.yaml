@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: main-frontend
+  namespace: cybericebox
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: main-frontend
