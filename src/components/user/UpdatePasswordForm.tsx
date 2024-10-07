@@ -1,29 +1,30 @@
 'use client'
 
 import React, {useState} from "react";
-import {FaLock, FaUnlock} from "react-icons/fa";
+import {Lock, LockKeyhole, LockKeyholeOpen} from "lucide-react"
 import {useUser} from "@/hooks/useUser";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
-import {ChangePasswordSchema} from "@/lib/validator";
 import {zodResolver} from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import {UserPasswordSchema} from "@/types/user";
 
 
-export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onClose: any }) {
-    const changePassword = useUser().useChangePassword()
+export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onClose: any }) {
+    const updatePassword = useUser().useUpdatePassword()
     const [showPassword, setShowPassword] = useState(false);
     const [showOldPassword, setShowOldPassword] = useState(false);
 
-    const form = useForm<z.infer<typeof ChangePasswordSchema>>({
-        resolver: zodResolver(ChangePasswordSchema),
+    const form = useForm<z.infer<typeof UserPasswordSchema>>({
+        resolver: zodResolver(UserPasswordSchema),
         mode: "onChange",
         defaultValues: {
-            oldPassword: "",
-            password: "",
-            confirmPassword: "",
+            OldPassword: "",
+            NewPassword: "",
+            ConfirmPassword: "",
         }
     })
     const OnClose = () => {
@@ -31,15 +32,30 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
         onClose()
     }
 
-    const onSubmit: SubmitHandler<z.infer<typeof ChangePasswordSchema>> = data => {
-        changePassword.mutate({
-            oldPassword: data.oldPassword,
-            newPassword: data.password,
+    const onSubmit: SubmitHandler<z.infer<typeof UserPasswordSchema>> = (data, event) => {
+        updatePassword.mutate(data, {
+            onError: (error) => {
+                // @ts-ignore
+                if (error?.response?.data.Status.Code === 20201 && form.getFieldState("OldPassword").error === undefined) {
+                    form.setError("OldPassword", {
+                        type: "manual",
+                        message: "Неправильний поточний пароль"
+                    })
+                }
+                // @ts-ignore
+                if (error?.response?.data.Status.Code === 20202 && form.getFieldState("Password").error === undefined) {
+                    form.setError("NewPassword", {
+                        type: "manual",
+                        message: "Пароль повинен відповідати вимогам"
+                    })
+                }
+            },
+            onSuccess: () => {
+                toast.success("Пароль успішно змінено")
+                onClose()
+            },
         })
     }
-
-    changePassword.isSuccess && OnClose()
-
 
     return (
         <Dialog open={isOpen} onOpenChange={OnClose} modal={true} defaultOpen={false}>
@@ -50,32 +66,34 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
                         <Form {...form}>
                             <form
                                 onSubmit={form.handleSubmit(onSubmit)}
-                                className={"flex flex-col w-full px-4 rounded-lg border border-gray-200 shadow-md space-y-6 py-8"}
+                                className={"flex flex-col w-full px-4 space-y-6 py-8"}
                             >
                                 <FormField
                                     control={form.control}
-                                    name="oldPassword"
-                                    render={({field}) => (
+                                    name="OldPassword"
+                                    render={({field, fieldState}) => (
                                         <FormItem className="w-full">
                                             <FormControl>
                                                 <div
                                                     className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                                 >
-                                                    <FaLock
-                                                        className={"text-[#211a52]"}
-                                                    />
+                                                    <Lock/>
                                                     <Input
                                                         placeholder="Поточний пароль"
                                                         {...field}
+                                                        onChange={(e) => {
+                                                            fieldState.error?.type === "manual" && form.clearErrors("OldPassword")
+                                                            field.onChange(e)
+                                                        }}
                                                         type={showOldPassword ? "text" : "password"}
-                                                        tabIndex={2}
+                                                        tabIndex={1}
                                                     />
                                                     <div
                                                         onClick={() => setShowOldPassword(!showOldPassword)}
                                                     >
                                                         {showOldPassword ?
-                                                            <FaUnlock className={"text-[#FC8181]"}/> :
-                                                            <FaLock className={"text-[#68D391]"}/>
+                                                            <LockKeyholeOpen className={"text-[#FC8181]"}/> :
+                                                            <LockKeyhole className={"text-[#68D391]"}/>
                                                         }
                                                     </div>
                                                 </div>
@@ -86,19 +104,21 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="password"
-                                    render={({field}) => (
+                                    name="NewPassword"
+                                    render={({field, fieldState}) => (
                                         <FormItem className="w-full">
                                             <FormControl>
                                                 <div
                                                     className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                                 >
-                                                    <FaLock
-                                                        className={"text-[#211a52]"}
-                                                    />
+                                                    <Lock/>
                                                     <Input
                                                         placeholder="Новий пароль"
                                                         {...field}
+                                                        onChange={(e) => {
+                                                            fieldState.error?.type === "manual" && form.clearErrors("NewPassword")
+                                                            field.onChange(e)
+                                                        }}
                                                         type={showPassword ? "text" : "password"}
                                                         tabIndex={2}
                                                     />
@@ -106,8 +126,8 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
                                                         onClick={() => setShowPassword(!showPassword)}
                                                     >
                                                         {showPassword ?
-                                                            <FaUnlock className={"text-[#FC8181]"}/> :
-                                                            <FaLock className={"text-[#68D391]"}/>
+                                                            <LockKeyholeOpen className={"text-[#FC8181]"}/> :
+                                                            <LockKeyhole className={"text-[#68D391]"}/>
                                                         }
                                                     </div>
                                                 </div>
@@ -118,16 +138,14 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="confirmPassword"
+                                    name="ConfirmPassword"
                                     render={({field}) => (
                                         <FormItem className="w-full">
                                             <FormControl>
                                                 <div
                                                     className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                                 >
-                                                    <FaLock
-                                                        className={"text-[#211a52]"}
-                                                    />
+                                                    <Lock/>
                                                     <Input
                                                         placeholder="Новий пароль ще раз"
                                                         {...field}
@@ -141,7 +159,7 @@ export default function ChangePassword({isOpen, onClose}: { isOpen: boolean, onC
                                     )}
                                 />
                                 <button
-                                    className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
+                                    className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
                                     tabIndex={4}
                                 >
                                     Змінити

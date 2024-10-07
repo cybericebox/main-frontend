@@ -5,15 +5,13 @@ import {ReCaptchaProvider} from "next-recaptcha-v3";
 import QueryProvider from "@/utils/providers/queryProvider";
 import {Tooltip} from "react-tooltip";
 
-export default function Providers({children, siteKey}: Readonly<{
+export default function Providers({children}: Readonly<{
     children: React.ReactNode,
-    siteKey: string | undefined
 }>) {
     return (
         <QueryProvider>
             <ReCaptchaProvider
                 language={"uk"}
-                reCaptchaKey={siteKey}
             >
                 {children}
                 <Tooltip

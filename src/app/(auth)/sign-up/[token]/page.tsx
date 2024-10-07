@@ -1,65 +1,64 @@
 'use client';
 import {parseSignUpToken} from "@/utils/helper";
-import {PlatformLogo} from "@/lib/logos";
+import {PlatformLogo} from "@/components/logos";
 import Link from "next/link";
-import {MdAlternateEmail} from "react-icons/md";
 import React, {useState} from "react";
-import {FaLock, FaUnlock, FaUserAlt} from "react-icons/fa";
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
-import {SignUpContinueSchema} from "@/lib/validator";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {GetFromURL, SignInLink} from "@/hooks/useAuthForm";
-import {signUpContinueWithCredentialsFn} from "@/api/authAPI";
+import {GetFromURL, SignInLink} from "@/hooks/auth";
 import toast from "react-hot-toast";
+import {useAuth} from "@/hooks/useAuth";
+import {SignUpWithCredentialsContinueSchema} from "@/types/auth";
+import {AtSign, Lock, LockKeyhole, LockKeyholeOpen, User} from "lucide-react";
 
 type SearchParamProps = {
     params: { token: string }
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default function SignUpContinuePage({params: {token}, searchParams}: SearchParamProps) {
+export default function SignUpContinuePage({params: {token}}: SearchParamProps) {
     const [showPassword, setShowPassword] = useState(false);
     const {code, email} = parseSignUpToken(token)
     const router = useRouter()
+    const SignUpContinue = useAuth().SignUpWithCredentialsContinue(code);
 
-    const form = useForm<z.infer<typeof SignUpContinueSchema>>({
-        resolver: zodResolver(SignUpContinueSchema),
+    const form = useForm<z.infer<typeof SignUpWithCredentialsContinueSchema>>({
+        resolver: zodResolver(SignUpWithCredentialsContinueSchema),
         defaultValues: {
-            email: email,
-            name: "",
-            password: "",
-            confirmPassword: "",
+            Email: email,
+            Name: "",
+            Password: "",
+            ConfirmPassword: "",
         },
         mode: "onChange"
     })
 
-    const onSubmit: SubmitHandler<z.infer<typeof SignUpContinueSchema>> = data => {
-        signUpContinueWithCredentialsFn(code, {
-            email: data.email,
-            name: data.name,
-            password: data.password,
-        }).then((res) => {
-            if (res.status === 200) {
-                toast.success("Дякуємо за реєстрацію!");
+    const onSubmit: SubmitHandler<z.infer<typeof SignUpWithCredentialsContinueSchema>> = data => {
+        SignUpContinue.mutate(data, {
+            onSuccess: () => {
+                form.reset();
+                toast.success("Реєстрація успішна!");
                 // redirect to the previous page with timeout
                 setTimeout(() => {
                     router.replace(GetFromURL("/"))
-                }, Number(process.env.NEXT_PUBLIC_REDIRECT_TIMEOUT) || 3000)
-            } else {
-                toast.error("Помилка при реєстрації")
+                }, 3000)
+            },
+            onError: () => {
+                form.reset();
+                toast.error("Помилка при реєстрації");
             }
         })
     }
 
     return (
         <div
-            className={"w-full h-[85dvh] flex flex-col justify-center items-center mb-[100px]"}
+            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
         >
-            <PlatformLogo className={"size-48"}/>
+            <PlatformLogo className={"size-20 md:size-44"}/>
             <div
                 className={"my-5 md:my-10 font-bold text-xl md:text-3xl text-primary"}
             >
@@ -75,16 +74,14 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                     >
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="Email"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <MdAlternateEmail
-                                                className={"text-[#211a52] text-xl"}
-                                            />
+                                            <AtSign/>
                                             <Input
                                                 placeholder="Адреса електронної пошти"
                                                 {...field}
@@ -98,16 +95,14 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                         />
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="Name"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <FaUserAlt
-                                                className={"text-[#211a52]"}
-                                            />
+                                            <User/>
                                             <Input
                                                 placeholder="Ім'я"
                                                 {...field}
@@ -121,16 +116,14 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="Password"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <FaLock
-                                                className={"text-[#211a52]"}
-                                            />
+                                            <Lock/>
                                             <Input
                                                 placeholder="Пароль"
                                                 {...field}
@@ -141,8 +134,8 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ?
-                                                    <FaUnlock className={"text-[#FC8181]"}/> :
-                                                    <FaLock className={"text-[#68D391]"}/>
+                                                    <LockKeyholeOpen className={"text-[#FC8181]"}/> :
+                                                    <LockKeyhole className={"text-[#68D391]"}/>
                                                 }
                                             </div>
                                         </div>
@@ -153,16 +146,14 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                         />
                         <FormField
                             control={form.control}
-                            name="confirmPassword"
+                            name="ConfirmPassword"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <FaLock
-                                                className={"text-[#211a52]"}
-                                            />
+                                            <Lock/>
                                             <Input
                                                 placeholder="Пароль ще раз"
                                                 {...field}
@@ -176,7 +167,7 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                             )}
                         />
                         <button
-                            className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded my-2"}
+                            className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded my-2"}
                             tabIndex={4}
                         >
                             Закінчити реєстрацію
@@ -185,7 +176,7 @@ export default function SignUpContinuePage({params: {token}, searchParams}: Sear
                 </Form>
             </div>
             <div className={"my-5"}>
-                <Link href={SignInLink} color="#54616e" tabIndex={4}>Вже є обліковий запис</Link>
+                <Link href={SignInLink} color="#54616e" tabIndex={5}>Вже є обліковий запис</Link>
             </div>
         </div>
     )
