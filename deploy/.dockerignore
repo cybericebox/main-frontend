@@ -1,0 +1,31 @@
+### Node template
+# Logs
+logs
+npm-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Dependency directories
+node_modules
+
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+
+# Next.js build output
+.next
+
+
+.github
+.dockerignore
+
+deploy/manifests
+.gitignore
+README.md
+
