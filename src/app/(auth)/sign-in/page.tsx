@@ -54,7 +54,7 @@ export default function SignInPage() {
                         router.replace(GetFromURL("/"))
                     }, 3000)
                 },
-                onError: (error) => {
+                onError: () => {
                     form.reset();
                     toast.error("Помилка аутентифікації");
                 }

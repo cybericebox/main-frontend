@@ -9,7 +9,7 @@ type SearchParamProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default function ConfirmEmail({params: {code}, searchParams}: SearchParamProps) {
+export default function ConfirmEmail({params: {code}}: SearchParamProps) {
     const router = useRouter()
     const confirmEmail = useAuth().ConfirmEmail();
     useEffect(() => {

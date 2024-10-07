@@ -32,7 +32,7 @@ export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onC
         onClose()
     }
 
-    const onSubmit: SubmitHandler<z.infer<typeof UserPasswordSchema>> = (data, event) => {
+    const onSubmit: SubmitHandler<z.infer<typeof UserPasswordSchema>> = (data) => {
         updatePassword.mutate(data, {
             onError: (error) => {
                 // @ts-ignore

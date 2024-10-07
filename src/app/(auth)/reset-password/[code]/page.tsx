@@ -19,7 +19,7 @@ type SearchParamProps = {
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default function ResetPasswordPage({params: {code}, searchParams}: SearchParamProps) {
+export default function ResetPasswordPage({params: {code}}: SearchParamProps) {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter()
     const resetPassword = useAuth().ResetPassword(code);
@@ -43,7 +43,7 @@ export default function ResetPasswordPage({params: {code}, searchParams}: Search
                     router.push(SignInLink)
                 }, 3000)
             },
-            onError: (error) => {
+            onError: () => {
                 form.reset();
                 toast.error("Не вдалося змінити пароль");
                 // redirect to the sign-in page with timeout
