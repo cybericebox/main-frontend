@@ -1,0 +1,13 @@
+interface IBaseResponse {
+    Status: {
+        Code: number;
+        Message: string;
+    };
+}
+
+interface IResponseWithData<D> extends IBaseResponse {
+    Data: D;
+    backUpData?: D;
+}
+
+export type IResponse<D = void> = D extends void ? IBaseResponse : IResponseWithData<D>;
