@@ -23,7 +23,7 @@ spec:
         app: main-frontend
     spec:
       containers:
-        - name: event-frontend
+        - name: main-frontend
           image: cybericebox/main-frontend:latest
           envFrom:
             - configMapRef:

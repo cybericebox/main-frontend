@@ -12,7 +12,7 @@ export default function QueryProvider({children}: {
                 refetchOnMount: true,
                 refetchOnReconnect: true,
                 staleTime: 5 * 60 * 1000,
-                refetchInterval: 61 * 60 * 1000, // 1 hour 1 minute
+                refetchInterval: 5 * 60 * 1000, // 5 minutes
             },
         }
     })

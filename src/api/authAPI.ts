@@ -1,4 +1,4 @@
-import axios, {type AxiosResponse} from "axios";
+import {type AxiosResponse} from "axios";
 import {baseAPI} from "@/api/baseAPI";
 import type {IResponse} from "@/types/api";
 import type {
@@ -22,7 +22,7 @@ export const signUpWithCredentialsFn = async (data: ISignUpWithCredentials): Pro
 }
 
 export const signUpWithCredentialsContinueFn = async (code: string, data: ISignUpWithCredentialsContinue): Promise<AxiosResponse<IResponse, any>> => {
-    return await axios.post(`/auth/sign-up/continue/${code}`, data)
+    return await baseAPI.post(`/auth/sign-up/${code}`, data)
 }
 
 export const forgotPasswordFn = async (data: IForgotPassword): Promise<AxiosResponse<IResponse, any>> => {

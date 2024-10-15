@@ -11,3 +11,9 @@ interface IResponseWithData<D> extends IBaseResponse {
 }
 
 export type IResponse<D = void> = D extends void ? IBaseResponse : IResponseWithData<D>;
+
+export interface IErrorResponse extends Error {
+    response: {
+        data: IBaseResponse;
+    };
+}

@@ -2,7 +2,7 @@ import platformLogo from "@/app/favicon.ico"
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import cn from "classnames";
+import {cn} from "@/utils/cn";
 
 export interface LogoProps {
     onClick?: () => void;

@@ -1,13 +1,12 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {getProfileFn, updatePasswordFn, updateProfileFn} from "@/api/userAPI";
-import type {IResponse} from "@/types/api";
-import {IUpdateUserPassword, IUpdateUserProfile, IUser, UserSchema} from "@/types/user";
+import {IUpdateUserPassword, IUpdateUserProfile, UserSchema} from "@/types/user";
 
 const useGetProfile = () => {
     return useQuery({
         queryKey: ["profile"],
         queryFn: getProfileFn,
-        select: (data): IResponse<IUser> => {
+        select: (data) => {
             const res = UserSchema.safeParse(data.data.Data)
             if (!res.success) {
                 throw new Error("Invalid response")

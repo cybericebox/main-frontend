@@ -13,7 +13,7 @@ export const baseAPI = axios.create({
 baseAPI.interceptors.response.use((response: AxiosResponse) => response,
     (error) => {
         if (error.response?.status === 401) {
-            if (window !== undefined) {
+            if (typeof window !== "undefined") {
                 window.location.reload();
             }
         }

@@ -13,6 +13,7 @@ import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
 import {ResetPasswordSchema} from "@/types/auth";
 import {Lock, LockKeyhole, LockKeyholeOpen} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 type SearchParamProps = {
     params: { code: string }
@@ -43,13 +44,10 @@ export default function ResetPasswordPage({params: {code}}: SearchParamProps) {
                     router.push(SignInLink)
                 }, 3000)
             },
-            onError: () => {
-                form.reset();
-                toast.error("Не вдалося змінити пароль");
-                // redirect to the sign-in page with timeout
-                setTimeout(() => {
-                    router.push(SignInLink)
-                }, 3000)
+            onError: (error) => {
+                const e = error as IErrorResponse
+                const message = e?.response?.data.Status.Message || ""
+                toast.error(`Не вдалося змінити пароль\n${message}`)
             }
         });
     }
