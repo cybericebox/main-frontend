@@ -3,6 +3,7 @@ import React, {useEffect} from "react";
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
+import {IErrorResponse} from "@/types/api";
 
 type SearchParamProps = {
     params: { code: string }
@@ -18,8 +19,10 @@ export default function ConfirmEmail({params: {code}}: SearchParamProps) {
                 toast.success("Адресу електронної пошти успішно підтверджено!");
                 router.push("/");
             },
-            onError: () => {
-                toast.error("Не вдалося підтвердити адресу електронної пошти");
+            onError: (error) => {
+                const e = error as IErrorResponse
+                const message = e?.response?.data.Status.Message || ""
+                toast.error(`Не вдалося підтвердити адресу електронної пошти\n${message}`)
                 router.push("/");
             },
         });

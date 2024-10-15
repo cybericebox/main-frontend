@@ -14,6 +14,7 @@ import {UserProfileSchema} from "@/types/user";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {AtSign, Lock, LogOut, User} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 export default function Profile() {
     const user = useUser().useGetProfile();
@@ -24,10 +25,10 @@ export default function Profile() {
         resolver: zodResolver(UserProfileSchema),
 
         defaultValues: async () => {
-            const data = await user.refetch();
+            const {data} = await user.refetch();
             return {
-                Email: data.data?.Data.Email || "",
-                Name: data.data?.Data.Name || "",
+                Email: data?.Data.Email || "",
+                Name: data?.Data.Name || "",
             }
         },
         mode: "onChange"
@@ -43,9 +44,10 @@ export default function Profile() {
                 // reset form default values to make they not dirty
                 form.control._resetDefaultValues();
             },
-            onError: () => {
-                form.reset();
-                toast.error("Помилка при оновленні профілю");
+            onError: (error) => {
+                const e = error as IErrorResponse
+                const message = e?.response?.data.Status.Message || ""
+                toast.error(`Не вдалося оновити дані профілю\n${message}`)
             }
         })
     }

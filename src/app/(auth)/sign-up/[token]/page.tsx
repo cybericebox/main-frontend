@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import {useAuth} from "@/hooks/useAuth";
 import {SignUpWithCredentialsContinueSchema} from "@/types/auth";
 import {AtSign, Lock, LockKeyhole, LockKeyholeOpen, User} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 type SearchParamProps = {
     params: { token: string }
@@ -41,15 +42,16 @@ export default function SignUpContinuePage({params: {token}}: SearchParamProps) 
         SignUpContinue.mutate(data, {
             onSuccess: () => {
                 form.reset();
-                toast.success("Реєстрація успішна!");
+                toast.success("Реєстрація успішно завершена!")
                 // redirect to the previous page with timeout
                 setTimeout(() => {
                     router.replace(GetFromURL("/"))
-                }, 3000)
+                }, 1000)
             },
-            onError: () => {
-                form.reset();
-                toast.error("Помилка при реєстрації");
+            onError: (error) => {
+                const e = error as IErrorResponse
+                const message = e?.response?.data.Status.Message || ""
+                toast.error(`Не вдалося завершити реєстрацію\n${message}`)
             }
         })
     }

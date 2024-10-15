@@ -23,12 +23,19 @@ spec:
         app: main-frontend
     spec:
       containers:
-        - name: event-frontend
+        - name: main-frontend
           image: cybericebox/main-frontend:latest
-          envFrom:
-            - configMapRef:
-                name: config
-              prefix: "NEXT_PUBLIC_" # prefix for env variables
+          env:
+            - name: NEXT_PUBLIC_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: DOMAIN
+            - name: NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: RECAPTCHA_SITE_KEY
           ports:
             - containerPort: 3000
               protocol: TCP

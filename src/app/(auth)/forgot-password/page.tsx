@@ -13,6 +13,7 @@ import {PlatformLogo} from "@/components/logos";
 import {useAuth} from "@/hooks/useAuth";
 import {ForgotPasswordSchema} from "@/types/auth";
 import {AtSign} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 
 export default function ForgotPasswordPage() {
@@ -32,7 +33,6 @@ export default function ForgotPasswordPage() {
         // get recaptcha token
         executeRecaptcha("forgotPassword").then((token) => {
             if (!token) {
-                // TODO: Change toast
                 toast.error("Перевірку на робота не пройдено")
                 return
             }
@@ -45,8 +45,10 @@ export default function ForgotPasswordPage() {
                     form.reset()
                     toast.success("Для відновлення паролю скористуйтеся інструкціями в листі")
                 },
-                onError: () => {
-                    toast.error("Помилка відновлення паролю")
+                onError: (error) => {
+                    const e = error as IErrorResponse
+                    const message = e?.response?.data.Status.Message || ""
+                    toast.error(`Не вдалося відновити пароль\n${message}`)
                 }
             })
         })

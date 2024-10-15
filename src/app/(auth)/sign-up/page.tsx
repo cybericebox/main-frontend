@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import {useAuth} from "@/hooks/useAuth";
 import {SignUpWithCredentialsSchema} from "@/types/auth";
 import {AtSign} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 export default function SignUpPage() {
     const {executeRecaptcha} = useReCaptcha();
@@ -31,7 +32,6 @@ export default function SignUpPage() {
         // get recaptcha token
         executeRecaptcha("signUp").then((token) => {
             if (!token) {
-                // TODO: Change toast
                 toast.error("Перевірку на робота не пройдено");
                 return;
             }
@@ -45,9 +45,10 @@ export default function SignUpPage() {
                         form.reset();
                         toast.success("Для продовження реєстрації дотримуйтесь інструкцій в листі");
                     },
-                    onError: () => {
-                        form.reset();
-                        toast.error("Помилка реєстрації");
+                    onError: (error) => {
+                        const e = error as IErrorResponse
+                        const message = e?.response?.data.Status.Message || ""
+                        toast.error(`Не вдалося провести реєстрацію\n${message}`)
                     }
                 })
         });

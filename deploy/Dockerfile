@@ -25,6 +25,11 @@ COPY .. .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Runtime Environment Variables
+ENV NEXT_PUBLIC_DOMAIN="NEXT_PUBLIC_DOMAIN"
+ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY="NEXT_PUBLIC_RECAPTCHA_SITE_KEY"
+
+
 RUN yarn build
 
 # If using npm comment out above and use below instead
@@ -63,9 +68,5 @@ EXPOSE 3000
 ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
-
-# Runtime Environment Variables
-ENV NEXT_PUBLIC_DOMAIN="NEXT_PUBLIC_DOMAIN"
-ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY="NEXT_PUBLIC_RECAPTCHA_SITE_KEY"
 
 ENTRYPOINT [ "entrypoint.sh" ]

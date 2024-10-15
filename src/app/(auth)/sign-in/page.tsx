@@ -14,6 +14,7 @@ import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
 import {SignInWithCredentialsSchema} from "@/types/auth";
 import {AtSign, Lock} from "lucide-react";
+import {IErrorResponse} from "@/types/api";
 
 
 export default function SignInPage() {
@@ -37,7 +38,6 @@ export default function SignInPage() {
         // get recaptcha token
         executeRecaptcha("signIn").then((token) => {
             if (!token) {
-                // TODO: Change toast
                 toast.error("Перевірку на робота не пройдено");
                 return;
             }
@@ -52,11 +52,12 @@ export default function SignInPage() {
                     // redirect to the previous page with timeout
                     setTimeout(() => {
                         router.replace(GetFromURL("/"))
-                    }, 3000)
+                    }, 1000)
                 },
-                onError: () => {
-                    form.reset();
-                    toast.error("Помилка аутентифікації");
+                onError: (error) => {
+                    const e = error as IErrorResponse
+                    const message = e?.response?.data.Status.Message || ""
+                    toast.error(`Не вдалося увійти\n${message}`)
                 }
             });
         });

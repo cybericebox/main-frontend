@@ -11,6 +11,7 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import {UserPasswordSchema} from "@/types/user";
+import {IErrorResponse} from "@/types/api";
 
 
 export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onClose: any }) {
@@ -35,15 +36,14 @@ export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onC
     const onSubmit: SubmitHandler<z.infer<typeof UserPasswordSchema>> = (data) => {
         updatePassword.mutate(data, {
             onError: (error) => {
-                // @ts-ignore
-                if (error?.response?.data.Status.Code === 20201 && form.getFieldState("OldPassword").error === undefined) {
+                const e = error as IErrorResponse
+                if (e?.response?.data.Status.Code === 20201 && form.getFieldState("OldPassword").error === undefined) {
                     form.setError("OldPassword", {
                         type: "manual",
                         message: "Неправильний поточний пароль"
                     })
                 }
-                // @ts-ignore
-                if (error?.response?.data.Status.Code === 20202 && form.getFieldState("Password").error === undefined) {
+                if (e?.response?.data.Status.Code === 20202 && form.getFieldState("NewPassword").error === undefined) {
                     form.setError("NewPassword", {
                         type: "manual",
                         message: "Пароль повинен відповідати вимогам"

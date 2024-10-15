@@ -5,4 +5,5 @@ metadata:
   namespace: cybericebox
 data:
   RECAPTCHA_SITE_KEY: "recaptcha-site-key"
+  DOMAIN: "cybericebox.com"
 
