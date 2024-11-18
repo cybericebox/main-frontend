@@ -1,31 +1,33 @@
 'use client'
-import React, {useEffect} from "react";
-import toast from "react-hot-toast";
+import React, {use, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 type SearchParamProps = {
-    params: { code: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+    params: Promise<{ code: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default function ConfirmEmail({params: {code}}: SearchParamProps) {
+export default function ConfirmEmail(props: SearchParamProps) {
+    const params = use(props.params);
+
+    const {
+        code
+    } = params;
+
     const router = useRouter()
-    const confirmEmail = useAuth().ConfirmEmail();
+    const {ConfirmEmail} = useAuth().ConfirmEmail();
     useEffect(() => {
-        confirmEmail.mutate(code, {
+        ConfirmEmail(code, {
             onSuccess: () => {
-                toast.success("Адресу електронної пошти успішно підтверджено!");
+                SuccessToast("Адресу електронної пошти успішно підтверджено!");
                 router.push("/");
             },
             onError: (error) => {
-                const e = error as IErrorResponse
-                const message = e?.response?.data.Status.Message || ""
-                toast.error(`Не вдалося підтвердити адресу електронної пошти\n${message}`)
-                router.push("/");
+                ErrorToast("Не вдалося підтвердити адресу електронної пошти", {cause: error});
             },
         });
-    }, []);
+    }, [router, ConfirmEmail, code]);
     return <></>
 }

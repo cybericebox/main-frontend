@@ -1,29 +1,34 @@
 'use client'
 import {PlatformLogo} from "@/components/logos";
 import Link from "next/link";
-import React, {useState} from "react";
+import React, {use, useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import toast from "react-hot-toast";
 import {SignInLink} from "@/hooks/auth";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
 import {ResetPasswordSchema} from "@/types/auth";
 import {Lock, LockKeyhole, LockKeyholeOpen} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 type SearchParamProps = {
-    params: { code: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+    params: Promise<{ code: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default function ResetPasswordPage({params: {code}}: SearchParamProps) {
+export default function ResetPasswordPage(props: SearchParamProps) {
+    const params = use(props.params);
+
+    const {
+        code
+    } = params;
+
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter()
-    const resetPassword = useAuth().ResetPassword(code);
+    const {ResetPassword} = useAuth().ResetPassword(code);
 
     const form = useForm<z.infer<typeof ResetPasswordSchema>>({
         resolver: zodResolver(ResetPasswordSchema),
@@ -35,19 +40,17 @@ export default function ResetPasswordPage({params: {code}}: SearchParamProps) {
     })
 
     const onSubmit: SubmitHandler<z.infer<typeof ResetPasswordSchema>> = data => {
-        resetPassword.mutate(data, {
+        ResetPassword(data, {
             onSuccess: () => {
                 form.reset();
-                toast.success("Пароль успішно змінено!");
+                SuccessToast("Пароль успішно змінено!");
                 // redirect to the sign-in page with timeout
                 setTimeout(() => {
                     router.push(SignInLink)
                 }, 3000)
             },
             onError: (error) => {
-                const e = error as IErrorResponse
-                const message = e?.response?.data.Status.Message || ""
-                toast.error(`Не вдалося змінити пароль\n${message}`)
+                ErrorToast("Не вдалося змінити пароль", {cause: error})
             }
         });
     }

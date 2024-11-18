@@ -1,6 +1,6 @@
 "use client"
 import {useUser} from "@/hooks/useUser";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import Link from "next/link";
 import {signOutFn} from "@/api/authAPI";
@@ -11,21 +11,20 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {UserProfileSchema} from "@/types/user";
-import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {AtSign, Lock, LogOut, User} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 export default function Profile() {
-    const user = useUser().useGetProfile();
-    const updateProfile = useUser().useUpdateProfile();
+    const {GetProfile, GetProfileRequest} = useUser().useGetProfile();
+    const {UpdateProfile} = useUser().useUpdateProfile();
     const [isOpenPasswordModel, setIsOpenPasswordModel] = useState(false)
 
     const form = useForm<z.infer<typeof UserProfileSchema>>({
         resolver: zodResolver(UserProfileSchema),
 
         defaultValues: async () => {
-            const {data} = await user.refetch();
+            const {data} = await GetProfile();
             return {
                 Email: data?.Data.Email || "",
                 Name: data?.Data.Name || "",
@@ -35,22 +34,26 @@ export default function Profile() {
     })
 
     const onSubmit: SubmitHandler<z.infer<typeof UserProfileSchema>> = data => {
-        updateProfile.mutate(data, {
+        UpdateProfile(data, {
             onSuccess: () => {
-                toast.success("Дані профілю успішно оновлено");
+                SuccessToast("Дані профілю успішно оновлено")
                 if (form.getFieldState("Email").isDirty) {
-                    toast.success("Для підтвердження нової адреси електронної пошти слідуйте інструкціям в листі", {duration: 5000});
+                    SuccessToast("Для підтвердження нової адреси електронної пошти слідуйте інструкціям в листі", {duration: 5000});
                 }
                 // reset form default values to make they not dirty
                 form.control._resetDefaultValues();
             },
             onError: (error) => {
-                const e = error as IErrorResponse
-                const message = e?.response?.data.Status.Message || ""
-                toast.error(`Не вдалося оновити дані профілю\n${message}`)
+                ErrorToast("Не вдалося оновити дані профілю", {cause: error})
             }
         })
     }
+
+    useEffect(() => {
+        if (GetProfileRequest.error) {
+            ErrorToast("Не вдалося завантажити дані профілю", {cause: GetProfileRequest.error})
+        }
+    }, [GetProfileRequest.error])
 
     return (
         <div

@@ -32,7 +32,7 @@ export const SignUpWithCredentialsContinueSchema = z.object({
     ConfirmPassword: z.string({required_error: "Поле має бути заповненим"}),
 }).refine(({Password, ConfirmPassword}) => Password === ConfirmPassword, {
     message: "Паролі не збігаються",
-    path: ["confirmPassword"]
+    path: ["ConfirmPassword"]
 })
 
 export interface ISignUpWithCredentialsContinue extends z.infer<typeof SignUpWithCredentialsContinueSchema> {

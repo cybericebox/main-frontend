@@ -9,13 +9,13 @@ import {Input} from "@/components/ui/input";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-import {UserPasswordSchema} from "@/types/user";
+import {ErrorResponseStatusCodes, UserPasswordSchema} from "@/types/user";
 import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 
 export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onClose: any }) {
-    const updatePassword = useUser().useUpdatePassword()
+    const {UpdatePassword} = useUser().useUpdatePassword()
     const [showPassword, setShowPassword] = useState(false);
     const [showOldPassword, setShowOldPassword] = useState(false);
 
@@ -34,24 +34,27 @@ export default function UpdatePassword({isOpen, onClose}: { isOpen: boolean, onC
     }
 
     const onSubmit: SubmitHandler<z.infer<typeof UserPasswordSchema>> = (data) => {
-        updatePassword.mutate(data, {
+        UpdatePassword(data, {
             onError: (error) => {
                 const e = error as IErrorResponse
-                if (e?.response?.data.Status.Code === 20201 && form.getFieldState("OldPassword").error === undefined) {
+                if (e?.response?.data.Status.Code === ErrorResponseStatusCodes.InvalidOldPassword && form.getFieldState("OldPassword").error === undefined) {
                     form.setError("OldPassword", {
                         type: "manual",
                         message: "Неправильний поточний пароль"
                     })
+                    return
                 }
-                if (e?.response?.data.Status.Code === 20202 && form.getFieldState("NewPassword").error === undefined) {
+                if (e?.response?.data.Status.Code === ErrorResponseStatusCodes.InvalidPasswordComplexity && form.getFieldState("NewPassword").error === undefined) {
                     form.setError("NewPassword", {
                         type: "manual",
                         message: "Пароль повинен відповідати вимогам"
                     })
+                    return
                 }
+                ErrorToast("Не вдалося змінити пароль", {cause: error})
             },
             onSuccess: () => {
-                toast.success("Пароль успішно змінено")
+                SuccessToast("Пароль успішно змінено")
                 onClose()
             },
         })

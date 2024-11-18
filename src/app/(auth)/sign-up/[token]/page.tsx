@@ -2,30 +2,38 @@
 import {parseSignUpToken} from "@/utils/helper";
 import {PlatformLogo} from "@/components/logos";
 import Link from "next/link";
-import React, {useState} from "react";
+import React, {use, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {GetFromURL, SignInLink} from "@/hooks/auth";
-import toast from "react-hot-toast";
+import {GetFromURL, SignInLink, SignUpLink} from "@/hooks/auth";
 import {useAuth} from "@/hooks/useAuth";
 import {SignUpWithCredentialsContinueSchema} from "@/types/auth";
 import {AtSign, Lock, LockKeyhole, LockKeyholeOpen, User} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {type IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
+import {ErrorResponseStatusCodes} from "@/types/user";
 
 type SearchParamProps = {
-    params: { token: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+    params: Promise<{ token: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default function SignUpContinuePage({params: {token}}: SearchParamProps) {
-    const [showPassword, setShowPassword] = useState(false);
+export default function SignUpContinuePage(props: SearchParamProps) {
+    const params = use(props.params);
+
+    const {
+        token
+    } = params;
+
     const {code, email} = parseSignUpToken(token)
+
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter()
-    const SignUpContinue = useAuth().SignUpWithCredentialsContinue(code);
+    const {SignUpWithCredentialsContinue} = useAuth().SignUpWithCredentialsContinue(code);
 
     const form = useForm<z.infer<typeof SignUpWithCredentialsContinueSchema>>({
         resolver: zodResolver(SignUpWithCredentialsContinueSchema),
@@ -38,11 +46,18 @@ export default function SignUpContinuePage({params: {token}}: SearchParamProps) 
         mode: "onChange"
     })
 
+    // if email is not valid, redirect to the sign-up page
+    useEffect(() => {
+        if (!email) {
+            router.replace(SignUpLink)
+        }
+    }, [email, router]);
+
     const onSubmit: SubmitHandler<z.infer<typeof SignUpWithCredentialsContinueSchema>> = data => {
-        SignUpContinue.mutate(data, {
+        SignUpWithCredentialsContinue(data, {
             onSuccess: () => {
                 form.reset();
-                toast.success("Реєстрація успішно завершена!")
+                SuccessToast("Реєстрація успішно завершена!")
                 // redirect to the previous page with timeout
                 setTimeout(() => {
                     router.replace(GetFromURL("/"))
@@ -50,8 +65,15 @@ export default function SignUpContinuePage({params: {token}}: SearchParamProps) 
             },
             onError: (error) => {
                 const e = error as IErrorResponse
-                const message = e?.response?.data.Status.Message || ""
-                toast.error(`Не вдалося завершити реєстрацію\n${message}`)
+                if (e?.response?.data.Status.Code === ErrorResponseStatusCodes.InvalidPasswordComplexity && form.getFieldState("Password").error === undefined) {
+                    form.setError("Password", {
+                        type: "manual",
+                        message: "Пароль повинен відповідати вимогам"
+                    })
+                    return
+                }
+
+                ErrorToast("Не вдалося завершити реєстрацію", {cause: error})
             }
         })
     }

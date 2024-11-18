@@ -11,7 +11,7 @@ export const updatePasswordFn = async ({
                                            OldPassword,
                                            NewPassword
                                        }: IUpdateUserPassword): Promise<AxiosResponse<IResponse, any>> => {
-    return await baseAPI.patch('/auth/self/change', {
+    return await baseAPI.patch('/auth/self/password', {
         OldPassword,
         NewPassword
     }, {})

@@ -1,15 +1,24 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {getProfileFn, updatePasswordFn, updateProfileFn} from "@/api/userAPI";
 import {IUpdateUserPassword, IUpdateUserProfile, UserSchema} from "@/types/user";
+import {ErrorInvalidResponseData} from "@/types/common";
 
 const useGetProfile = () => {
-    return useQuery({
+    const {
+        data: GetProfileResponse,
+        isLoading,
+        isError,
+        isSuccess,
+        error,
+        refetch: GetProfile
+    } = useQuery({
         queryKey: ["profile"],
         queryFn: getProfileFn,
         select: (data) => {
             const res = UserSchema.safeParse(data.data.Data)
             if (!res.success) {
-                throw new Error("Invalid response")
+                console.log(res.error)
+                throw ErrorInvalidResponseData
             } else {
                 data.data.Data = res.data
             }
@@ -17,24 +26,45 @@ const useGetProfile = () => {
             return data.data
         },
     })
+
+    const GetProfileRequest = {
+        isLoading,
+        isError,
+        isSuccess,
+        error,
+    }
+
+    return {GetProfileResponse, GetProfileRequest, GetProfile}
 }
 
 const useUpdateProfile = () => {
     const queryClient = useQueryClient()
 
-    return useMutation({
+    const {
+        data: UpdateProfileResponse,
+        isPending: PendingUpdateProfile,
+        mutate: UpdateProfile
+    } = useMutation({
         mutationKey: ["updateProfile"],
         mutationFn: async (data: IUpdateUserProfile) => await updateProfileFn(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["profile"]}).catch(console.error)
+            queryClient.invalidateQueries({queryKey: ["profile"]}).catch((e) => console.error(e))
         }
     })
+
+    return {UpdateProfileResponse, UpdateProfile, PendingUpdateProfile}
 }
 const useUpdatePassword = () => {
-    return useMutation({
+    const {
+        mutate: UpdatePassword,
+        data: UpdatePasswordResponse,
+        isPending: PendingUpdatePassword,
+    } = useMutation({
         mutationKey: ["updatePassword"],
         mutationFn: async (data: IUpdateUserPassword) => await updatePasswordFn(data),
     })
+
+    return {UpdatePassword, UpdatePasswordResponse, PendingUpdatePassword}
 }
 
 export const useUser = () => {

@@ -9,15 +9,14 @@ import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/
 import {Input} from "@/components/ui/input";
 import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
-import toast from "react-hot-toast";
 import {useAuth} from "@/hooks/useAuth";
 import {SignUpWithCredentialsSchema} from "@/types/auth";
 import {AtSign} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 export default function SignUpPage() {
     const {executeRecaptcha} = useReCaptcha();
-    const signUp = useAuth().SignUpWithCredentials();
+    const {SignUpWithCredentials} = useAuth().SignUpWithCredentials();
 
     const form = useForm<z.infer<typeof SignUpWithCredentialsSchema>>({
         resolver: zodResolver(SignUpWithCredentialsSchema),
@@ -32,23 +31,21 @@ export default function SignUpPage() {
         // get recaptcha token
         executeRecaptcha("signUp").then((token) => {
             if (!token) {
-                toast.error("Перевірку на робота не пройдено");
+                ErrorToast("Перевірку на робота не пройдено");
                 return;
             }
 
-            signUp.mutate({
+            SignUpWithCredentials({
                     ...data,
                     RecaptchaToken: token
                 },
                 {
                     onSuccess: () => {
                         form.reset();
-                        toast.success("Для продовження реєстрації дотримуйтесь інструкцій в листі");
+                        SuccessToast("Для продовження реєстрації дотримуйтесь інструкцій в листі");
                     },
                     onError: (error) => {
-                        const e = error as IErrorResponse
-                        const message = e?.response?.data.Status.Message || ""
-                        toast.error(`Не вдалося провести реєстрацію\n${message}`)
+                        ErrorToast("Не вдалося провести реєстрацію", {cause: error});
                     }
                 })
         });

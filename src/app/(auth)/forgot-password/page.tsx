@@ -6,18 +6,17 @@ import {useReCaptcha} from "next-recaptcha-v3";
 import {SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {PlatformLogo} from "@/components/logos";
 import {useAuth} from "@/hooks/useAuth";
 import {ForgotPasswordSchema} from "@/types/auth";
 import {AtSign} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 
 export default function ForgotPasswordPage() {
-    const forgotPassword = useAuth().ForgotPassword()
+    const {ForgotPassword} = useAuth().ForgotPassword()
     const {executeRecaptcha} = useReCaptcha();
 
     const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
@@ -33,22 +32,20 @@ export default function ForgotPasswordPage() {
         // get recaptcha token
         executeRecaptcha("forgotPassword").then((token) => {
             if (!token) {
-                toast.error("Перевірку на робота не пройдено")
+                ErrorToast("Перевірку на робота не пройдено")
                 return
             }
 
-            forgotPassword.mutate({
+            ForgotPassword({
                 ...data,
                 RecaptchaToken: token
             }, {
                 onSuccess: () => {
                     form.reset()
-                    toast.success("Для відновлення паролю скористуйтеся інструкціями в листі")
+                    SuccessToast("Для відновлення паролю скористуйтеся інструкціями в листі")
                 },
                 onError: (error) => {
-                    const e = error as IErrorResponse
-                    const message = e?.response?.data.Status.Message || ""
-                    toast.error(`Не вдалося відновити пароль\n${message}`)
+                    ErrorToast("Не вдалося відновити пароль", {cause: error})
                 }
             })
         })

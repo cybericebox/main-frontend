@@ -31,8 +31,14 @@ export const UserPasswordSchema = z.object({
     ConfirmPassword: z.string({required_error: "Поле має бути заповненим"})
 }).refine(({NewPassword, ConfirmPassword}) => NewPassword === ConfirmPassword, {
     message: "Паролі не збігаються",
-    path: ["confirmPassword"]
+    path: ["ConfirmPassword"]
 })
 
 export interface IUpdateUserPassword extends z.infer<typeof UserPasswordSchema> {
+}
+
+export enum ErrorResponseStatusCodes {
+    InvalidUserCredentials = 20801,
+    InvalidOldPassword = 20802,
+    InvalidPasswordComplexity = 20803,
 }

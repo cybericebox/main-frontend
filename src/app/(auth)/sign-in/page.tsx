@@ -7,21 +7,21 @@ import {useReCaptcha} from "next-recaptcha-v3";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
 import {SignInWithCredentialsSchema} from "@/types/auth";
 import {AtSign, Lock} from "lucide-react";
-import {IErrorResponse} from "@/types/api";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 
 export default function SignInPage() {
 
     const {executeRecaptcha} = useReCaptcha();
     const router = useRouter()
-    const signIn = useAuth().SignInWithCredentials();
+    const {SignInWithCredentials} = useAuth().SignInWithCredentials();
+
 
     const form = useForm<z.infer<typeof SignInWithCredentialsSchema>>({
         resolver: zodResolver(SignInWithCredentialsSchema),
@@ -38,26 +38,24 @@ export default function SignInPage() {
         // get recaptcha token
         executeRecaptcha("signIn").then((token) => {
             if (!token) {
-                toast.error("Перевірку на робота не пройдено");
+                ErrorToast("Перевірку на робота не пройдено");
                 return;
             }
 
-            signIn.mutate({
+            SignInWithCredentials({
                 ...data,
                 RecaptchaToken: token
             }, {
                 onSuccess: () => {
                     form.reset();
-                    toast.success("З поверненням!");
+                    SuccessToast("З поверненням!");
                     // redirect to the previous page with timeout
                     setTimeout(() => {
                         router.replace(GetFromURL("/"))
                     }, 1000)
                 },
                 onError: (error) => {
-                    const e = error as IErrorResponse
-                    const message = e?.response?.data.Status.Message || ""
-                    toast.error(`Не вдалося увійти\n${message}`)
+                    ErrorToast("Не вдалося увійти", {cause: error});
                 }
             });
         });
