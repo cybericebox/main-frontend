@@ -1,13 +1,14 @@
 "use client";
 import type React from "react";
-import {deleteCookie, getCookie} from "cookies-next"
+import {deleteCookie as deleteCookieOnClient, getCookie as getCookieOnClient} from "cookies-next/client"
+import {getCookie as getCookieOnServer} from "cookies-next/server";
 import {type IAuthenticated} from "@/types/auth";
 
 const permissionsTokenField = "permissionsToken"
 
 function AuthenticatedOnClient(): IAuthenticated {
     try {
-        const token = getCookie(permissionsTokenField)
+        const token = getCookieOnClient(permissionsTokenField)
         // if no token, return false
         if (!token) {
             return {
@@ -15,21 +16,12 @@ function AuthenticatedOnClient(): IAuthenticated {
                 ID: ""
             }
         }
-
-        // if token is string, parse it
-        if (typeof token === "string") {
             const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
             const userID = payload?.sub
             return {
                 IsAuthenticated: !!userID,
                 ID: userID
             }
-        }
-
-        return {
-            IsAuthenticated: false,
-            ID: ""
-        }
 
     } catch (e) {
         return {
@@ -41,39 +33,22 @@ function AuthenticatedOnClient(): IAuthenticated {
 
 async function AuthenticatedOnServer(): Promise<IAuthenticated> {
     try {
-        const tokenPromise = getCookie(permissionsTokenField)
+        const token = await getCookieOnServer(permissionsTokenField)
         // if no tokenPromise, return false
-        if (!tokenPromise) {
+        if (!token) {
             return {
                 IsAuthenticated: false,
                 ID: ""
             }
         }
-
-        // if tokenPromise is not a promise, return false
-        if (typeof tokenPromise !== "object" || typeof tokenPromise.then !== "function") {
-            return {
-                IsAuthenticated: false,
-                ID: ""
-            }
-        }
-
-        const token = await tokenPromise
 
         // if token is string, parse it
-        if (typeof token === "string") {
             const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
             const userID = payload?.sub
             return {
                 IsAuthenticated: !!userID,
                 ID: userID
             }
-        }
-
-        return {
-            IsAuthenticated: false,
-            ID: ""
-        }
 
     } catch (e) {
         return {
@@ -101,8 +76,8 @@ const fromURLField = "fromURL"
 
 // Get the value of the fromURL cookie and delete it from the client
 export function GetFromURL(defaultValue: string): string {
-    const value = getCookie(fromURLField)
-    deleteCookie(fromURLField, {
+    const value = getCookieOnClient(fromURLField)
+    deleteCookieOnClient(fromURLField, {
         path: "/",
         domain: `.${process.env.NEXT_PUBLIC_DOMAIN || ""}`,
         secure: true,
