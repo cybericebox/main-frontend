@@ -46,3 +46,11 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "200m"
+          readinessProbe:
+            httpGet:
+              port: 3000
+              path: /api/health
+          livenessProbe:
+            httpGet:
+              port: 3000
+              path: /api/health
