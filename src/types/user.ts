@@ -6,7 +6,7 @@ export const UserSchema = z.object({
     Name: z.string({required_error: "Поле має бути заповненим"})
         .min(3, {message: "Ім'я має складатися хоча б з 3 символів"}),
     Role: z.union([z.literal("Користувач"), z.literal("Адміністратор")]),
-    Picture: z.string({required_error: "Поле має бути заповненим"}).url({message: "Некоректне посилання на зображення"}).optional(),
+    Picture: z.string({required_error: "Поле має бути заповненим"}).optional().or(z.string().url({message: "Некоректне посилання на зображення"})),
     LastSeen: z.coerce.date({required_error: "Поле має бути заповненим"}),
     CreatedAt: z.coerce.date({required_error: "Поле має бути заповненим"}),
 })
