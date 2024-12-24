@@ -4,5 +4,6 @@ metadata:
   name: config
   namespace: cybericebox
 data:
-  RECAPTCHA_KEY: "6Lc6BAAAAAAAAChqRbQZcn_yyyyyyyyyyyyyyyyy"
+  RECAPTCHA_SITE_KEY: "recaptcha-site-key"
+  DOMAIN: "cybericebox.com"
 

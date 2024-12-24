@@ -3,33 +3,44 @@ import "@/app/globals.css";
 import Providers from "@/utils/providers";
 import {Toaster} from "react-hot-toast";
 import Footer from "@/components/Footer";
-import {GoogleAnalytics} from '@next/third-parties/google'
 import type {Metadata} from "next";
-import getEnv from "@/utils/helper";
+import {GoogleAnalytics} from '@next/third-parties/google'
 
 export const metadata: Metadata = {
     title: "Cyber ICE Box Platform",
     description: "Cyber ICE Box Platform",
+    openGraph: {
+        title: "Cyber ICE Box Platform",
+        description: "Cyber ICE Box Platform",
+        type: "website",
+        url: `https://${process.env.NEXT_PUBLIC_DOMAIN}`,
+        images: [
+            {
+                url: `https://${process.env.NEXT_PUBLIC_DOMAIN}/favicon.ico`,
+                width: 1200,
+                height: 600,
+                alt: "Cyber ICE Box Platform",
+            }
+        ],
+    },
 };
 
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
-
-    const recaptchaKey = getEnv("RECAPTCHA_KEY")
-
     return (
         <html lang="uk">
         <body>
-        <Providers siteKey={recaptchaKey}>
-            {/*<Header/>*/}
+        <Providers>
             <main>
                 {children}
             </main>
             <Footer/>
-            <Toaster position={"bottom-center"}/>
+            <Toaster position={"top-center"} toastOptions={{duration: 3000}}/>
+            <GoogleAnalytics
+                gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""}
+            />
         </Providers>
         </body>
-        {process.env.GOOGLE_ANALYTICS_ID && <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID}/>}
         </html>
     );
 }

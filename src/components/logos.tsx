@@ -2,7 +2,7 @@ import platformLogo from "@/app/favicon.ico"
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {cn} from "@/lib/utils";
+import {cn} from "@/utils/cn";
 
 export interface LogoProps {
     onClick?: () => void;
@@ -51,7 +51,7 @@ const GoogleLogo = () => {
 function PlatformLogo(props: LogoProps) {
     return (
         <Link
-            href="/"
+            href="/public"
             onClick={props.onClick}
             className={cn(props.className, "cursor-pointer")}
         >

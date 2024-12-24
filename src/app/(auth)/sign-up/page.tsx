@@ -1,57 +1,61 @@
 'use client'
-import type React from "react"
-import {GoogleLogo, PlatformLogo} from "@/lib/logos"
-import {GoogleAPILink, SignInLink} from "@/hooks/useAuthForm"
+import React from "react"
+import {GoogleLogo, PlatformLogo} from "@/components/logos"
+import {GoogleAPILink, SignInLink} from "@/hooks/auth"
 import Link from "next/link"
-import {MdAlternateEmail} from "react-icons/md"
 import {useReCaptcha} from "next-recaptcha-v3";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {SignUpSchema} from "@/lib/validator";
 import * as z from "zod";
-import toast from "react-hot-toast";
-import {signUpWithCredentialsFn} from "@/api/authAPI";
+import {useAuth} from "@/hooks/useAuth";
+import {SignUpWithCredentialsSchema} from "@/types/auth";
+import {AtSign} from "lucide-react";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 export default function SignUpPage() {
     const {executeRecaptcha} = useReCaptcha();
+    const {SignUpWithCredentials} = useAuth().SignUpWithCredentials();
 
-    const form = useForm<z.infer<typeof SignUpSchema>>({
-        resolver: zodResolver(SignUpSchema),
+    const form = useForm<z.infer<typeof SignUpWithCredentialsSchema>>({
+        resolver: zodResolver(SignUpWithCredentialsSchema),
         mode: "onChange",
         defaultValues: {
-            email: "",
+            Email: "",
+            RecaptchaToken: "",
         }
     })
 
-    const onSubmit: SubmitHandler<z.infer<typeof SignUpSchema>> = data => {
+    const onSubmit: SubmitHandler<z.infer<typeof SignUpWithCredentialsSchema>> = data => {
         // get recaptcha token
         executeRecaptcha("signUp").then((token) => {
             if (!token) {
-                // TODO: Change toast
-                toast.error("Перевірку на робота не пройдено");
+                ErrorToast("Перевірку на робота не пройдено");
                 return;
             }
 
-            signUpWithCredentialsFn({
-                email: data.email,
-                recaptchaToken: token
-            }).then((res) => {
-                if (res.status === 200) {
-                    toast.success("Для продовження реєстрації дотримуйтесь інструкцій в листі");
-                } else {
-                    toast.error("Помилка реєстрації");
-                }
-            })
+            SignUpWithCredentials({
+                    ...data,
+                    RecaptchaToken: token
+                },
+                {
+                    onSuccess: () => {
+                        form.reset();
+                        SuccessToast("Для продовження реєстрації дотримуйтесь інструкцій в листі");
+                    },
+                    onError: (error) => {
+                        ErrorToast("Не вдалося провести реєстрацію", {cause: error});
+                    }
+                })
         });
     }
 
     return (
         <div
-            className={"w-full h-[85dvh] flex flex-col justify-center items-center mb-[100px]"}
+            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
         >
-            <PlatformLogo className={"size-48"}/>
+            <PlatformLogo className={"size-20 md:size-44"}/>
             <div
                 className={"my-5 md:my-10 font-bold text-xl md:text-3xl text-primary"}
             >
@@ -65,7 +69,7 @@ export default function SignUpPage() {
                           className={"flex flex-col w-full px-4 py-8 rounded-lg border border-gray-200 shadow-md space-y-6"}
                     >
                         <div
-                            className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
+                            className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
                             tabIndex={1}
                         >
                             <Link href={GoogleAPILink} prefetch={false}>
@@ -80,16 +84,14 @@ export default function SignUpPage() {
                         </div>
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="Email"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <MdAlternateEmail
-                                                className={"text-[#211a52] text-xl"}
-                                            />
+                                            <AtSign/>
                                             <Input
                                                 placeholder="Адреса електронної пошти"
                                                 {...field}
@@ -102,7 +104,7 @@ export default function SignUpPage() {
                             )}
                         />
                         <button
-                            className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
+                            className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
                             tabIndex={3}
                             disabled={form.formState.isSubmitting}
                         >

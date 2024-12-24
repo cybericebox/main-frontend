@@ -1,61 +1,63 @@
 'use client';
-import type React from "react";
-import {GoogleLogo, PlatformLogo} from "@/lib/logos";
-import {ForgotPasswordLink, GetFromURL, GoogleAPILink, SignUpLink} from "@/hooks/useAuthForm";
+import React from "react";
+import {GoogleLogo, PlatformLogo} from "@/components/logos";
+import {ForgotPasswordLink, GetFromURL, GoogleAPILink, SignUpLink} from "@/hooks/auth";
 import Link from "next/link";
-import {MdAlternateEmail} from "react-icons/md";
-import {FaLock} from "react-icons/fa";
 import {useReCaptcha} from "next-recaptcha-v3";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import * as z from "zod";
-import {SignInSchema} from "@/lib/validator";
 import {zodResolver} from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-import {signInWithCredentialsFn} from "@/api/authAPI";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
+import {useAuth} from "@/hooks/useAuth";
+import {SignInWithCredentialsSchema} from "@/types/auth";
+import {AtSign, Lock} from "lucide-react";
+import {ErrorToast, SuccessToast} from "@/components/common/customToast";
 
 
 export default function SignInPage() {
 
     const {executeRecaptcha} = useReCaptcha();
     const router = useRouter()
+    const {SignInWithCredentials} = useAuth().SignInWithCredentials();
 
-    const form = useForm<z.infer<typeof SignInSchema>>({
-        resolver: zodResolver(SignInSchema),
+
+    const form = useForm<z.infer<typeof SignInWithCredentialsSchema>>({
+        resolver: zodResolver(SignInWithCredentialsSchema),
         mode: "onChange",
         defaultValues: {
-            email: "",
-            password: "",
+            Email: "",
+            Password: "",
+            RecaptchaToken: "",
         }
     })
 
-    const onSubmit: SubmitHandler<z.infer<typeof SignInSchema>> = data => {
+    const onSubmit: SubmitHandler<z.infer<typeof SignInWithCredentialsSchema>> = data => {
 
         // get recaptcha token
         executeRecaptcha("signIn").then((token) => {
             if (!token) {
-                // TODO: Change toast
-                toast.error("Перевірку на робота не пройдено");
+                ErrorToast("Перевірку на робота не пройдено");
                 return;
             }
 
-            signInWithCredentialsFn({
-                email: data.email,
-                password: data.password,
-                recaptchaToken: token
-            }).then((res) => {
-                if (res.status === 200) {
-                    toast.success("З поверненням!");
+            SignInWithCredentials({
+                ...data,
+                RecaptchaToken: token
+            }, {
+                onSuccess: () => {
+                    form.reset();
+                    SuccessToast("З поверненням!");
                     // redirect to the previous page with timeout
                     setTimeout(() => {
                         router.replace(GetFromURL("/"))
-                    }, Number(process.env.NEXT_PUBLIC_REDIRECT_TIMEOUT) || 3000)
-                } else {
-                    toast.error("Помилка аутентифікації");
+                    }, 1000)
+                },
+                onError: (error) => {
+                    ErrorToast("Не вдалося увійти", {cause: error});
                 }
-            })
+            });
         });
     }
 
@@ -63,7 +65,7 @@ export default function SignInPage() {
         <div
             className={"w-full h-full flex flex-col justify-center items-center"}
         >
-            <PlatformLogo className={"size-48"}/>
+            <PlatformLogo className={"size-20 md:size-44"}/>
             <div
                 className={"my-5 md:my-10 font-bold text-xl md:text-3xl text-primary"}
             >
@@ -78,11 +80,11 @@ export default function SignInPage() {
                         className={"flex flex-col w-full px-4 rounded-lg border border-gray-200 shadow-md space-y-6 py-8"}
                     >
                         <div
-                            className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
+                            className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
                             tabIndex={1}
                         >
                             <Link href={GoogleAPILink} prefetch={false}>
-                                <div className={"flex flex-row justify-center items-center"}>
+                                <div className={"flex flex-row justify-center items-center text-center"}>
                                     <GoogleLogo/>
                                     <div className={"ml-2"}>Продовжити за допомогою Google</div>
                                 </div>
@@ -93,16 +95,14 @@ export default function SignInPage() {
                         </div>
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="Email"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <MdAlternateEmail
-                                                className={"text-[#211a52] text-xl"}
-                                            />
+                                            <AtSign/>
                                             <Input
                                                 placeholder="Адреса електронної пошти"
                                                 {...field}
@@ -116,16 +116,14 @@ export default function SignInPage() {
                         />
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="Password"
                             render={({field}) => (
                                 <FormItem className="w-full">
                                     <FormControl>
                                         <div
                                             className={"flex flex-row items-center border border-gray-200 rounded p-2 space-x-3"}
                                         >
-                                            <FaLock
-                                                className={"text-[#211a52]"}
-                                            />
+                                            <Lock/>
                                             <Input
                                                 placeholder="Пароль"
                                                 type="password"
@@ -145,7 +143,7 @@ export default function SignInPage() {
                             <Link href={ForgotPasswordLink}>Забули пароль?</Link>
                         </div>
                         <button
-                            className={"w-full bg-[#211a52] hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
+                            className={"w-full bg-primary hover:opacity-70 text-white font-bold py-2 px-4 rounded"}
                             tabIndex={4}
                         >
                             Увійти
