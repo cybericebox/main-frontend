@@ -1,33 +1,16 @@
-'use client'
-import React, {use, useEffect} from "react";
-import {useRouter} from "next/navigation";
-import {useAuth} from "@/hooks/useAuth";
-import {ErrorToast, SuccessToast} from "@/components/common/customToast";
+import ConfirmEmailComponent from "@/app/(auth)/confirm-email/[code]/component";
+
+export const dynamic = "force-static"
 
 type SearchParamProps = {
     params: Promise<{ code: string }>
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default function ConfirmEmail(props: SearchParamProps) {
-    const params = use(props.params);
+export async function generateStaticParams() {
+    return []
+}
 
-    const {
-        code
-    } = params;
-
-    const router = useRouter()
-    const {ConfirmEmail} = useAuth().ConfirmEmail();
-    useEffect(() => {
-        ConfirmEmail(code, {
-            onSuccess: () => {
-                SuccessToast("Адресу електронної пошти успішно підтверджено!");
-                router.push("/");
-            },
-            onError: (error) => {
-                ErrorToast("Не вдалося підтвердити адресу електронної пошти", {cause: error});
-            },
-        });
-    }, [router, ConfirmEmail, code]);
-    return <></>
+export default async function ConfirmEmailPage(props: SearchParamProps) {
+    const params = await props.params;
+    return <ConfirmEmailComponent code={params.code}/>
 }
