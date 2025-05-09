@@ -16,7 +16,7 @@ export default function Providers({children}: Readonly<{
                 {children}
                 <Tooltip
                     id={"tooltip"}
-                    className={"!bg-primary"}
+                    className={"bg-primary!"}
                 />
             </ReCaptchaProvider>
         </QueryProvider>

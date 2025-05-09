@@ -57,7 +57,7 @@ export default function Profile() {
 
     return (
         <div
-            className={"flex flex-col h-full w-full max-w-screen-md m-auto mt-20"}
+            className={"flex flex-col h-full w-full max-w-(--breakpoint-md) m-auto mt-20"}
         >
             <Card className="text-primary border-2 shadow-2xl">
                 <CardHeader>

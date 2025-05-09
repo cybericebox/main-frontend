@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
     }
     return (
         <div
-            className={"w-full h-full flex flex-col justify-center items-center"}
+            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
         >
             <PlatformLogo className={"size-20 md:size-44"}/>
             <div
