@@ -14,7 +14,7 @@ export const UserSchema = z.object({
 export interface IUser extends z.infer<typeof UserSchema> {
 }
 
-export const UserProfileSchema = z.object({}).extend(UserSchema.pick({ Name: true, Picture: true, Email: true }))
+export const UserProfileSchema = z.object({}).extend(UserSchema.pick({ Name: true, Picture: true, Email: true }).shape)
 
 export interface IUpdateUserProfile extends z.infer<typeof UserProfileSchema> {
 }
