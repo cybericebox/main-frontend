@@ -1,19 +1,19 @@
 'use client';
-import React from "react";
-import {GoogleLogo, PlatformLogo} from "@/components/logos";
-import {ForgotPasswordLink, GetFromURL, GoogleAPILink, SignUpLink} from "@/hooks/auth";
-import Link from "next/link";
-import {useReCaptcha} from "next-recaptcha-v3";
-import {type SubmitHandler, useForm} from "react-hook-form";
-import * as z from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {useRouter} from "next/navigation";
-import {useAuth} from "@/hooks/useAuth";
-import {SignInWithCredentialsSchema} from "@/types/auth";
-import {AtSign, Lock} from "lucide-react";
-import {ErrorToast, SuccessToast} from "@/components/common/customToast";
+import { ErrorToast, SuccessToast } from '@/components/common/customToast'
+import { GoogleLogo, PlatformLogo } from '@/components/logos'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { ForgotPasswordLink, GetFromURL, GoogleAPILink, SignUpLink } from '@/hooks/auth'
+import { useAuth } from '@/hooks/useAuth'
+import { SignInWithCredentialsSchema } from '@/types/auth'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AtSign, Lock } from 'lucide-react'
+import { useReCaptcha } from 'next-recaptcha-v3'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import * as z from 'zod'
 
 
 export default function SignInPage() {
@@ -63,7 +63,7 @@ export default function SignInPage() {
 
     return (
         <div
-            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
+	        className={'w-full flex flex-col justify-center items-center sm:mb-[50px]'}
         >
             <PlatformLogo className={"size-20 md:size-44"}/>
             <div

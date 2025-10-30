@@ -1,18 +1,18 @@
 'use client'
-import React from "react"
-import {GoogleLogo, PlatformLogo} from "@/components/logos"
-import {GoogleAPILink, SignInLink} from "@/hooks/auth"
-import Link from "next/link"
-import {useReCaptcha} from "next-recaptcha-v3";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {zodResolver} from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {useAuth} from "@/hooks/useAuth";
-import {SignUpWithCredentialsSchema} from "@/types/auth";
-import {AtSign} from "lucide-react";
-import {ErrorToast, SuccessToast} from "@/components/common/customToast";
+import { ErrorToast, SuccessToast } from '@/components/common/customToast'
+import { GoogleLogo, PlatformLogo } from '@/components/logos'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { GoogleAPILink, SignInLink } from '@/hooks/auth'
+import { useAuth } from '@/hooks/useAuth'
+import { SignUpWithCredentialsSchema } from '@/types/auth'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AtSign } from 'lucide-react'
+import { useReCaptcha } from 'next-recaptcha-v3'
+import Link from 'next/link'
+import React from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as z from 'zod'
 
 export default function SignUpPage() {
     const {executeRecaptcha} = useReCaptcha();
@@ -53,7 +53,7 @@ export default function SignUpPage() {
 
     return (
         <div
-            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
+	        className={'w-full flex flex-col justify-center items-center sm:mb-[50px]'}
         >
             <PlatformLogo className={"size-20 md:size-44"}/>
             <div

@@ -1,21 +1,21 @@
 'use client';
-import {parseSignUpToken} from "@/utils/helper";
-import {PlatformLogo} from "@/components/logos";
-import Link from "next/link";
-import React, {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {SubmitHandler, useForm} from "react-hook-form";
-import * as z from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {GetFromURL, SignInLink, SignUpLink} from "@/hooks/auth";
-import {useAuth} from "@/hooks/useAuth";
-import {SignUpWithCredentialsContinueSchema} from "@/types/auth";
-import {AtSign, Lock, LockKeyhole, LockKeyholeOpen, User} from "lucide-react";
-import {type IErrorResponse} from "@/types/api";
-import {ErrorToast, SuccessToast} from "@/components/common/customToast";
-import {ErrorResponseStatusCodes} from "@/types/user";
+import { ErrorToast, SuccessToast } from '@/components/common/customToast'
+import { PlatformLogo } from '@/components/logos'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { GetFromURL, SignInLink, SignUpLink } from '@/hooks/auth'
+import { useAuth } from '@/hooks/useAuth'
+import { type IErrorResponse } from '@/types/api'
+import { SignUpWithCredentialsContinueSchema } from '@/types/auth'
+import { ErrorResponseStatusCodes } from '@/types/user'
+import { parseSignUpToken } from '@/utils/helper'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AtSign, Lock, LockKeyhole, LockKeyholeOpen, User } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as z from 'zod'
 
 type Props = {
     token: string
@@ -73,7 +73,7 @@ export default function SignUpContinueComponent({token}: Props) {
 
     return (
         <div
-            className={"w-full h-[85dvh] flex flex-col justify-center items-center sm:mb-[100px]"}
+	        className={'w-full flex flex-col justify-center items-center sm:mb-[50px]'}
         >
             <PlatformLogo className={"size-20 md:size-44"}/>
             <div
