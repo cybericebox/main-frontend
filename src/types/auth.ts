@@ -1,5 +1,5 @@
-import * as z from "zod";
-import {PasswordSchema, UserSchema} from "@/types/user";
+import { PasswordSchema, UserSchema } from '@/types/user'
+import * as z from 'zod'
 
 export interface IAuthenticated {
     IsAuthenticated: boolean;
@@ -8,10 +8,10 @@ export interface IAuthenticated {
 
 export const SignInWithCredentialsSchema = z.object({
     Email: UserSchema.shape.Email,
-    Password: z.string({required_error: "Поле має бути заповненим"})
+	Password: z.string({ error: 'Поле має бути заповненим' })
         .min(8, {message: "Пароль має складатися хоча б з 8 символів"})
         .max(32, {message: "Пароль має складатися не більше ніж з 32 символів"}),
-    RecaptchaToken: z.string({required_error: "Поле має бути заповненим"}),
+	RecaptchaToken: z.string({ error: 'Поле має бути заповненим' })
 })
 
 export interface ISignInWithCredentials extends z.infer<typeof SignInWithCredentialsSchema> {
@@ -19,7 +19,7 @@ export interface ISignInWithCredentials extends z.infer<typeof SignInWithCredent
 
 export const SignUpWithCredentialsSchema = z.object({
     Email: UserSchema.shape.Email,
-    RecaptchaToken: z.string({required_error: "Поле має бути заповненим"}),
+	RecaptchaToken: z.string({ error: 'Поле має бути заповненим' })
 })
 
 export interface ISignUpWithCredentials extends z.infer<typeof SignUpWithCredentialsSchema> {
@@ -29,7 +29,7 @@ export const SignUpWithCredentialsContinueSchema = z.object({
     Email: UserSchema.shape.Email,
     Name: UserSchema.shape.Name,
     Password: PasswordSchema,
-    ConfirmPassword: z.string({required_error: "Поле має бути заповненим"}),
+	ConfirmPassword: z.string({ error: 'Поле має бути заповненим' })
 }).refine(({Password, ConfirmPassword}) => Password === ConfirmPassword, {
     message: "Паролі не збігаються",
     path: ["ConfirmPassword"]
@@ -40,7 +40,7 @@ export interface ISignUpWithCredentialsContinue extends z.infer<typeof SignUpWit
 
 export const ForgotPasswordSchema = z.object({
     Email: UserSchema.shape.Email,
-    RecaptchaToken: z.string({required_error: "Поле має бути заповненим"}),
+	RecaptchaToken: z.string({ error: 'Поле має бути заповненим' })
 })
 
 export interface IForgotPassword extends z.infer<typeof ForgotPasswordSchema> {
@@ -48,7 +48,7 @@ export interface IForgotPassword extends z.infer<typeof ForgotPasswordSchema> {
 
 export const ResetPasswordSchema = z.object({
     Password: PasswordSchema,
-    ConfirmPassword: z.string({required_error: "Поле має бути заповненим"}),
+	ConfirmPassword: z.string({ error: 'Поле має бути заповненим' })
 }).refine(({Password, ConfirmPassword}) => Password === ConfirmPassword, {
     message: "Паролі не збігаються",
     path: ["confirmPassword"]
