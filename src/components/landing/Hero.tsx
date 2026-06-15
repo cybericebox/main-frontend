@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { t } from "@/i18n/t"
-import { SIGN_IN_URL } from "@/lib/links"
+import { SIGN_UP_URL } from "@/lib/links"
 
-// Apex hero — crest brand mark + single primary CTA to the sign-in page.
+// Apex hero — crest brand mark + single primary CTA to the sign-up page.
 // Platform-focused, static-export safe, no client hooks.
 export default function Hero() {
   return (
@@ -23,7 +23,7 @@ export default function Hero() {
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button asChild className="facet glow">
-            <a href={SIGN_IN_URL}>{t("landing.hero.primaryCta")}</a>
+            <a href={SIGN_UP_URL}>{t("landing.hero.primaryCta")}</a>
           </Button>
         </div>
       </div>
