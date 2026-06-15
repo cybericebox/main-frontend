@@ -5,7 +5,6 @@ import { User } from "lucide-react"
 
 import { type Me } from "@/lib/auth"
 import { useAuthState } from "@/lib/useAuthState"
-import { Wordmark } from "@/components/brand/Wordmark"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -59,6 +58,13 @@ function initials(me: Me): string {
   return (me.Email?.trim()?.[0] ?? "?").toUpperCase()
 }
 
+const NAV_ANCHORS: { href: string; label: string }[] = [
+  { href: "#features", label: "landing.nav.features" },
+  { href: "#self-host", label: "landing.nav.selfHost" },
+  { href: "#open-source", label: "landing.nav.openSource" },
+  { href: "#faq", label: "landing.nav.faq" },
+]
+
 export default function Header() {
   // Auth-state orchestration (silent-authn + anon-marker loop-prevention) lives
   // in one place — the useAuthState hook. The Header just renders from `status`:
@@ -100,10 +106,18 @@ export default function Header() {
         scrolled ? "frost-panel" : "bg-transparent border-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <a href="/" className="glow">
-          <Wordmark size="md" />
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+        <a href="/" className="glow flex items-center" aria-label="CyberICEBox — ICE CTF">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, unoptimized images */}
+          <img src="/assets/logo-crest.png" alt="CyberICEBox — ICE CTF" className="h-9 w-auto" />
         </a>
+        <nav className="hidden items-center gap-6 md:flex">
+          {NAV_ANCHORS.map((a) => (
+            <a key={a.href} href={a.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              {t(a.label)}
+            </a>
+          ))}
+        </nav>
         <div>{authControl}</div>
       </div>
     </header>
