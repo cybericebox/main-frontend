@@ -1,11 +1,21 @@
 import { Check } from "lucide-react"
 import { t } from "@/i18n/t"
-import { PLATFORM_DOMAIN } from "@/lib/links"
 
-const POINTS = ["landing.labs.point1", "landing.labs.point2", "landing.labs.point3"]
+const POINTS = [
+  "landing.labs.point1",
+  "landing.labs.point2",
+  "landing.labs.point3",
+  "landing.labs.point4",
+]
 
-// Highlight for the platform's core capability — multifunctional, on-demand labs.
-// Copy + capability bullets beside an illustrative lab-terminal mockup.
+const NODES = [
+  { y: 32, label: "host" },
+  { y: 85, label: "web" },
+  { y: 138, label: "host" },
+]
+
+// Highlight for the platform core — multifunctional labs. Copy + capability
+// bullets beside an illustrative network-topology mockup (VPN → L3 → nodes).
 export default function Labs() {
   return (
     <section id="labs" className="scroll-mt-20 bg-[#0B1521] py-16">
@@ -28,27 +38,38 @@ export default function Labs() {
           </ul>
         </div>
 
-        <div className="frost-panel overflow-hidden rounded-xl font-mono text-sm">
-          <div className="flex items-center gap-1.5 border-b border-[var(--frost-border)] px-4 py-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#f2a742]/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#7fd3a0]/70" />
+        <div className="frost-panel rounded-xl p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-medium text-foreground">{t("landing.labs.caption")}</span>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[#7fd3a0] opacity-75 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7fd3a0]" />
+            </span>
           </div>
-          <div className="space-y-1.5 p-5">
-            <p className="text-foreground"><span className="text-[var(--accent-warm)]">$</span> lab start web/frozen-session</p>
-            <p className="text-muted-foreground">▸ provisioning isolated environment…</p>
-            <p className="text-muted-foreground">▸ target: <span className="text-[#7fd3a0]">https://lab-7f3a.{PLATFORM_DOMAIN}</span></p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/5">
-              <span className="block h-full w-full rounded-full bg-primary/70 motion-safe:animate-pulse" />
-            </div>
-            <p className="mt-3 inline-flex items-center gap-2 text-[#7fd3a0]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[#7fd3a0] opacity-75 motion-safe:animate-ping" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7fd3a0]" />
-              </span>
-              {t("landing.labs.caption")}
-            </p>
-          </div>
+          <svg viewBox="0 0 280 170" className="h-52 w-full" role="img" aria-label={t("landing.labs.caption")}>
+            <g stroke="var(--frost-border)" strokeWidth="1.5" fill="none">
+              <line x1="82" y1="85" x2="124" y2="85" />
+              <line x1="156" y1="85" x2="206" y2="85" />
+              <line x1="140" y1="69" x2="140" y2="46" />
+              <line x1="140" y1="101" x2="140" y2="124" />
+              <line x1="140" y1="46" x2="206" y2="46" />
+              <line x1="140" y1="124" x2="206" y2="124" />
+            </g>
+            <g>
+              <rect x="14" y="68" width="68" height="34" rx="8" fill="var(--primary)" fillOpacity="0.15" stroke="var(--primary)" />
+              <text x="48" y="89" textAnchor="middle" fill="var(--foreground)" fontSize="11" fontFamily="monospace">VPN</text>
+            </g>
+            <g>
+              <circle cx="140" cy="85" r="16" fill="var(--accent-warm)" fillOpacity="0.15" stroke="var(--accent-warm)" />
+              <text x="140" y="89" textAnchor="middle" fill="var(--foreground)" fontSize="9" fontFamily="monospace">L3</text>
+            </g>
+            {NODES.map((n, i) => (
+              <g key={i}>
+                <rect x="206" y={n.y - 14} width="58" height="28" rx="7" fill="var(--card)" stroke="var(--frost-border)" />
+                <text x="235" y={n.y + 4} textAnchor="middle" fill="var(--muted-foreground)" fontSize="10" fontFamily="monospace">{n.label}</text>
+              </g>
+            ))}
+          </svg>
         </div>
       </div>
     </section>
