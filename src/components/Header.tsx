@@ -1,9 +1,11 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { User } from "lucide-react"
 
 import { type Me } from "@/lib/auth"
 import { useAuthState } from "@/lib/useAuthState"
+import { Wordmark } from "@/components/brand/Wordmark"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -65,25 +67,44 @@ export default function Header() {
   //   "authed"  → avatar / menu
   const { status, me } = useAuthState()
 
-  return (
-    <header className="flex items-center justify-between px-4 py-3">
-      <a href="/" className="text-base font-semibold">
-        {t("landing.title")}
-      </a>
+  // Scroll-aware frosting: transparent over the hero, frost-panel strip on
+  // scroll. The listener is client-only (inside useEffect) so static export
+  // stays safe.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
-      <div className="flex items-center">
-        {status === "loading" ? (
-          // Loading (incl. pending silent redirect): neutral placeholder sized
-          // like the avatar to avoid layout shift / a Sign-in flash.
-          <div className="h-9 w-9" aria-hidden />
-        ) : status === "anon" || me === null ? (
-          // Unauthenticated: plain anchor to the id sign-in page.
-          <Button asChild variant="outline" size="sm">
-            <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
-          </Button>
-        ) : (
-          <AuthedMenu me={me} />
-        )}
+  // Existing auth-state control — UNCHANGED behavior/links/logic, just extracted
+  // into a local variable so the shell can place it on the right.
+  const authControl =
+    status === "loading" ? (
+      // Loading (incl. pending silent redirect): neutral placeholder sized
+      // like the avatar to avoid layout shift / a Sign-in flash.
+      <div className="h-9 w-9" aria-hidden />
+    ) : status === "anon" || me === null ? (
+      // Unauthenticated: plain anchor to the id sign-in page.
+      <Button asChild variant="outline" size="sm">
+        <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
+      </Button>
+    ) : (
+      <AuthedMenu me={me} />
+    )
+
+  return (
+    <header
+      className={`sticky top-0 z-50 transition-colors ${
+        scrolled ? "frost-panel" : "bg-transparent border-transparent"
+      }`}
+    >
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+        <a href="/" className="glow">
+          <Wordmark size="md" />
+        </a>
+        <div>{authControl}</div>
       </div>
     </header>
   )
