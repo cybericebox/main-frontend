@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 export const metadata: Metadata = {
     title: "Cyber ICE Box Platform",
@@ -26,8 +28,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="uk">
-            <body>
+        <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+            <body className="grid-bg">
                 <Header />
                 <main>{children}</main>
                 <Footer />
