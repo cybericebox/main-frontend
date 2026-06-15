@@ -1,4 +1,5 @@
-import { Check } from "lucide-react"
+import type { ComponentType } from "react"
+import { Check, Globe, ShieldCheck, Router, Network, Monitor, Server } from "lucide-react"
 import { t } from "@/i18n/t"
 
 const POINTS = [
@@ -8,14 +9,39 @@ const POINTS = [
   "landing.labs.point4",
 ]
 
-const NODES = [
-  { y: 32, label: "host" },
-  { y: 85, label: "web" },
-  { y: 138, label: "host" },
-]
+function Node({
+  icon: Icon,
+  label,
+  accent = false,
+}: {
+  icon: ComponentType<{ className?: string }>
+  label: string
+  accent?: boolean
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <span
+        className={
+          "inline-flex h-10 w-10 items-center justify-center rounded-lg border " +
+          (accent
+            ? "border-[var(--accent-warm)] bg-[var(--accent-warm)]/10 text-[var(--accent-warm)]"
+            : "border-[var(--frost-border)] bg-white/[0.03] text-foreground")
+        }
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="font-mono text-[10px] text-muted-foreground">{label}</span>
+    </div>
+  )
+}
+
+function Link() {
+  return <span className="mb-4 h-px flex-1 bg-[var(--frost-border)]" />
+}
 
 // Highlight for the platform core — multifunctional labs. Copy + capability
-// bullets beside an illustrative network-topology mockup (VPN → L3 → nodes).
+// bullets beside an illustrative device topology (internet → VPN → router →
+// switch → lab hosts). Server component; only the live dot animates (motion-safe).
 export default function Labs() {
   return (
     <section id="labs" className="scroll-mt-20 bg-[#0B1521] py-16">
@@ -39,37 +65,31 @@ export default function Labs() {
         </div>
 
         <div className="frost-panel rounded-xl p-5">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-5 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.labs.caption")}</span>
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-[#7fd3a0] opacity-75 motion-safe:animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7fd3a0]" />
             </span>
           </div>
-          <svg viewBox="0 0 280 170" className="h-52 w-full" role="img" aria-label={t("landing.labs.caption")}>
-            <g stroke="var(--frost-border)" strokeWidth="1.5" fill="none">
-              <line x1="82" y1="85" x2="124" y2="85" />
-              <line x1="156" y1="85" x2="206" y2="85" />
-              <line x1="140" y1="69" x2="140" y2="46" />
-              <line x1="140" y1="101" x2="140" y2="124" />
-              <line x1="140" y1="46" x2="206" y2="46" />
-              <line x1="140" y1="124" x2="206" y2="124" />
-            </g>
-            <g>
-              <rect x="14" y="68" width="68" height="34" rx="8" fill="var(--primary)" fillOpacity="0.15" stroke="var(--primary)" />
-              <text x="48" y="89" textAnchor="middle" fill="var(--foreground)" fontSize="11" fontFamily="monospace">VPN</text>
-            </g>
-            <g>
-              <circle cx="140" cy="85" r="16" fill="var(--accent-warm)" fillOpacity="0.15" stroke="var(--accent-warm)" />
-              <text x="140" y="89" textAnchor="middle" fill="var(--foreground)" fontSize="9" fontFamily="monospace">L3</text>
-            </g>
-            {NODES.map((n, i) => (
-              <g key={i}>
-                <rect x="206" y={n.y - 14} width="58" height="28" rx="7" fill="var(--card)" stroke="var(--frost-border)" />
-                <text x="235" y={n.y + 4} textAnchor="middle" fill="var(--muted-foreground)" fontSize="10" fontFamily="monospace">{n.label}</text>
-              </g>
-            ))}
-          </svg>
+
+          <div className="flex items-center">
+            <Node icon={Globe} label="internet" />
+            <Link />
+            <Node icon={ShieldCheck} label="VPN" accent />
+            <Link />
+            <Node icon={Router} label="router" />
+            <Link />
+            <Node icon={Network} label="switch" />
+          </div>
+
+          <div className="mr-[18px] ml-auto h-6 w-px bg-[var(--frost-border)]" />
+
+          <div className="flex items-center justify-end gap-5">
+            <Node icon={Monitor} label="host" />
+            <Node icon={Server} label="web" />
+            <Node icon={Monitor} label="host" />
+          </div>
         </div>
       </div>
     </section>
