@@ -18,8 +18,6 @@ export default function Footer() {
                 © {new Date().getFullYear()} ХНУРЕ
                 <br />
                 <a href='https://ice.nure.ua/ua/' target="_blank" rel="noopener noreferrer" className="hover:text-foreground">За підтримки кафедри ІКІ ім. В. В. Поповського</a>
-                <br />
-                Харківського національного університету радіоелектроніки
             </div>
         </footer>
     )
