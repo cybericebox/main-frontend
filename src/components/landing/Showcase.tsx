@@ -1,14 +1,20 @@
-import type { CSSProperties, ComponentType } from "react"
+import type { CSSProperties, ComponentType, ReactNode } from "react"
 import { Globe, Lock, Terminal, Search } from "lucide-react"
 import { t } from "@/i18n/t"
 
-// Illustrative product mockups for the landing — a live score-progression chart
-// and a challenge board. Fake data; server component; animation is motion-safe.
+// Two illustrative product screens framed as browser windows — a live scoreboard
+// and a challenges page. Fake data; server component; animation is motion-safe.
 const SERIES: { color: string; points: string }[] = [
   { color: "var(--primary)", points: "0,110 40,98 80,86 120,70 160,64 200,46 240,34 280,18" },
   { color: "var(--accent-warm)", points: "0,112 40,104 80,92 120,84 160,60 200,52 240,40 280,30" },
   { color: "#7fd3a0", points: "0,114 40,108 80,100 120,88 160,78 200,66 240,58 280,44" },
   { color: "#c084fc", points: "0,116 40,112 80,106 120,98 160,90 200,82 240,70 280,60" },
+]
+
+const STANDINGS = [
+  { team: "0xFrost", score: 4820 },
+  { team: "IceBreakers", score: 4655 },
+  { team: "NullSec", score: 4390 },
 ]
 
 const CHALLENGES: {
@@ -25,6 +31,24 @@ const CHALLENGES: {
   { icon: Search, cat: "Forensics", title: "Cold Trail", pts: 250, diff: "#7fd3a0", solved: true },
 ]
 
+function BrowserFrame({ url, children }: { url: string; children: ReactNode }) {
+  return (
+    <div className="frost-panel overflow-hidden rounded-xl">
+      <div className="flex items-center gap-2 border-b border-[var(--frost-border)] px-4 py-2.5">
+        <span className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#f2a742]/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#7fd3a0]/70" />
+        </span>
+        <span className="ml-2 flex-1 truncate rounded-md bg-white/[0.05] px-3 py-1 text-center font-mono text-[11px] text-muted-foreground">
+          {url}
+        </span>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
+  )
+}
+
 export default function Showcase() {
   return (
     <section id="showcase" className="mx-auto max-w-5xl scroll-mt-20 px-4 py-16">
@@ -39,8 +63,8 @@ export default function Showcase() {
       </p>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2">
-        <div className="frost-panel rounded-xl p-5">
-          <div className="mb-4 flex items-center justify-between">
+        <BrowserFrame url="play.cybericebox.app/event/winter-arena/scoreboard">
+          <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.chartTitle")}</span>
             <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-warm)]">
               <span className="relative flex h-2 w-2">
@@ -50,7 +74,7 @@ export default function Showcase() {
               {t("landing.showcase.live")}
             </span>
           </div>
-          <svg viewBox="0 0 280 120" className="h-44 w-full" preserveAspectRatio="none" role="img" aria-label={t("landing.showcase.chartTitle")}>
+          <svg viewBox="0 0 280 120" className="h-36 w-full" preserveAspectRatio="none" role="img" aria-label={t("landing.showcase.chartTitle")}>
             {[24, 48, 72, 96].map((y) => (
               <line key={y} x1="0" y1={y} x2="280" y2={y} stroke="var(--frost-border)" strokeWidth="1" />
             ))}
@@ -72,11 +96,27 @@ export default function Showcase() {
               return <circle key={i} cx={last[0]} cy={last[1]} r="3" fill={s.color} />
             })}
           </svg>
-        </div>
+          <ol className="mt-4 divide-y divide-[var(--frost-border)]">
+            {STANDINGS.map((row, i) => (
+              <li key={row.team} className="flex items-center gap-3 py-2">
+                <span className="w-4 text-center font-mono text-xs text-muted-foreground">{i + 1}</span>
+                <span className="flex-1 truncate text-sm text-foreground">{row.team}</span>
+                <span className="font-mono text-xs tabular-nums text-[var(--accent-warm)]">{row.score}</span>
+              </li>
+            ))}
+          </ol>
+        </BrowserFrame>
 
-        <div className="frost-panel rounded-xl p-5">
-          <div className="mb-4 flex items-center justify-between">
+        <BrowserFrame url="play.cybericebox.app/event/winter-arena/challenges">
+          <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.challengesTitle")}</span>
+            <div className="hidden gap-1.5 sm:flex">
+              {["Web", "Crypto", "Pwn"].map((c) => (
+                <span key={c} className="rounded-full border border-[var(--frost-border)] px-2 py-0.5 text-[10px] text-muted-foreground">
+                  {c}
+                </span>
+              ))}
+            </div>
           </div>
           <ul className="grid grid-cols-2 gap-3">
             {CHALLENGES.map((c) => {
@@ -103,7 +143,7 @@ export default function Showcase() {
               )
             })}
           </ul>
-        </div>
+        </BrowserFrame>
       </div>
     </section>
   )
