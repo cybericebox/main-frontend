@@ -9,8 +9,5 @@ export const ID_ORIGIN =
 // Sign-in page on the identity app (landing primary CTA targets this).
 export const SIGN_IN_URL = `${ID_ORIGIN}/sign-in`
 
-// Org-level link only (no specific repo); license/docs resolve to the same org page.
+// Org-level link only (no specific repo).
 export const SOURCE_URL = "https://github.com/cybericebox"
-
-export const LICENSE_URL = SOURCE_URL
-export const DOCS_URL = SOURCE_URL

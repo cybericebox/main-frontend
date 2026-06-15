@@ -1,6 +1,5 @@
-import type React from 'react'
 import { t } from '@/i18n/t'
-import { SOURCE_URL, DOCS_URL, LICENSE_URL } from '@/lib/links'
+import { SOURCE_URL } from '@/lib/links'
 
 export default function Footer() {
     return (
@@ -13,16 +12,14 @@ export default function Footer() {
                 </div>
                 <nav className="flex items-center gap-5 text-xs text-muted-foreground">
                     <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t('landing.footer.github')}</a>
-                    <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t('landing.footer.docs')}</a>
-                    <a href={LICENSE_URL} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">{t('landing.footer.license')}</a>
                 </nav>
             </div>
-            <div className="border-t border-[var(--frost-border)] py-2 text-center text-[11px] text-muted-foreground">
+            <div className="border-t border-[var(--frost-border)] py-3 text-center text-[11px] leading-relaxed text-muted-foreground">
                 © {new Date().getFullYear()} ХНУРЕ
-                {process.env.NEXT_PUBLIC_SHOW_UNIVERSITY === 'true' && (
-                    <><br /><a href='https://ice.nure.ua/ua/' className="hover:text-foreground">За підтримки кафедри ІКІ ім. В. В.
-                        Поповського</a><br />Харківського національного університету радіоелектроніки</>
-                )}
+                <br />
+                <a href='https://ice.nure.ua/ua/' target="_blank" rel="noopener noreferrer" className="hover:text-foreground">За підтримки кафедри ІКІ ім. В. В. Поповського</a>
+                <br />
+                Харківського національного університету радіоелектроніки
             </div>
         </footer>
     )
