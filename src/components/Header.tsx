@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { User } from "lucide-react"
 
-import { fetchMe, type Me } from "@/lib/auth"
+import { type Me } from "@/lib/auth"
+import { useAuthState } from "@/lib/useAuthState"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -58,25 +58,12 @@ function initials(me: Me): string {
 }
 
 export default function Header() {
-  // me === undefined → loading (avoid layout shift with a neutral slot)
-  // me === null       → unauthenticated
-  // me === Me         → authenticated
-  const [me, setMe] = useState<Me | null | undefined>(undefined)
-
-  useEffect(() => {
-    let cancelled = false
-    fetchMe()
-      .then((res) => {
-        if (!cancelled) setMe(res)
-      })
-      .catch(() => {
-        // Unexpected error (5xx / network): treat as signed-out for display.
-        if (!cancelled) setMe(null)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  // Auth-state orchestration (silent-authn + anon-marker loop-prevention) lives
+  // in one place — the useAuthState hook. The Header just renders from `status`:
+  //   "loading" → neutral placeholder (also covers a pending silent redirect)
+  //   "anon"    → Sign-in
+  //   "authed"  → avatar / menu
+  const { status, me } = useAuthState()
 
   return (
     <header className="flex items-center justify-between px-4 py-3">
@@ -85,10 +72,11 @@ export default function Header() {
       </a>
 
       <div className="flex items-center">
-        {me === undefined ? (
-          // Loading: neutral placeholder sized like the avatar to avoid shift.
+        {status === "loading" ? (
+          // Loading (incl. pending silent redirect): neutral placeholder sized
+          // like the avatar to avoid layout shift / a Sign-in flash.
           <div className="h-9 w-9" aria-hidden />
-        ) : me === null ? (
+        ) : status === "anon" || me === null ? (
           // Unauthenticated: plain anchor to the id sign-in page.
           <Button asChild variant="outline" size="sm">
             <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
