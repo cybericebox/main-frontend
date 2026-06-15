@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { User } from "lucide-react"
+import { Menu, User, X } from "lucide-react"
 
 import { type Me } from "@/lib/auth"
 import { useAuthState } from "@/lib/useAuthState"
@@ -59,8 +59,8 @@ function initials(me: Me): string {
 }
 
 const NAV_ANCHORS: { href: string; label: string }[] = [
-  { href: "#features", label: "landing.nav.features" },
   { href: "#showcase", label: "landing.nav.showcase" },
+  { href: "#labs", label: "landing.nav.labs" },
   { href: "#faq", label: "landing.nav.faq" },
 ]
 
@@ -76,6 +76,7 @@ export default function Header() {
   // scroll. The listener is client-only (inside useEffect) so static export
   // stays safe.
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
@@ -108,7 +109,7 @@ export default function Header() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
         <a href="/" className="glow flex items-center" aria-label="CyberICEBox — ICE CTF">
           {/* eslint-disable-next-line @next/next/no-img-element -- static export, unoptimized images */}
-          <img src="/assets/logo-crest.png" alt="CyberICEBox — ICE CTF" className="h-11 w-auto" />
+          <img src="/assets/logo-crest.png" alt="CyberICEBox — ICE CTF" className="h-12 w-auto" />
         </a>
         <nav className="hidden items-center gap-6 md:flex">
           {NAV_ANCHORS.map((a) => (
@@ -117,8 +118,35 @@ export default function Header() {
             </a>
           ))}
         </nav>
-        <div>{authControl}</div>
+        <div className="flex items-center gap-2">
+          {authControl}
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/80 hover:text-foreground md:hidden"
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <nav className="border-t border-[var(--frost-border)] px-4 py-3 md:hidden">
+          <div className="mx-auto flex max-w-5xl flex-col gap-3">
+            {NAV_ANCHORS.map((a) => (
+              <a
+                key={a.href}
+                href={a.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+              >
+                {t(a.label)}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
   )
 }
