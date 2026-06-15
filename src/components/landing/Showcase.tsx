@@ -64,7 +64,7 @@ export default function Showcase() {
       </p>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2">
-        <BrowserFrame url={`play.${PLATFORM_DOMAIN}/event/winter-arena/scoreboard`}>
+        <BrowserFrame url={`winter-arena.${PLATFORM_DOMAIN}/scoreboard`}>
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.chartTitle")}</span>
             <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-warm)]">
@@ -108,7 +108,7 @@ export default function Showcase() {
           </ol>
         </BrowserFrame>
 
-        <BrowserFrame url={`play.${PLATFORM_DOMAIN}/event/winter-arena/challenges`}>
+        <BrowserFrame url={`winter-arena.${PLATFORM_DOMAIN}/challenges`}>
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.challengesTitle")}</span>
             <div className="hidden gap-1.5 sm:flex">
