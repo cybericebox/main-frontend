@@ -3,6 +3,9 @@
 // SOURCE_URL — public GitHub organization (org-level link by product decision).
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
 
+// Current platform domain (for illustrative in-product URLs on the landing).
+export const PLATFORM_DOMAIN = DOMAIN || "cybericebox.app"
+
 export const ID_ORIGIN =
   process.env.NEXT_PUBLIC_ID_ORIGIN ?? `https://id.${DOMAIN}`
 

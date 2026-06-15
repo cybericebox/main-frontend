@@ -1,6 +1,7 @@
 import type { CSSProperties, ComponentType, ReactNode } from "react"
 import { Globe, Lock, Terminal, Search } from "lucide-react"
 import { t } from "@/i18n/t"
+import { PLATFORM_DOMAIN } from "@/lib/links"
 
 // Two illustrative product screens framed as browser windows — a live scoreboard
 // and a challenges page. Fake data; server component; animation is motion-safe.
@@ -63,7 +64,7 @@ export default function Showcase() {
       </p>
 
       <div className="mt-10 grid gap-5 md:grid-cols-2">
-        <BrowserFrame url="play.cybericebox.app/event/winter-arena/scoreboard">
+        <BrowserFrame url={`play.${PLATFORM_DOMAIN}/event/winter-arena/scoreboard`}>
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.chartTitle")}</span>
             <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-warm)]">
@@ -107,7 +108,7 @@ export default function Showcase() {
           </ol>
         </BrowserFrame>
 
-        <BrowserFrame url="play.cybericebox.app/event/winter-arena/challenges">
+        <BrowserFrame url={`play.${PLATFORM_DOMAIN}/event/winter-arena/challenges`}>
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-foreground">{t("landing.showcase.challengesTitle")}</span>
             <div className="hidden gap-1.5 sm:flex">

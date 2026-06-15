@@ -1,5 +1,6 @@
 import { Check } from "lucide-react"
 import { t } from "@/i18n/t"
+import { PLATFORM_DOMAIN } from "@/lib/links"
 
 const POINTS = ["landing.labs.point1", "landing.labs.point2", "landing.labs.point3"]
 
@@ -36,7 +37,7 @@ export default function Labs() {
           <div className="space-y-1.5 p-5">
             <p className="text-foreground"><span className="text-[var(--accent-warm)]">$</span> lab start web/frozen-session</p>
             <p className="text-muted-foreground">▸ provisioning isolated environment…</p>
-            <p className="text-muted-foreground">▸ target: <span className="text-[#7fd3a0]">https://lab-7f3a.cybericebox.app</span></p>
+            <p className="text-muted-foreground">▸ target: <span className="text-[#7fd3a0]">https://lab-7f3a.{PLATFORM_DOMAIN}</span></p>
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/5">
               <span className="block h-full w-full rounded-full bg-primary/70 motion-safe:animate-pulse" />
             </div>
