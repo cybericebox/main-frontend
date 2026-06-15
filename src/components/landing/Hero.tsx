@@ -1,10 +1,9 @@
-import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { t } from "@/i18n/t"
-import { ID_ORIGIN, SOURCE_URL } from "@/lib/links"
+import { SIGN_IN_URL } from "@/lib/links"
 
-// Apex hero — crest brand mark, one primary CTA (sign-in/get-started), one
-// secondary (view source). Static-export safe, no client hooks.
+// Apex hero — crest brand mark + single primary CTA to the sign-in page.
+// Platform-focused, static-export safe, no client hooks.
 export default function Hero() {
   return (
     <section id="top" className="relative mx-auto flex max-w-5xl flex-col items-center px-4 pb-12 pt-20 text-center">
@@ -24,13 +23,7 @@ export default function Hero() {
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button asChild className="facet glow">
-            <a href={ID_ORIGIN}>{t("landing.hero.primaryCta")}</a>
-          </Button>
-          <Button asChild variant="outline" className="border-[var(--accent-warm)] text-[var(--accent-warm)] hover:text-[var(--accent-warm)]">
-            <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer">
-              <Star className="mr-1.5 h-4 w-4" />
-              {t("landing.hero.viewSource")}
-            </a>
+            <a href={SIGN_IN_URL}>{t("landing.hero.primaryCta")}</a>
           </Button>
         </div>
       </div>
