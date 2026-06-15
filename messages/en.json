@@ -92,6 +92,7 @@
   "profile.displayName": "Display name",
   "profile.avatar": "Avatar",
   "nav.profile": "Profile",
+  "nav.admin": "Admin",
   "nav.settings": "Settings",
   "nav.signOut": "Sign out",
   "error.notFound": "Page not found",

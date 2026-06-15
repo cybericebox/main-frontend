@@ -92,6 +92,7 @@
   "profile.displayName": "Відображуване ім'я",
   "profile.avatar": "Аватар",
   "nav.profile": "Профіль",
+  "nav.admin": "Адмін",
   "nav.settings": "Налаштування",
   "nav.signOut": "Вийти",
   "error.notFound": "Сторінку не знайдено",

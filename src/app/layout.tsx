@@ -1,5 +1,6 @@
 import type React from "react";
 import "@/app/globals.css";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="uk">
             <body>
+                <Header />
                 <main>{children}</main>
                 <Footer />
                 <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
