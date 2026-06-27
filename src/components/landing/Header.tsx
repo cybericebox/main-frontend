@@ -138,11 +138,12 @@ function AuthedMenu({ me }: { me: Me }) {
           className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-medium focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
           aria-label={fullName}
         >
-          {me.Avatar ? (
+          {me.Picture ? (
             // eslint-disable-next-line @next/next/no-img-element -- static export, unoptimized images
             <img
-              src={me.Avatar}
+              src={me.Picture}
               alt={fullName}
+              referrerPolicy="no-referrer"
               className="h-full w-full object-cover"
             />
           ) : initials(me) !== "?" ? (

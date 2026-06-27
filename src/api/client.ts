@@ -38,11 +38,17 @@ async function request<T>(
     parsed = await res.text()
   }
 
+  // The backend wraps every JSON response in { Status, Data }; unwrap to Data.
+  const envelope =
+    parsed && typeof parsed === "object"
+      ? (parsed as { Status?: { Message?: string }; Data?: unknown })
+      : undefined
+
   if (!res.ok) {
-    throw new ApiError(res.status, parsed)
+    throw new ApiError(res.status, parsed, envelope?.Status?.Message)
   }
 
-  return parsed as T
+  return (envelope ? envelope.Data : parsed) as T
 }
 
 export function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
