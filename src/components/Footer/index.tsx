@@ -6,43 +6,48 @@ export default function Footer() {
     const year = new Date().getFullYear()
     return (
         <footer className="border-t border-[var(--frost-border)] bg-transparent">
-            <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-start sm:justify-between">
-                {/* Brand: short platform description, with year + support note at the bottom */}
-                <div className="flex max-w-sm flex-col gap-3">
-                    <Logo size={40} />
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                        {t('landing.footer.tagline')}
-                    </p>
-                    <p className="border-t border-[var(--frost-border)] pt-3 text-[11px] leading-relaxed text-muted-foreground">
-                        © {year} ХНУРЕ · За підтримки{' '}
+            <div className="mx-auto max-w-5xl px-4 py-8">
+                {/* Top: two columns */}
+                <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                    {/* Brand: short platform description */}
+                    <div className="flex max-w-sm flex-col gap-3">
+                        <Logo size={40} />
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                            {t('landing.footer.tagline')}
+                        </p>
+                    </div>
+
+                    {/* Links (no heading) */}
+                    <div className="flex flex-col gap-2">
+                        <a href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
+                            {t('landing.footer.privacy')}
+                        </a>
+                        <a href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
+                            {t('landing.footer.terms')}
+                        </a>
                         <a
-                            href="https://ice.nure.ua/ua/"
+                            href={SOURCE_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-foreground"
+                            className="text-xs text-muted-foreground hover:text-foreground"
                         >
-                            кафедри ІКІ ім. В. В. Поповського
+                            {t('landing.footer.github')}
                         </a>
-                    </p>
+                    </div>
                 </div>
 
-                {/* Links (no heading) */}
-                <div className="flex flex-col gap-2">
-                    <a href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
-                        {t('landing.footer.privacy')}
-                    </a>
-                    <a href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
-                        {t('landing.footer.terms')}
-                    </a>
+                {/* Full-width divider + single copyright line */}
+                <p className="mt-6 border-t border-[var(--frost-border)] pt-6 text-[11px] leading-relaxed text-muted-foreground">
+                    © {year} ХНУРЕ · За підтримки{' '}
                     <a
-                        href={SOURCE_URL}
+                        href="https://ice.nure.ua/ua/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-muted-foreground hover:text-foreground"
+                        className="hover:text-foreground"
                     >
-                        {t('landing.footer.github')}
+                        кафедри ІКІ ім. В. В. Поповського
                     </a>
-                </div>
+                </p>
             </div>
         </footer>
     )
