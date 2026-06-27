@@ -13,7 +13,7 @@ export default function Footer() {
                     <p className="text-xs leading-relaxed text-muted-foreground">
                         {t('landing.footer.tagline')}
                     </p>
-                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    <p className="border-t border-[var(--frost-border)] pt-3 text-[11px] leading-relaxed text-muted-foreground">
                         © {year} ХНУРЕ · За підтримки{' '}
                         <a
                             href="https://ice.nure.ua/ua/"
