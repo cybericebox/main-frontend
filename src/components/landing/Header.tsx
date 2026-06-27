@@ -45,10 +45,12 @@ function initials(me: Me): string {
   return (me.Email?.trim()?.[0] ?? "?").toUpperCase()
 }
 
+// Anchors point at the landing path (/#...), not bare #..., so they work from any
+// page instead of resolving the hash on the current page.
 const NAV_ANCHORS: { href: string; label: string }[] = [
-  { href: "#showcase", label: "landing.nav.showcase" },
-  { href: "#labs", label: "landing.nav.labs" },
-  { href: "#faq", label: "landing.nav.faq" },
+  { href: "/#showcase", label: "landing.nav.showcase" },
+  { href: "/#labs", label: "landing.nav.labs" },
+  { href: "/#faq", label: "landing.nav.faq" },
 ]
 
 export function Header() {

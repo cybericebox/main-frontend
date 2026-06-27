@@ -2,6 +2,10 @@ import * as React from "react"
 
 export type LegalSection = { heading: string; body: React.ReactNode }
 
+// Support contact derived from the current platform domain (support@<domain>).
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? "cybericebox.app"
+const SUPPORT_EMAIL = `support@${DOMAIN}`
+
 // Content for legal documents (Terms, Privacy) — readable single-column prose.
 // The page chrome (Header/Footer) is supplied by the (legal) route-group layout,
 // identical to the landing, so every page shares the same nav and footer.
@@ -32,6 +36,13 @@ export function LegalPage({
           </section>
         ))}
       </div>
+
+      <p className="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
+        Маєте питання?{" "}
+        <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">
+          {SUPPORT_EMAIL}
+        </a>
+      </p>
     </main>
   )
 }
