@@ -31,89 +31,29 @@ import { useEffect, useState } from "react"
 
 import {
   fetchMe,
-  hasAnonMarker,
-  clearAnonMarker,
-  attemptSilentAuthn,
-  consumeNoSessionParam,
   type Me,
 } from "@/lib/auth"
-
-// ID_ORIGIN — identity server (Authorization Server). Reuse the exact resolution
-// the Header uses: NEXT_PUBLIC_ID_ORIGIN wins, else derive from the platform domain.
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
-const ID_ORIGIN = process.env.NEXT_PUBLIC_ID_ORIGIN ?? `https://id.${DOMAIN}`
 
 export type AuthStatus = "loading" | "authed" | "anon"
 
 export interface AuthState {
   /**
-   * - "loading": initial probe in flight, OR a silent redirect is pending
-   *   (render the neutral placeholder — never flash Sign-in here).
+   * - "loading": initial probe in flight.
    * - "authed": `me` is present.
-   * - "anon": confirmed signed-out (bounced or anon marker) — render Sign-in.
+   * - "anon": confirmed signed-out — render Sign-in.
    */
   status: AuthStatus
   me: Me | null
 }
 
-/**
- * useAuthState — runs the silent-authn orchestration on mount and returns the
- * derived auth state for the Header to render from.
- *
- * Sequence (exact):
- *   1. bounced = consumeNoSessionParam()  — strip ?no_session=1, set anon marker.
- *   2. me = await fetchMe().
- *   3. me present            → "authed" + clearAnonMarker().
- *      me === null:
- *        bounced || hasAnonMarker() → "anon" (render Sign-in, NO redirect).
- *        else                       → attemptSilentAuthn(prompt=none) and stay
- *                                      "loading" while the redirect navigates away.
- */
 export function useAuthState(): AuthState {
   const [state, setState] = useState<AuthState>({ status: "loading", me: null })
-
   useEffect(() => {
     let cancelled = false
-
-    // 1. Consume a no_session bounce first (sets the anon marker for ~5 min and
-    //    strips the param). Must run before the decision so this load is gated.
-    const bounced = consumeNoSessionParam()
-
-    // 2. Probe the local session.
     fetchMe()
-      .then((me) => {
-        if (cancelled) return
-
-        if (me) {
-          // authed: a fresh success clears any stale anon marker.
-          clearAnonMarker()
-          setState({ status: "authed", me })
-          return
-        }
-
-        // not authed.
-        if (bounced || hasAnonMarker()) {
-          // Anti-blink-storm: a recent "definitely anon" signal — render Sign-in,
-          // do NOT redirect (loop-prevention invariant).
-          setState({ status: "anon", me: null })
-          return
-        }
-
-        // No local session and no anon signal → attempt a silent top-level
-        // redirect to id with prompt=none. Stay "loading" so we render the
-        // neutral placeholder while the browser navigates away (no Sign-in flash).
-        attemptSilentAuthn({ idOrigin: ID_ORIGIN, returnTo: window.location.href })
-        // Intentionally leave status === "loading"; the page is unloading.
-      })
-      .catch(() => {
-        // Unexpected error (5xx / network): treat as signed-out for display.
-        if (!cancelled) setState({ status: "anon", me: null })
-      })
-
-    return () => {
-      cancelled = true
-    }
+      .then((me) => { if (!cancelled) setState({ status: me ? "authed" : "anon", me }) })
+      .catch(() => { if (!cancelled) setState({ status: "anon", me: null }) })
+    return () => { cancelled = true }
   }, [])
-
   return state
 }
