@@ -38,9 +38,9 @@ const LINKS: [number, number][] = [
 // Highlight for the platform core — multifunctional labs. Copy + capability
 // bullets beside a lab-perimeter topology diagram (VPN + internet gateways →
 // switch → hosts). Server component; only the live dot animates (motion-safe).
-export default function Labs() {
+export function Labs() {
   return (
-    <section id="labs" className="scroll-mt-20 bg-[#0B1521] py-16">
+    <section id="labs" className="scroll-mt-20 bg-secondary/40 py-16">
       <div className="mx-auto grid max-w-5xl items-center gap-10 px-4 md:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--accent-warm)]">
@@ -100,7 +100,7 @@ export default function Labs() {
                       "inline-flex h-9 w-9 items-center justify-center rounded-lg border " +
                       (n.accent
                         ? "border-[var(--accent-warm)] bg-[var(--accent-warm)]/10 text-[var(--accent-warm)]"
-                        : "border-[var(--frost-border)] bg-[#0B1521] text-foreground")
+                        : "border-[var(--frost-border)] bg-secondary/40 text-foreground")
                     }
                   >
                     <Icon className="h-4 w-4" />

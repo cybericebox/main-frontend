@@ -18,31 +18,18 @@ import {
 import { t } from "@/i18n/t"
 
 // ---------------------------------------------------------------------------
-// Cross-origin helpers
-//
-// ID_ORIGIN — the identity server (Authorization Server). All auth navigations
-// (sign-in / profile / sign-out) are plain top-level anchors to this origin so
-// the master session cookie on id.<domain> is in scope.
-//   NEXT_PUBLIC_ID_ORIGIN takes precedence; otherwise derive from the platform
-//   domain (id.<domain>).
-// ADMIN_ORIGIN — the admin app (admin.<domain>); shown only as a display hint.
+// Cross-origin helpers (env-var driven — production-ready)
 // ---------------------------------------------------------------------------
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
 const ID_ORIGIN =
   process.env.NEXT_PUBLIC_ID_ORIGIN ?? `https://id.${DOMAIN}`
 const ADMIN_ORIGIN = `https://admin.${DOMAIN}`
 
-/**
- * currentUrl — the absolute URL of the current main page, used as return_to so
- * the id app bounces the user straight back here after the auth action.
- * SSR/static-safe: returns "" when window is unavailable.
- */
 function currentUrl(): string {
   if (typeof window === "undefined") return ""
   return window.location.href
 }
 
-/** Build an id-app URL with a return_to back to the current main page. */
 function idUrl(path: string): string {
   const url = new URL(path, ID_ORIGIN || "https://id.local")
   const ret = currentUrl()
@@ -50,7 +37,6 @@ function idUrl(path: string): string {
   return url.toString()
 }
 
-/** Initials fallback for the avatar when no image is present. */
 function initials(me: Me): string {
   const f = me.FirstName?.trim()?.[0] ?? ""
   const l = me.LastName?.trim()?.[0] ?? ""
@@ -65,17 +51,9 @@ const NAV_ANCHORS: { href: string; label: string }[] = [
   { href: "#faq", label: "landing.nav.faq" },
 ]
 
-export default function Header() {
-  // Auth-state orchestration (silent-authn + anon-marker loop-prevention) lives
-  // in one place — the useAuthState hook. The Header just renders from `status`:
-  //   "loading" → neutral placeholder (also covers a pending silent redirect)
-  //   "anon"    → Sign-in
-  //   "authed"  → avatar / menu
+export function Header() {
   const { status, me } = useAuthState()
 
-  // Scroll-aware frosting: transparent over the hero, frost-panel strip on
-  // scroll. The listener is client-only (inside useEffect) so static export
-  // stays safe.
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   useEffect(() => {
@@ -85,15 +63,10 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  // Existing auth-state control — UNCHANGED behavior/links/logic, just extracted
-  // into a local variable so the shell can place it on the right.
   const authControl =
     status === "loading" ? (
-      // Loading (incl. pending silent redirect): neutral placeholder sized
-      // like the avatar to avoid layout shift / a Sign-in flash.
       <div className="h-9 w-9" aria-hidden />
     ) : status === "anon" || me === null ? (
-      // Unauthenticated: plain anchor to the id sign-in page.
       <Button asChild variant="outline" size="sm">
         <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
       </Button>
@@ -152,10 +125,7 @@ export default function Header() {
 }
 
 function AuthedMenu({ me }: { me: Me }) {
-  // Display-only privileged hint. The authoritative authorization check lives
-  // server-side in the daemon rbac middleware; this only toggles the Admin link.
   const PRIVILEGED = me.Role !== "user"
-
   const fullName = `${me.FirstName} ${me.LastName}`.trim() || me.Email
 
   return (

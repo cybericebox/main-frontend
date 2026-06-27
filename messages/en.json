@@ -127,7 +127,6 @@
   "validation.required": "This field is required",
   "validation.invalidEmail": "Please enter a valid email address",
   "validation.passwordMin": "Password must be at least 8 characters",
-
   "profile.heading": "Account",
   "profile.tab.profile": "Profile",
   "profile.tab.account": "Account",
@@ -136,7 +135,6 @@
   "profile.tab.connections": "Connections",
   "profile.loading": "Loading your account…",
   "profile.loadError": "Could not load your account",
-
   "profile.profile.title": "Personal information",
   "profile.profile.description": "Update your name.",
   "profile.profile.firstName": "First name",
@@ -145,7 +143,6 @@
   "profile.profile.createdAt": "Member since",
   "profile.profile.save": "Save changes",
   "profile.profile.saved": "Profile updated",
-
   "profile.account.title": "Email",
   "profile.account.description": "Manage your email address.",
   "profile.account.currentEmail": "Current email",
@@ -161,7 +158,6 @@
   "profile.account.deleteConfirmTitle": "Delete your account?",
   "profile.account.deleteConfirmBody": "This permanently deletes your account, sessions, and linked providers. This action cannot be undone.",
   "profile.account.deleteConfirmButton": "Yes, delete my account",
-
   "profile.security.title": "Password",
   "profile.security.description": "Change your password.",
   "profile.security.setFirstDescription": "Set a password for your account.",
@@ -171,7 +167,6 @@
   "profile.security.confirmPassword": "Confirm new password",
   "profile.security.save": "Save password",
   "profile.security.saved": "Password updated",
-
   "profile.sessions.title": "Active sessions",
   "profile.sessions.description": "Devices currently signed in to your account.",
   "profile.sessions.current": "This device",
@@ -180,12 +175,19 @@
   "profile.sessions.revokeAll": "Revoke all other sessions",
   "profile.sessions.empty": "No active sessions found.",
   "profile.sessions.unknownDevice": "Unknown device",
-
   "profile.connections.title": "Connected accounts",
   "profile.connections.description": "Link external accounts you can sign in with.",
   "profile.connections.googleConnected": "Google connected",
   "profile.connections.googleNotConnected": "Google not connected",
   "profile.connections.unlink": "Unlink",
   "profile.connections.connect": "Connect Google",
-  "profile.connections.linkFailed": "Failed to link Google account. Please try again."
+  "profile.connections.linkFailed": "Failed to link Google account. Please try again.",
+  "landing.faq.q5": "Як підключитися до лабораторії?",
+  "landing.faq.a5": "Кожна лабораторія доступна через персональний VPN-профіль (WireGuard). Завантажте конфігурацію в один клік — і ви всередині ізольованої мережі завдання.",
+  "landing.faq.q6": "Як нараховуються бали та формується рейтинг?",
+  "landing.faq.a6": "Бали динамічні: що більше команд розв’язало завдання, то менше воно коштує. Рейтинг оновлюється наживо протягом усієї події.",
+  "landing.faq.q7": "Чи можна брати участь соло, без команди?",
+  "landing.faq.a7": "Так. Грайте самостійно або створіть команду чи приєднайтеся до наявної — ваш прогрес і захоплені прапори зберігаються за вами.",
+  "landing.faq.q8": "Скільки коштує участь?",
+  "landing.faq.a8": "Базовий доступ безкоштовний — зареєструйтеся й почніть перший виклик за хвилину. Розширені сценарії доступні для організаторів подій."
 }

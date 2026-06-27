@@ -127,7 +127,6 @@
   "validation.required": "Це поле обов'язкове",
   "validation.invalidEmail": "Введіть дійсну електронну адресу",
   "validation.passwordMin": "Пароль має містити щонайменше 8 символів",
-
   "profile.heading": "Обліковий запис",
   "profile.tab.profile": "Профіль",
   "profile.tab.account": "Обліковий запис",
@@ -136,7 +135,6 @@
   "profile.tab.connections": "Підключення",
   "profile.loading": "Завантаження облікового запису…",
   "profile.loadError": "Не вдалося завантажити обліковий запис",
-
   "profile.profile.title": "Особиста інформація",
   "profile.profile.description": "Оновіть своє ім'я.",
   "profile.profile.firstName": "Ім'я",
@@ -145,7 +143,6 @@
   "profile.profile.createdAt": "Учасник з",
   "profile.profile.save": "Зберегти зміни",
   "profile.profile.saved": "Профіль оновлено",
-
   "profile.account.title": "Електронна пошта",
   "profile.account.description": "Керуйте своєю електронною адресою.",
   "profile.account.currentEmail": "Поточна електронна пошта",
@@ -161,7 +158,6 @@
   "profile.account.deleteConfirmTitle": "Видалити обліковий запис?",
   "profile.account.deleteConfirmBody": "Це назавжди видалить ваш обліковий запис, сесії та підключені провайдери. Цю дію не можна скасувати.",
   "profile.account.deleteConfirmButton": "Так, видалити мій обліковий запис",
-
   "profile.security.title": "Пароль",
   "profile.security.description": "Змініть свій пароль.",
   "profile.security.setFirstDescription": "Встановіть пароль для свого облікового запису.",
@@ -171,7 +167,6 @@
   "profile.security.confirmPassword": "Підтвердьте новий пароль",
   "profile.security.save": "Зберегти пароль",
   "profile.security.saved": "Пароль оновлено",
-
   "profile.sessions.title": "Активні сесії",
   "profile.sessions.description": "Пристрої, на яких зараз виконано вхід до вашого облікового запису.",
   "profile.sessions.current": "Цей пристрій",
@@ -180,12 +175,19 @@
   "profile.sessions.revokeAll": "Відкликати всі інші сесії",
   "profile.sessions.empty": "Активних сесій не знайдено.",
   "profile.sessions.unknownDevice": "Невідомий пристрій",
-
   "profile.connections.title": "Підключені облікові записи",
   "profile.connections.description": "Підключіть зовнішні облікові записи для входу.",
   "profile.connections.googleConnected": "Google підключено",
   "profile.connections.googleNotConnected": "Google не підключено",
   "profile.connections.unlink": "Відключити",
   "profile.connections.connect": "Підключити Google",
-  "profile.connections.linkFailed": "Не вдалося підключити обліковий запис Google. Спробуйте ще раз."
+  "profile.connections.linkFailed": "Не вдалося підключити обліковий запис Google. Спробуйте ще раз.",
+  "landing.faq.q5": "Як підключитися до лабораторії?",
+  "landing.faq.a5": "Кожна лабораторія доступна через персональний VPN-профіль (WireGuard). Завантажте конфігурацію в один клік — і ви всередині ізольованої мережі завдання.",
+  "landing.faq.q6": "Як нараховуються бали та формується рейтинг?",
+  "landing.faq.a6": "Бали динамічні: що більше команд розв’язало завдання, то менше воно коштує. Рейтинг оновлюється наживо протягом усієї події.",
+  "landing.faq.q7": "Чи можна брати участь соло, без команди?",
+  "landing.faq.a7": "Так. Грайте самостійно або створіть команду чи приєднайтеся до наявної — ваш прогрес і захоплені прапори зберігаються за вами.",
+  "landing.faq.q8": "Скільки коштує участь?",
+  "landing.faq.a8": "Базовий доступ безкоштовний — зареєструйтеся й почніть перший виклик за хвилину. Розширені сценарії доступні для організаторів подій."
 }

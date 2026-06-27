@@ -8,12 +8,16 @@ const ITEMS = [
   { q: "landing.faq.q2", a: "landing.faq.a2" },
   { q: "landing.faq.q3", a: "landing.faq.a3" },
   { q: "landing.faq.q4", a: "landing.faq.a4" },
+  { q: "landing.faq.q5", a: "landing.faq.a5" },
+  { q: "landing.faq.q6", a: "landing.faq.a6" },
+  { q: "landing.faq.q7", a: "landing.faq.a7" },
+  { q: "landing.faq.q8", a: "landing.faq.a8" },
 ]
 
-export default function Faq() {
+export function Faq() {
   const [open, setOpen] = useState<number | null>(0)
   return (
-    <section id="faq" className="scroll-mt-20 bg-[#0B1521] py-16">
+    <section id="faq" className="scroll-mt-20 bg-secondary/40 py-16">
       <div className="mx-auto max-w-2xl px-4">
         <h2 className="text-center text-2xl font-bold text-foreground md:text-3xl">{t("landing.faq.title")}</h2>
         <div className="mt-8 flex flex-col gap-3">

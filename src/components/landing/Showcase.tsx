@@ -1,149 +1,237 @@
-import type { CSSProperties, ComponentType, ReactNode } from "react"
-import { Globe, Lock, Terminal, Search } from "lucide-react"
+import type { ComponentType, ReactNode } from "react"
+import {
+  Globe,
+  Lock,
+  Terminal,
+  Search,
+  Cpu,
+  Flag,
+  Users,
+  Boxes,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+} from "lucide-react"
 import { t } from "@/i18n/t"
 import { PLATFORM_DOMAIN } from "@/lib/links"
 
-// Two illustrative product screens framed as browser windows — a live scoreboard
-// and a challenges page. Fake data; server component; animation is motion-safe.
-const SERIES: { color: string; points: string }[] = [
-  { color: "var(--primary)", points: "0,110 40,98 80,86 120,70 160,64 200,46 240,34 280,18" },
-  { color: "var(--accent-warm)", points: "0,112 40,104 80,92 120,84 160,60 200,52 240,40 280,30" },
-  { color: "#7fd3a0", points: "0,114 40,108 80,100 120,88 160,78 200,66 240,58 280,44" },
-  { color: "#c084fc", points: "0,116 40,112 80,106 120,98 160,90 200,82 240,70 280,60" },
+// A single realistic platform dashboard, framed as a browser window — event
+// header, live scoreboard, challenge board and a stats strip. Illustrative data.
+
+type Trend = "up" | "down" | "flat"
+const STANDINGS: { team: string; members: number; score: number; trend: Trend }[] = [
+  { team: "0xFrost", members: 4, score: 4820, trend: "up" },
+  { team: "IceBreakers", members: 3, score: 4655, trend: "up" },
+  { team: "NullSec", members: 4, score: 4390, trend: "down" },
+  { team: "ColdBoot", members: 2, score: 3980, trend: "flat" },
+  { team: "GlacialUnit", members: 5, score: 3710, trend: "up" },
 ]
 
-const STANDINGS = [
-  { team: "0xFrost", score: 4820 },
-  { team: "IceBreakers", score: 4655 },
-  { team: "NullSec", score: 4390 },
-]
+const DIFF = {
+  easy: { label: "Легке", color: "#10B981" },
+  medium: { label: "Середнє", color: "#F59E0B" },
+  hard: { label: "Складне", color: "#EF4444" },
+} as const
 
 const CHALLENGES: {
   icon: ComponentType<{ className?: string }>
   cat: string
   title: string
   pts: number
-  diff: string
+  diff: keyof typeof DIFF
+  solves: number
   solved: boolean
 }[] = [
-  { icon: Globe, cat: "Web", title: "Frozen Session", pts: 350, diff: "#f2a742", solved: true },
-  { icon: Lock, cat: "Crypto", title: "Glacier Cipher", pts: 500, diff: "#f87171", solved: false },
-  { icon: Terminal, cat: "Pwn", title: "Heap of Snow", pts: 450, diff: "#f87171", solved: false },
-  { icon: Search, cat: "Forensics", title: "Cold Trail", pts: 250, diff: "#7fd3a0", solved: true },
+  { icon: Globe, cat: "Web", title: "Frozen Session", pts: 350, diff: "medium", solves: 42, solved: true },
+  { icon: Lock, cat: "Crypto", title: "Glacier Cipher", pts: 500, diff: "hard", solves: 11, solved: false },
+  { icon: Terminal, cat: "Pwn", title: "Heap of Snow", pts: 450, diff: "hard", solves: 18, solved: false },
+  { icon: Search, cat: "Forensics", title: "Cold Trail", pts: 250, diff: "easy", solves: 96, solved: true },
+  { icon: Cpu, cat: "Reverse", title: "Permafrost.bin", pts: 400, diff: "medium", solves: 27, solved: false },
+  { icon: Globe, cat: "Web", title: "Whiteout XSS", pts: 300, diff: "medium", solves: 51, solved: true },
 ]
+
+const STATS = [
+  { icon: Users, value: "128", label: "команд" },
+  { icon: Boxes, value: "42", label: "завдання" },
+  { icon: Flag, value: "1 904", label: "прапорів здано" },
+  { icon: Cpu, value: "316", label: "активних лабораторій" },
+]
+
+function rankClass(i: number) {
+  if (i === 0) return "bg-primary text-primary-foreground"
+  if (i === 1) return "bg-accent text-accent-foreground"
+  if (i === 2) return "bg-secondary text-secondary-foreground"
+  return "bg-muted text-muted-foreground"
+}
+
+function TrendIcon({ trend }: { trend: Trend }) {
+  if (trend === "up") return <ArrowUp className="h-3.5 w-3.5 text-[#10B981]" />
+  if (trend === "down") return <ArrowDown className="h-3.5 w-3.5 text-[#EF4444]" />
+  return <Minus className="h-3.5 w-3.5 text-muted-foreground" />
+}
 
 function BrowserFrame({ url, children }: { url: string; children: ReactNode }) {
   return (
-    <div className="frost-panel overflow-hidden rounded-xl">
-      <div className="flex items-center gap-2 border-b border-[var(--frost-border)] px-4 py-2.5">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_30px_80px_-40px_rgba(11,18,51,0.45)]">
+      <div className="flex items-center gap-2 border-b border-border bg-secondary/40 px-4 py-2.5">
         <span className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#f2a742]/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#7fd3a0]/70" />
+          <span className="h-3 w-3 rounded-full bg-[#EF4444]/60" />
+          <span className="h-3 w-3 rounded-full bg-[#F59E0B]/60" />
+          <span className="h-3 w-3 rounded-full bg-[#10B981]/60" />
         </span>
-        <span className="ml-2 flex-1 truncate rounded-md bg-white/[0.05] px-3 py-1 text-center font-mono text-[11px] text-muted-foreground">
+        <span className="ml-2 flex-1 truncate rounded-md border border-border bg-card px-3 py-1 text-center font-mono text-[11px] text-muted-foreground">
           {url}
         </span>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-5 md:p-6">{children}</div>
     </div>
   )
 }
 
-export default function Showcase() {
+export function Showcase() {
   return (
-    <section id="showcase" className="mx-auto max-w-5xl scroll-mt-20 px-4 py-16">
-      <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-[var(--accent-warm)]">
+    <section id="showcase" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20">
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-primary">
         {t("landing.showcase.kicker")}
       </p>
-      <h2 className="mt-3 text-center text-2xl font-bold text-foreground md:text-3xl">
+      <h2 className="mt-3 text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
         {t("landing.showcase.title")}
       </h2>
       <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
         {t("landing.showcase.subtitle")}
       </p>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
-        <BrowserFrame url={`winter-arena.${PLATFORM_DOMAIN}/scoreboard`}>
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">{t("landing.showcase.chartTitle")}</span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-warm)]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent-warm)] opacity-75 motion-safe:animate-ping" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent-warm)]" />
+      <div className="mt-12">
+        <BrowserFrame url={`winter-arena.${PLATFORM_DOMAIN}`}>
+          {/* event header */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Flag className="h-5 w-5" />
               </span>
-              {t("landing.showcase.live")}
-            </span>
-          </div>
-          <svg viewBox="0 0 280 120" className="h-36 w-full" preserveAspectRatio="none" role="img" aria-label={t("landing.showcase.chartTitle")}>
-            {[24, 48, 72, 96].map((y) => (
-              <line key={y} x1="0" y1={y} x2="280" y2={y} stroke="var(--frost-border)" strokeWidth="1" />
-            ))}
-            {SERIES.map((s, i) => (
-              <polyline
-                key={i}
-                points={s.points}
-                fill="none"
-                stroke={s.color}
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ strokeDasharray: 600, ["--draw-len" as string]: "600", animationDelay: `${i * 0.18}s` } as CSSProperties}
-                className="motion-safe:[animation:draw-line_1.8s_ease-out_both]"
-              />
-            ))}
-            {SERIES.map((s, i) => {
-              const last = s.points.split(" ").pop()!.split(",")
-              return <circle key={i} cx={last[0]} cy={last[1]} r="3" fill={s.color} />
-            })}
-          </svg>
-          <ol className="mt-4 divide-y divide-[var(--frost-border)]">
-            {STANDINGS.map((row, i) => (
-              <li key={row.team} className="flex items-center gap-3 py-2">
-                <span className="w-4 text-center font-mono text-xs text-muted-foreground">{i + 1}</span>
-                <span className="flex-1 truncate text-sm text-foreground">{row.team}</span>
-                <span className="font-mono text-xs tabular-nums text-[var(--accent-warm)]">{row.score}</span>
-              </li>
-            ))}
-          </ol>
-        </BrowserFrame>
-
-        <BrowserFrame url={`winter-arena.${PLATFORM_DOMAIN}/challenges`}>
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">{t("landing.showcase.challengesTitle")}</span>
-            <div className="hidden gap-1.5 sm:flex">
-              {["Web", "Crypto", "Pwn"].map((c) => (
-                <span key={c} className="rounded-full border border-[var(--frost-border)] px-2 py-0.5 text-[10px] text-muted-foreground">
-                  {c}
+              <div>
+                <h3 className="text-base font-semibold leading-tight text-foreground">Winter Arena 2026</h3>
+                <span className="text-xs text-muted-foreground">Jeopardy CTF · 128 команд</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-primary">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 motion-safe:animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
                 </span>
-              ))}
+                {t("landing.showcase.live")}
+              </span>
+              <span className="rounded-md border border-border bg-secondary/40 px-2.5 py-1 font-mono text-xs tabular-nums text-foreground">
+                02:14:09
+              </span>
             </div>
           </div>
-          <ul className="grid grid-cols-2 gap-3">
-            {CHALLENGES.map((c) => {
-              const Icon = c.icon
-              return (
-                <li key={c.title} className="rounded-lg border border-[var(--frost-border)] bg-white/[0.03] p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary/15">
-                      <Icon className="h-4 w-4 text-primary" />
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-5">
+            {/* scoreboard */}
+            <div className="lg:col-span-2">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Рейтинг команд</span>
+                <span className="text-xs text-muted-foreground">топ-5</span>
+              </div>
+              <ol className="flex flex-col gap-1.5">
+                {STANDINGS.map((row, i) => (
+                  <li
+                    key={row.team}
+                    className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 px-3 py-2"
+                  >
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold ${rankClass(i)}`}>
+                      {i + 1}
                     </span>
-                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.diff }} aria-hidden />
-                  </div>
-                  <p className="mt-2 truncate text-sm font-medium text-foreground">{c.title}</p>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">{c.cat}</span>
-                    <span className="font-mono text-xs tabular-nums text-[var(--accent-warm)]">{c.pts}</span>
-                  </div>
-                  {c.solved && (
-                    <span className="mt-2 inline-block rounded-full bg-[#7fd3a0]/15 px-2 py-0.5 text-[10px] font-medium text-[#7fd3a0]">
-                      {t("landing.showcase.solved")}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-foreground">{row.team}</p>
+                      <p className="text-[11px] text-muted-foreground">{row.members} учасники</p>
+                    </div>
+                    <TrendIcon trend={row.trend} />
+                    <span className="font-mono text-sm font-semibold tabular-nums text-primary">
+                      {row.score.toLocaleString("uk")}
                     </span>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* challenges */}
+            <div className="lg:col-span-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Завдання</span>
+                <div className="hidden gap-1.5 sm:flex">
+                  {["Усі", "Web", "Crypto", "Pwn"].map((c, i) => (
+                    <span
+                      key={c}
+                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                        i === 0
+                          ? "bg-primary text-primary-foreground"
+                          : "border border-border text-muted-foreground"
+                      }`}
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <ul className="grid gap-2.5 sm:grid-cols-2">
+                {CHALLENGES.map((c) => {
+                  const Icon = c.icon
+                  const d = DIFF[c.diff]
+                  return (
+                    <li
+                      key={c.title}
+                      className="rounded-lg border border-border bg-secondary/30 p-3 transition-colors hover:border-primary/40"
+                    >
+                      <div className="flex items-start justify-between">
+                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="font-mono text-sm font-bold tabular-nums text-primary">{c.pts}</span>
+                      </div>
+                      <p className="mt-2 truncate text-sm font-semibold text-foreground">{c.title}</p>
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {c.cat}
+                        </span>
+                        <span
+                          className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium"
+                          style={{ color: d.color, backgroundColor: `${d.color}1A` }}
+                        >
+                          {d.label}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-[11px] text-muted-foreground">
+                        <span>{c.solves} розв’язань</span>
+                        {c.solved && (
+                          <span className="inline-flex items-center gap-1 font-medium text-[#10B981]">
+                            <Flag className="h-3 w-3" /> здано
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
+
+          {/* stats strip */}
+          <div className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-5 md:grid-cols-4">
+            {STATS.map(({ icon: Icon, value, label }) => (
+              <div key={label} className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="font-mono text-lg font-bold leading-none tabular-nums text-foreground">{value}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">{label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </BrowserFrame>
       </div>
     </section>
