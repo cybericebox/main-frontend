@@ -42,7 +42,8 @@ export interface Me {
  */
 export async function fetchMe(): Promise<Me | null> {
   try {
-    return await apiGet<Me>("/api/auth/me")
+    // Opt out of the client's auto-redirect: here a 401 simply means "anonymous".
+    return await apiGet<Me>("/api/auth/me", undefined, { on401: "throw" })
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       return null
