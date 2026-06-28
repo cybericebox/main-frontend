@@ -88,21 +88,29 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  // Existing auth-state control — UNCHANGED behavior/links/logic, just extracted
-  // into a local variable so the shell can place it on the right.
-  const authControl =
-    status === "loading" ? (
-      // Loading (incl. pending silent redirect): neutral placeholder sized
-      // like the avatar to avoid layout shift / a Sign-in flash.
-      <div className="h-9 w-9" aria-hidden />
-    ) : status === "anon" || me === null ? (
-      // Unauthenticated: plain anchor to the id sign-in page.
-      <Button asChild variant="outline" size="sm">
-        <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
-      </Button>
-    ) : (
-      <AuthedMenu me={me} />
-    )
+  // The auth control resolves async (loading → sign-in button / authed avatar).
+  // Reserve a fixed slot sized to the WIDEST control (the sign-in button) with an
+  // invisible ghost, and overlay the real control right-aligned. Every state then
+  // occupies the same width, so the nav never shifts when auth state settles —
+  // and nothing renders (no Sign-in flash) until the state is known.
+  const authControl = (
+    <div className="relative flex items-center justify-end">
+      <span className="pointer-events-none invisible" aria-hidden>
+        <Button variant="outline" size="sm">
+          {t("common.signIn")}
+        </Button>
+      </span>
+      <span className="absolute inset-y-0 right-0 flex items-center">
+        {status === "loading" ? null : status === "anon" || me === null ? (
+          <Button asChild variant="outline" size="sm">
+            <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
+          </Button>
+        ) : (
+          <AuthedMenu me={me} />
+        )}
+      </span>
+    </div>
+  )
 
   return (
     <header
