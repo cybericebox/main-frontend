@@ -17,7 +17,7 @@
   "landing.hero.headline": "The cybersecurity CTF platform",
   "landing.hero.subhead": "Competitions, exercises and labs for capture-the-flag — one space for teams and players.",
   "landing.hero.primaryCta": "Get started",
-  "landing.hero.adminCta": "Go to admin",
+  "landing.hero.adminCta": "Go to admin panel",
   "landing.labs.kicker": "The core",
   "landing.labs.title": "Multifunctional labs",
   "landing.labs.body": "Spin up isolated lab networks on demand — emulate full L2/L3 topologies on virtualization-capable devices, reach them over VPN, and expose web apps to the outside.",
