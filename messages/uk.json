@@ -122,7 +122,7 @@
   "profile.displayName": "Відображуване ім'я",
   "profile.avatar": "Аватар",
   "nav.profile": "Профіль",
-  "nav.admin": "Адміністрування",
+  "nav.admin": "Адміністративна панель",
   "nav.settings": "Налаштування",
   "nav.signOut": "Вийти",
   "error.notFound": "Сторінку не знайдено",
