@@ -120,7 +120,7 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
         <a href="/" className="glow flex items-center" aria-label="CyberICEBox — ICE CTF">
-          <Logo size={44} />
+          <Logo size={44} href={null} />
         </a>
         <nav className="hidden items-center gap-6 md:flex">
           {NAV_ANCHORS.map((a) => (

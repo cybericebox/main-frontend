@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/brand/Logo"
 import { t } from "@/i18n/t"
-import { SIGN_UP_URL } from "@/lib/links"
+import { HeroCta } from "./HeroCta"
 
-// Apex hero — crest brand mark + single primary CTA to the sign-up page.
-// Platform-focused, static-export safe, no client hooks.
+// Apex hero — crest brand mark + a role-aware primary CTA (HeroCta).
+// Server component; the CTA's auth-state logic is isolated in the client child.
 export function Hero() {
   return (
     <section id="top" className="relative mx-auto flex max-w-5xl flex-col items-center px-4 pb-12 pt-20 text-center">
@@ -18,9 +17,7 @@ export function Hero() {
           {t("landing.hero.subhead")}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild className="facet glow">
-            <a href={SIGN_UP_URL}>{t("landing.hero.primaryCta")}</a>
-          </Button>
+          <HeroCta />
         </div>
       </div>
     </section>
