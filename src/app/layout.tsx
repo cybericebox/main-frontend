@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { QueryProvider } from "@/components/QueryProvider";
 
 export const metadata: Metadata = {
     title: "Cyber ICE Box Platform",
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`}>
             <body className="grid-bg">
-                {children}
+                <QueryProvider>{children}</QueryProvider>
                 <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
             </body>
         </html>
