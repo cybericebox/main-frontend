@@ -65,16 +65,29 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const authControl =
-    status === "loading" ? (
-      <div className="h-9 w-9" aria-hidden />
-    ) : status === "anon" || me === null ? (
-      <Button asChild variant="outline" size="sm">
-        <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
-      </Button>
-    ) : (
-      <AuthedMenu me={me} />
-    )
+  // The auth control resolves async (loading → anon button / authed avatar). To
+  // avoid a layout shift that nudges the nav when it appears, reserve a fixed slot
+  // sized to the WIDEST control (the sign-in button) with an invisible ghost, and
+  // overlay the real control right-aligned. Every state then occupies the same
+  // width, so nothing shifts when auth state settles.
+  const authControl = (
+    <div className="relative flex items-center justify-end">
+      <span className="pointer-events-none invisible" aria-hidden>
+        <Button variant="outline" size="sm">
+          {t("common.signIn")}
+        </Button>
+      </span>
+      <span className="absolute inset-y-0 right-0 flex items-center">
+        {status === "loading" ? null : status === "anon" || me === null ? (
+          <Button asChild variant="outline" size="sm">
+            <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
+          </Button>
+        ) : (
+          <AuthedMenu me={me} />
+        )}
+      </span>
+    </div>
+  )
 
   return (
     <header
