@@ -122,7 +122,12 @@
 	}
 
 	main {
-		@apply grow overflow-auto h-full w-full;
+		/* No nested scroll container: the page scrolls on the window/root so the
+		   sticky <Header> (a preceding sibling of <main>) shares that scroll
+		   timeline — this is what lets the header's CSS scroll-driven frost work
+		   without any JS. A nested `overflow-auto` on <main> would hide the
+		   scroll from both window.scrollY and `animation-timeline: scroll()`. */
+		@apply grow w-full;
 	}
 
 	body {
@@ -139,6 +144,18 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
       0 18px 40px -22px rgba(11, 18, 51, 0.35);
   }
+  /* Scroll-driven frost: the header interpolates from transparent → frost over
+     the first 48px of window scroll, driven entirely by CSS (no JS listener).
+     `scroll()` binds to the nearest scroll container, which is the window/root
+     now that <main> no longer nests its own scroll. Browsers without
+     scroll-driven-animation support just keep the transparent base state. */
+  .scroll-frost {
+    background: transparent;
+    border: 1px solid transparent;
+    animation: header-frost linear both;
+    animation-timeline: scroll();
+    animation-range: 0 48px;
+  }
   .glow {
     transition: box-shadow 180ms ease, text-shadow 180ms ease;
   }
@@ -149,6 +166,19 @@
   }
   .facet {
     clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+  }
+}
+
+/* Frost keyframe for .scroll-frost (kept out of @layer so the animation name
+   resolves everywhere). `from` is implicit = the element's transparent base. */
+@keyframes header-frost {
+  to {
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-color: var(--border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 18px 40px -22px rgba(11, 18, 51, 0.35);
   }
 }
 

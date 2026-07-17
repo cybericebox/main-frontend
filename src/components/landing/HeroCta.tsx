@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useAuthState } from "@/lib/useAuthState"
 import { t } from "@/i18n/t"
-import { SIGN_UP_URL, ADMIN_ORIGIN } from "@/lib/links"
+import { SIGN_UP_URI, ADMIN_ORIGIN } from "@/lib/links"
 
 /**
  * Role-aware hero CTA:
@@ -23,7 +23,7 @@ export function HeroCta() {
   if (status === "anon" || me === null) {
     return (
       <Button asChild className="facet glow">
-        <a href={SIGN_UP_URL}>{t("landing.hero.primaryCta")}</a>
+        <a href={SIGN_UP_URI}>{t("landing.hero.primaryCta")}</a>
       </Button>
     )
   }

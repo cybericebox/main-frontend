@@ -26,11 +26,10 @@ export interface Me {
  * Throws only on unexpected errors (5xx, network failures, etc.).
  *
  * Uses required:false so a 401 is treated as "anonymous" (no redirect).
- * Uses skipBootstrap:true to avoid a deadlock — fetchMe IS the bootstrap probe.
  */
 export async function fetchMe(): Promise<Me | null> {
   try {
-    return await apiGet<Me>("/api/auth/me", undefined, { required: false, skipBootstrap: true })
+    return await apiGet<Me>("/api/auth/me", undefined, { required: false })
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       return null

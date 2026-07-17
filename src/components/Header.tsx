@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Menu, User, X } from "lucide-react"
 
 import { type Me } from "@/lib/auth"
@@ -16,21 +16,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { t } from "@/i18n/t"
-
-// ---------------------------------------------------------------------------
-// Cross-origin helpers
-//
-// ID_ORIGIN — the identity server (Authorization Server). All auth navigations
-// (sign-in / profile / sign-out) are plain top-level anchors to this origin so
-// the master session cookie on id.<domain> is in scope.
-//   NEXT_PUBLIC_ID_ORIGIN takes precedence; otherwise derive from the platform
-//   domain (id.<domain>).
-// ADMIN_ORIGIN — the admin app (admin.<domain>); shown only as a display hint.
-// ---------------------------------------------------------------------------
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
-const ID_ORIGIN =
-  process.env.NEXT_PUBLIC_ID_ORIGIN ?? `https://id.${DOMAIN}`
-const ADMIN_ORIGIN = `https://admin.${DOMAIN}`
+import { ID_ORIGIN, ADMIN_ORIGIN, PROFILE_URI, SIGN_OUT_URI, SIGN_IN_URI } from "@/lib/links"
 
 /**
  * currentUrl — the absolute URL of the current main page, used as return_to so
@@ -44,7 +30,7 @@ function currentUrl(): string {
 
 /** Build an id-app URL with a return_to back to the current main page. */
 function idUrl(path: string): string {
-  const url = new URL(path, ID_ORIGIN || "https://id.local")
+  const url = new URL(path, ID_ORIGIN)
   const ret = currentUrl()
   if (ret) url.searchParams.set("return_to", ret)
   return url.toString()
@@ -76,17 +62,10 @@ export default function Header() {
   //   "authed"  → avatar / menu
   const { status, me } = useAuthState()
 
-  // Scroll-aware frosting: transparent over the hero, frost-panel strip on
-  // scroll. The listener is client-only (inside useEffect) so static export
-  // stays safe.
-  const [scrolled, setScrolled] = useState(false)
+  // Scroll-aware frosting is pure CSS now (.scroll-frost + a scroll-driven
+  // animation in globals.css): transparent over the hero, frosting in over the
+  // first 48px of window scroll. No JS listener — the browser drives it.
   const [menuOpen, setMenuOpen] = useState(false)
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   // The auth control resolves async (loading → sign-in button / authed avatar).
   // Reserve a fixed slot sized to the WIDEST control (the sign-in button) with an
@@ -103,7 +82,7 @@ export default function Header() {
       <span className="absolute inset-y-0 right-0 flex items-center">
         {status === "loading" ? null : status === "anon" || me === null ? (
           <Button asChild variant="outline" size="sm">
-            <a href={idUrl("/sign-in")}>{t("common.signIn")}</a>
+            <a href={idUrl(SIGN_IN_URI)}>{t("common.signIn")}</a>
           </Button>
         ) : (
           <AuthedMenu me={me} />
@@ -112,12 +91,10 @@ export default function Header() {
     </div>
   )
 
+
   return (
-    <header
-      className={`sticky top-0 z-50 transition-colors ${
-        scrolled ? "frost-panel" : "bg-transparent border-transparent"
-      }`}
-    >
+    <header className="scroll-frost sticky top-0 z-50">
+
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
         <a href="/" className="glow flex items-center" aria-label="CyberICEBox — ICE CTF">
           <Logo size={44} href={null} />
@@ -204,7 +181,7 @@ function AuthedMenu({ me }: { me: Me }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <a href={idUrl("/profile")}>{t("nav.profile")}</a>
+          <a href={idUrl(PROFILE_URI)}>{t("nav.profile")}</a>
         </DropdownMenuItem>
 
         {PRIVILEGED && (
@@ -216,7 +193,7 @@ function AuthedMenu({ me }: { me: Me }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <a href={idUrl("/sign-out")}>{t("common.signOut")}</a>
+          <a href={idUrl(SIGN_OUT_URI)}>{t("common.signOut")}</a>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
