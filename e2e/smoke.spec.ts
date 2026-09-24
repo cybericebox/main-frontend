@@ -123,7 +123,7 @@ test.describe("static landing — API down", () => {
   })
 
   test("legal page has numbered sections and anchors back to the landing", async ({ page }) => {
-    await page.goto("/privacy/")
+    await page.goto("/privacy")
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Політика конфіденційності")
     await expect(page.locator("#s1")).toHaveCount(1)
     await expect(page.locator(".ib-navbar__tabs a").first()).toHaveAttribute("href", "/#labs")

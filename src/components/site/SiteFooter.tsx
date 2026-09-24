@@ -11,8 +11,8 @@ export function SiteFooter({ home }: { home: boolean }) {
         labs,
         faq,
         { href: SOURCE_URL, label: t("landing.footer.github"), external: true },
-        { href: "/privacy/", label: t("landing.footer.privacy") },
-        { href: "/terms/", label: t("landing.footer.terms") },
+        { href: "/privacy", label: t("landing.footer.privacy") },
+        { href: "/terms", label: t("landing.footer.terms") },
         { href: `mailto:${SUPPORT_EMAIL}`, label: SUPPORT_EMAIL },
       ]}
     />
