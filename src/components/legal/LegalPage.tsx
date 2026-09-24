@@ -1,14 +1,16 @@
 import * as React from "react"
+import { t } from "@/i18n/t"
+import { nbsp } from "@/i18n/typo"
+import { SUPPORT_EMAIL } from "@/lib/links"
+import "@/styles/ds/components/toc.css"
+import "@/styles/legal.css"
 
 export type LegalSection = { heading: string; body: React.ReactNode }
 
-// Support contact derived from the current platform domain (support@<domain>).
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? "cybericebox.app"
-const SUPPORT_EMAIL = `support@${DOMAIN}`
 
-// Content for legal documents (Terms, Privacy) — readable single-column prose.
-// The page chrome (Header/Footer) is supplied by the (legal) route-group layout,
-// identical to the landing, so every page shares the same nav and footer.
+// Legal document (Terms, Privacy): title, «Останнє оновлення», intro, numbered
+// sections with anchor ids; from 1024 px a sticky section list on the left.
+// Navbar/Footer come from the (legal) route-group layout.
 export function LegalPage({
   title,
   updated,
@@ -21,28 +23,40 @@ export function LegalPage({
   sections: LegalSection[]
 }) {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Останнє оновлення: {updated}</p>
-      {intro && <p className="mt-6 leading-relaxed text-muted-foreground">{intro}</p>}
-
-      <div className="mt-10 flex flex-col gap-8">
-        {sections.map((s, i) => (
-          <section key={i}>
-            <h2 className="text-lg font-semibold tracking-tight">
-              {i + 1}. {s.heading}
-            </h2>
-            <div className="mt-2 leading-relaxed text-muted-foreground">{s.body}</div>
-          </section>
-        ))}
+    <article className="lg-doc">
+      <div className="lg-doc__grid">
+        <nav className="ib-toc" aria-label={t("legal.toc")}>
+          <p className="ib-toc__title">{t("legal.toc")}</p>
+          <ol className="ib-toc__list">
+            {sections.map((s, i) => (
+              <li key={s.heading}>
+                <a className="ib-toc__link" href={`#s${i + 1}`}>
+                  {i + 1}. {nbsp(s.heading)}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+        <div className="lg-doc__body">
+          <h1>{nbsp(title)}</h1>
+          <p className="lg-doc__updated">
+            {t("legal.updated")}: {updated}
+          </p>
+          {intro && <p className="lg-doc__intro">{nbsp(intro)}</p>}
+          {sections.map((s, i) => (
+            <section key={s.heading} id={`s${i + 1}`} className="lg-doc__sec" aria-labelledby={`s${i + 1}-h`}>
+              <h2 id={`s${i + 1}-h`}>
+                <span className="ib-num">{i + 1}.</span>
+                {nbsp(s.heading)}
+              </h2>
+              <div>{typeof s.body === "string" ? nbsp(s.body) : s.body}</div>
+            </section>
+          ))}
+          <p className="lg-doc__contact">
+            {t("legal.questions")} <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+          </p>
+        </div>
       </div>
-
-      <p className="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
-        Маєте питання?{" "}
-        <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">
-          {SUPPORT_EMAIL}
-        </a>
-      </p>
-    </main>
+    </article>
   )
 }

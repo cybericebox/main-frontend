@@ -1,15 +1,14 @@
 import type React from "react"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import { SiteHeader } from "@/components/site/SiteHeader"
+import { SiteFooter } from "@/components/site/SiteFooter"
 
-// (main) route group layout — adds the shared Header/Footer chrome for the
-// landing page and any future marketing pages.
+// (main) route group layout — landing chrome: navbar anchors jump within the page.
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
-      <main>{children}</main>
-      <Footer />
+      <SiteHeader home />
+      <main id="top">{children}</main>
+      <SiteFooter home />
     </>
   )
 }

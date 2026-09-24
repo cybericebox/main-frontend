@@ -1,0 +1,29 @@
+/* copied from ds-v2 2026-09-24 */
+/* Status text — a state written as a word, in a tone colour. For table cells, lists, meta lines.
+   Source: prototypes/admin.html (.t-warn / .t-bad / .t-ok / .t-faint / .t-ink). No pills, no dots.
+   The WORD carries the meaning («Помилка», «Запрошено», «Наживо»); colour and the optional icon only repeat it,
+   so it still reads in greyscale and for colour-blind users. Never a colour-only mark.
+     <span class="ib-status ib-status--bad">Помилка</span>
+     <span class="ib-status ib-status--warn"><svg class="ib-icon" aria-hidden="true"><use href="…#i-warn"/></svg>У черзі</span>
+   Tones: --ok (done, good), --warn (waiting, attention), --bad (failed, blocked), --ink (live / current, semibold),
+          --dim (normal secondary: «Активний», «Доставлено»), --faint (inactive: «Чернетка»).
+   Contrast on --ib-surface: ok 5.3 / warn 5.9 / bad 6.6 (light); 6.8 / 5.4 / 5.4 (dark).
+   In own / selected / new table rows (soft fill) dark warn/bad would drop to 4.0:1, so they switch to the
+   lighter --ib-status-*-on-soft (4.9 / 5.0); --dim/--faint switch to --ib-table-own-dim. */
+
+:root,[data-theme="light"]{--ib-status-warn-on-soft:var(--ib-warn);--ib-status-bad-on-soft:var(--ib-danger)}   /* 5.1 / 5.6 on #EDEDF1 */
+[data-theme="dark"]{--ib-status-warn-on-soft:#F2CB8A;--ib-status-bad-on-soft:#FFC4BE}                            /* 4.9 / 5.0 on #555361 */
+
+.ib-status{display:inline-flex;align-items:center;gap:var(--ib-1);font-weight:var(--ib-w-medium);line-height:var(--ib-lh-ui);white-space:nowrap}
+.ib-status>svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib-status--ok{color:var(--ib-ok)}
+.ib-status--warn{color:var(--ib-warn)}
+.ib-status--bad{color:var(--ib-danger)}
+.ib-status--ink{color:var(--ib-ink);font-weight:var(--ib-w-semibold)}
+.ib-status--dim{color:var(--ib-dim);font-weight:var(--ib-w-regular)}
+.ib-status--faint{color:var(--ib-faint);font-weight:var(--ib-w-regular)}
+.ib-table tr.is-own .ib-status--dim,.ib-table tr.is-own .ib-status--faint,
+.ib-table tr.is-selected .ib-status--dim,.ib-table tr.is-selected .ib-status--faint,
+.ib-table tr.is-new .ib-status--dim,.ib-table tr.is-new .ib-status--faint{color:var(--ib-table-own-dim)}
+.ib-table tr.is-own .ib-status--warn,.ib-table tr.is-selected .ib-status--warn,.ib-table tr.is-new .ib-status--warn{color:var(--ib-status-warn-on-soft)}
+.ib-table tr.is-own .ib-status--bad,.ib-table tr.is-selected .ib-status--bad,.ib-table tr.is-new .ib-status--bad{color:var(--ib-status-bad-on-soft)}

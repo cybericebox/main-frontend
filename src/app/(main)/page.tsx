@@ -1,16 +1,5 @@
-import { Hero } from "@/components/landing/Hero"
-import { Showcase } from "@/components/landing/Showcase"
-import { Labs } from "@/components/landing/Labs"
-import { Faq } from "@/components/landing/Faq"
+import { LandingPage } from "@/components/landing/LandingPage"
 
-// Apex landing — layout wraps this in <Header> and <Footer>.
-export default function LandingPage() {
-  return (
-    <>
-      <Hero />
-      <Labs />
-      <Showcase />
-      <Faq />
-    </>
-  )
+export default function Page() {
+  return <LandingPage />
 }

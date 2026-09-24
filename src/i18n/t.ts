@@ -8,6 +8,7 @@
 // procedure (see README).
 import en from "../../messages/en.json"
 import uk from "../../messages/uk.json"
+import { nbsp } from "./typo"
 
 // `en` defines the canonical key set; `uk` is what users see.
 const active = uk
@@ -18,10 +19,11 @@ type MessageKey = keyof typeof en
 /**
  * Translate a message key to the active-language (Ukrainian) string.
  * Falls back to English, then to the key itself (safe for static export).
+ * Active-language strings get Ukrainian no-break spaces (see ./typo).
  */
 export function t(key: MessageKey | string): string {
   const a = (active as Record<string, string>)[key]
-  if (a !== undefined) return a
+  if (a !== undefined) return nbsp(a)
   const f = (fallback as Record<string, string>)[key]
   return f ?? key
 }

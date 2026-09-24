@@ -23,6 +23,9 @@ jobs:
         with:
           context: .
           file: deploy/Dockerfile
+          # warm-up flag (secret NEXT_PUBLIC_WARMUP_FLAG, format ICE{…}); build stage only
+          build-args: |
+            NEXT_PUBLIC_WARMUP_FLAG=${{ secrets.NEXT_PUBLIC_WARMUP_FLAG }}
           push: true
           platforms: linux/amd64
           tags: |

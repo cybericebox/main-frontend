@@ -1,0 +1,6 @@
+/* «Cyber ICE Box» wordmark: «ICE» in the crest ice blue (as in id-frontend).
+   Dark shade on light paper (≈5:1), light shade on dark paper and on the brand mass (≈9:1). */
+:root,[data-theme="light"]{--ib-ice:#1070A0}
+[data-theme="dark"],.ib-mass{--ib-ice:#7FD0FA}
+.ib-wordmark{white-space:nowrap}
+.ib-wordmark__ice{color:var(--ib-ice)}

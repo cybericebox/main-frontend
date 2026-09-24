@@ -1,0 +1,41 @@
+/* copied from ds-v2 2026-09-24 */
+/* Topology — lab network diagram (landing «Лабораторії», lab page). Inline SVG styled with tokens only.
+   Source: prototypes/platform.html (.pl-topo). Behaviour: topology.js — [data-ib-topo] draws the route once
+   when it scrolls into view (skipped with reduced motion). Stroke roles:
+     zone    — dashed perimeter/subnet outlines: --ib-control (perimeter), --ib-diagram-zone (subnets)
+     link    — idle links: --ib-control 1.25px
+     route   — the highlighted path (your PC → target): --ib-action 2.25px
+     node    — host box on --ib-raised, --ib-control stroke; --on = on the route (--ib-action stroke 1.5)
+     you     — the participant's machine: brand mass fill, on-brand text
+   Text: names 14/600 sans ink, addresses 12 mono dim, notes 11.5 mono faint.
+   <figure class="ib-topo" data-ib-topo>
+     <figcaption class="ib-topo__head"><b>lab-07</b><span class="ib-num">10.10.0.0/16</span></figcaption>
+     <div class="ib-topo__canvas"><svg viewBox="…" role="img" aria-label="…">…</svg></div>
+     <pre class="ib-topo__term"><b>$ sudo wg-quick up ./lab-07.conf</b>…</pre>
+   </figure> */
+
+.ib-topo{margin:0;background:var(--ib-surface);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);overflow:hidden}
+.ib-topo__head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--ib-4);padding:var(--ib-4) var(--ib-5);border-bottom:1px solid var(--ib-line)}
+.ib-topo__head b{font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
+.ib-topo__head span{font-size:var(--ib-fs-13);color:var(--ib-faint)}
+.ib-topo__canvas{padding:var(--ib-3) var(--ib-3) var(--ib-1);overflow-x:auto}
+.ib-topo svg{display:block;width:100%;min-width:600px;height:auto}
+.ib-topo text{font-family:var(--ib-mono);font-size:12px;fill:var(--ib-dim)}
+.ib-topo .ib-topo__name{font-family:var(--ib-font);font-size:14px;font-weight:var(--ib-w-semibold);fill:var(--ib-ink)}
+.ib-topo .ib-topo__note{font-size:11.5px;fill:var(--ib-faint)}
+.ib-topo .ib-topo__zone{fill:var(--ib-paper);stroke:var(--ib-control)}
+.ib-topo .ib-topo__subnet{fill:var(--ib-surface);stroke:var(--ib-diagram-zone)}
+.ib-topo .ib-topo__link{fill:none;stroke:var(--ib-control);stroke-width:1.25}
+.ib-topo .ib-topo__route{fill:none;stroke:var(--ib-action);stroke-width:2.25;stroke-linejoin:round}
+.ib-topo .ib-topo__joint{fill:var(--ib-action)}
+.ib-topo .ib-topo__node{fill:var(--ib-raised);stroke:var(--ib-control)}
+.ib-topo .ib-topo__node--on{stroke:var(--ib-action);stroke-width:1.5}
+.ib-topo .ib-topo__you{fill:var(--ib-brand)}
+.ib-topo .ib-topo__on-brand{fill:var(--ib-on-brand)}
+.ib-topo .ib-topo__on-brand-2{fill:var(--ib-on-brand-2)}
+.ib-topo .ib-topo__draw{stroke-dasharray:640;stroke-dashoffset:0}
+.ib-topo.is-draw .ib-topo__draw{animation:ib-topo-route 1.6s var(--ib-ease) both}
+@keyframes ib-topo-route{from{stroke-dashoffset:640}to{stroke-dashoffset:0}}
+.ib-topo__term{margin:0;border-top:1px solid var(--ib-line);background:var(--ib-paper);padding:14px var(--ib-5);font:var(--ib-fs-13)/1.7 var(--ib-mono);color:var(--ib-dim);overflow-x:auto;white-space:pre}
+.ib-topo__term b{color:var(--ib-ink);font-weight:var(--ib-w-medium)}
+@media (max-width:640px){.ib-topo__canvas{padding:var(--ib-2) 0 0}}

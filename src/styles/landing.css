@@ -1,0 +1,86 @@
+/* Landing page layout (from ds-v2/prototypes/platform.html <style>). Tokens only; page-scoped props are --pl-*. */
+/* --pl-gut (page side gutter) is global — styles/site.css — so navbar/footer align with the hero */
+.pl-wrap{padding:0 var(--pl-gut)}
+
+/* hero: left = headline, subhead, buttons; right = the event app window (HeroChallenge).
+   Background (tokens only): a radial brand pool from the top-right corner (page tone → brand; stronger in
+   dark); the quiet waves (.ib-waves-quiet) sit on top; the bottom fades into the next section (--pl-tone). */
+.pl-hero{--pl-left:calc(560px + var(--pl-gut));--pl-fade:140px;
+  display:grid;grid-template-columns:var(--pl-left) minmax(0,1fr);min-height:max(560px,min(calc(100svh - 64px),820px));overflow:hidden;
+  background:var(--pl-pool);
+  --pl-pool:radial-gradient(ellipse 72% 125% at 100% 0%,var(--ib-brand) 0%,var(--ib-brand) 48%,color-mix(in srgb,var(--ib-brand) 70%,var(--ib-hero)) 60%,color-mix(in srgb,var(--ib-brand) 35%,var(--ib-hero)) 72%,color-mix(in srgb,var(--ib-brand) 10%,var(--ib-hero)) 84%,var(--ib-hero) 100%)}
+[data-theme="dark"] .pl-hero{--pl-pool:radial-gradient(ellipse 70% 90% at 100% 0%,color-mix(in srgb,var(--ib-brand),#FFFFFF 10%) 0%,var(--ib-brand) 70%)}   /* dark: solid brand + lighter brand glow, no grey mixing */
+.pl-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--pl-fade);pointer-events:none;
+  background:linear-gradient(to bottom,color-mix(in srgb,var(--pl-tone) 0%,transparent),var(--pl-tone))}
+@media (min-width:1600px){.pl-hero{--pl-fade:160px}}
+/* both columns centre on the same axis above the fade; the text column never reaches the window —
+   h1 scales with the column (container units), 32px air on the right */
+.pl-main{container-type:inline-size;display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 32px var(--pl-fade) var(--pl-gut)}
+.pl-main h1{font-size:min(70px,12.4cqi);line-height:.98;letter-spacing:-.04em;font-weight:650}   /* nbsp keeps «для CTF‑змагань» on one line (7.8em) */
+.pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:30ch}   /* ≥ 7:1 on the page tone and on the dark pool */
+.pl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.pl-actions .ib-btn{height:48px;padding:0 22px;font-size:var(--ib-fs-16)}
+.pl-actions .ib-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+/* warm-up done: a quiet, still clickable button (opens the solved card read-only) */
+.pl-actions .ib-btn--primary.is-done{background:transparent;border-color:var(--ib-control);color:var(--ib-ink)}
+.pl-actions .ib-btn--primary.is-done svg{color:var(--ib-ok)}
+.pl-side{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 0 var(--pl-fade)}
+
+/* warm-up success dialog: result row — big mono numbers, dim labels, hairline separators */
+.pl-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0}
+.pl-stats>div{display:flex;flex-direction:column;gap:2px;padding:var(--ib-1) var(--ib-4)}
+.pl-stats>div:first-child{padding-left:0}
+.pl-stats>div+div{border-left:1px solid var(--ib-line)}
+.pl-stats dt{font-size:var(--ib-fs-12);color:var(--ib-dim)}
+.pl-stats dd{margin:0;font-size:28px;line-height:1.1;font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
+
+/* sections */
+.pl-sec{padding:80px 0}
+/* rhythm: hero → tone (Labs) → paper (FAQ); no borders between sections.
+   --pl-tone: page-level tone (ds dark has --ib-hero = --ib-paper, so dark uses surface). The theme boot
+   script always resolves «system» to data-theme="light|dark" on <html>, so these two cover every case. */
+:root,[data-theme="light"]{--pl-tone:var(--ib-hero)}
+[data-theme="dark"]{--pl-tone:var(--ib-surface)}
+#labs{background:var(--pl-tone)}
+/* dark: Labs tone = surface, so lift the topology card one step */
+[data-theme="dark"] #labs .ib-topo{background:var(--ib-raised)}
+.pl-sec h2{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
+.pl-lead{margin-top:var(--ib-5);font-size:18px;color:var(--ib-dim);max-width:46ch}
+
+/* labs */
+.pl-labs{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px;align-items:start}
+.pl-labs h2{max-width:10ch}
+.pl-feat{margin:var(--ib-10) 0 0;border-top:1px solid var(--ib-line)}
+.pl-feat div{display:grid;grid-template-columns:120px 1fr;gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}
+.pl-feat dt{font:var(--ib-w-medium) var(--ib-fs-14)/1.6 var(--ib-mono);color:var(--ib-action)}
+.pl-feat dd{margin:0;font-size:15px;color:var(--ib-body)}
+
+/* faq */
+.pl-faq{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px}
+
+/* responsive */
+@media (max-width:1180px){
+  .pl-hero{--pl-left:calc(440px + var(--pl-gut))}
+  .pl-main h1{font-size:min(56px,12.4cqi)}
+  .pl-labs,.pl-faq{gap:var(--ib-12)}
+}
+@media (max-width:980px){
+  /* stacked: the pool comes from the bottom-right, behind the window */
+  .pl-hero{grid-template-columns:minmax(0,1fr);min-height:0;--pl-pool:radial-gradient(ellipse 140% 70% at 100% 100%,var(--ib-brand) 0%,var(--ib-brand) 48%,color-mix(in srgb,var(--ib-brand) 70%,var(--ib-hero)) 60%,color-mix(in srgb,var(--ib-brand) 35%,var(--ib-hero)) 72%,color-mix(in srgb,var(--ib-brand) 10%,var(--ib-hero)) 84%,var(--ib-hero) 100%)}
+  [data-theme="dark"] .pl-hero{--pl-pool:radial-gradient(ellipse 90% 60% at 100% 100%,color-mix(in srgb,var(--ib-brand),#FFFFFF 10%) 0%,var(--ib-brand) 70%)}
+  .pl-main{padding:64px var(--pl-gut) 40px}
+  .pl-side{padding:40px var(--pl-gut) calc(var(--pl-fade) + 8px)}
+  .pl-labs,.pl-faq{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .pl-main{padding:48px var(--pl-gut) 32px}
+  .pl-main h1{font-size:min(40px,12.4cqi);letter-spacing:-.035em}
+  .pl-sub{font-size:17px;margin-top:20px}
+  .pl-actions{margin-top:28px}
+  .pl-actions .ib-btn{flex:1}
+  .pl-sec{padding:56px 0}
+  .pl-sec h2{font-size:36px}
+  .pl-lead{font-size:17px}
+  .pl-feat div{grid-template-columns:96px 1fr}
+  .ib-footer{padding-bottom:var(--ib-16)}
+}

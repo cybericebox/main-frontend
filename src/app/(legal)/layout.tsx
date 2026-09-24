@@ -1,16 +1,15 @@
 import type React from "react"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import { SiteHeader } from "@/components/site/SiteHeader"
+import { SiteFooter } from "@/components/site/SiteFooter"
 
-// (legal) route group layout — legal pages (Privacy, Terms) share the exact same
-// Header/Footer chrome as the landing, so the nav and footer are identical across
-// every page. LegalPage renders only the document content.
+// (legal) route group layout — same navbar/footer as the landing; anchors lead
+// back to the landing sections (/#labs …). LegalPage renders the document.
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
-      {children}
-      <Footer />
+      <SiteHeader home={false} />
+      <main>{children}</main>
+      <SiteFooter home={false} />
     </>
   )
 }

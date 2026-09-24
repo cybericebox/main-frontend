@@ -1,0 +1,23 @@
+/* Legal documents (/privacy, /terms): one reading column on the ds type scale;
+   ≥1024 px a sticky section list on the left (.ib-toc). Tokens only. */
+.lg-doc{padding:var(--ib-16) var(--pl-gut) 96px}
+.lg-doc__grid{display:block}
+.lg-doc .ib-toc{display:none}
+.lg-doc__body{max-width:68ch}
+.lg-doc h1{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
+.lg-doc__updated{margin-top:var(--ib-3);font-size:var(--ib-fs-14);color:var(--ib-faint)}
+.lg-doc__intro{margin-top:var(--ib-8);font-size:18px;line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__sec{margin-top:var(--ib-10);padding-top:var(--ib-8);border-top:1px solid var(--ib-line)}
+.lg-doc__sec h2{display:flex;gap:var(--ib-3);font-size:var(--ib-fs-20);letter-spacing:-.015em}
+.lg-doc__sec h2 .ib-num{color:var(--ib-faint);font-weight:var(--ib-w-medium)}
+.lg-doc__sec p,.lg-doc__sec div{margin-top:var(--ib-3);font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__contact{margin-top:var(--ib-12);padding-top:var(--ib-6);border-top:1px solid var(--ib-line);color:var(--ib-dim);font-size:var(--ib-fs-14)}
+@media (min-width:1024px){
+  .lg-doc__grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start}
+  .lg-doc .ib-toc{display:block;--ib-toc-top:calc(var(--ib-16) + var(--ib-6))}
+}
+@media (max-width:640px){
+  .lg-doc{padding:var(--ib-10) var(--pl-gut) 72px}
+  .lg-doc h1{font-size:36px}
+  .lg-doc__intro{font-size:17px}
+}

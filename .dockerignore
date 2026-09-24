@@ -5,3 +5,5 @@ out
 .env*
 Dockerfile
 .dockerignore
+src/lib/warmup.generated.ts
+public/.well-known/ice

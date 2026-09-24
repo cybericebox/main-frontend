@@ -161,3 +161,13 @@ export function apiPatch<T>(
 export function apiDelete<T>(path: string, init?: RequestInit, opts?: ApiOptions): Promise<T> {
   return request<T>(path, { ...init, method: "DELETE" }, opts)
 }
+
+/**
+ * mediaUrl — the backend returns stored media (avatars) as API-relative paths
+ * like "/api/auth/avatar/<id>"; resolve them against api.<domain>, otherwise a
+ * relative path hits the landing origin and 404s. Absolute URLs pass through.
+ */
+export function mediaUrl(src: string | undefined | null): string | undefined {
+  if (!src) return undefined
+  return src.startsWith("/") ? `${API_ORIGIN}${src}` : src
+}
