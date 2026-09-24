@@ -16,6 +16,9 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  // No 308 slash-normalising redirects in dev/start: they are permanent and get cached
+  // by browsers, which can turn into redirect loops if the slash policy ever changes.
+  skipTrailingSlashRedirect: true,
   allowedDevOrigins: DOMAIN ? [DOMAIN, `*.${DOMAIN}`] : [],
 };
 
