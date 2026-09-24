@@ -6,6 +6,9 @@ import { Icon } from "@/components/ib/Icon"
 import { Modal } from "@/components/ib/Modal"
 import { t } from "@/i18n/t"
 import { WARMUP_SHA256 } from "@/lib/warmup.generated"
+import { useApi } from "@/lib/useApi"
+import { idUrl } from "@/lib/auth"
+import { SIGN_IN_URI } from "@/lib/links"
 import "@/styles/ds/components/icon-button.css"
 import "@/styles/ds/components/input.css"
 import "@/styles/ds/components/status-text.css"
@@ -72,7 +75,6 @@ export function HeroChallenge() {
   const tryRef = useRef<HTMLButtonElement>(null)
   const cardRef = useRef<HTMLElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const skipFocusRef = useRef(false)
   const doneRef = useRef(false)
   useEffect(() => {
     doneRef.current = done
@@ -144,11 +146,10 @@ export function HeroChallenge() {
   }
 
   const closeModal = () => setModal(false)
-  // «Лабораторії»: let the anchor scroll to #labs, and don't pull focus back up to the hero.
-  const toLabs = () => {
-    skipFocusRef.current = true
-    setModal(false)
-  }
+  // «Увійти» only when the API answered and nobody is signed in — the next step after the
+  // warm-up is real events, which need an account.
+  const api = useApi()
+  const canSignIn = api.status === "up" && !api.me
   const place = t("landing.ch.place").replace("{place}", String(RANK.place))
 
   return (
@@ -310,19 +311,17 @@ export function HeroChallenge() {
         title={t("landing.warmup.modalTitle")}
         description={t("landing.warmup.modalText")}
         // the card is closed by now — focus goes back to «Розминку пройдено»
-        returnFocus={() => {
-          if (!skipFocusRef.current) return tryRef.current
-          skipFocusRef.current = false
-          return null
-        }}
+        returnFocus={() => tryRef.current}
         actions={
           <>
-            <Button variant="ghost" onClick={closeModal}>
+            <Button variant={canSignIn ? "ghost" : "primary"} onClick={closeModal}>
               {t("common.close")}
             </Button>
-            <Button variant="primary" href="#labs" onClick={toLabs}>
-              {t("landing.nav.labs")}
-            </Button>
+            {canSignIn ? (
+              <Button variant="primary" href={idUrl(SIGN_IN_URI)}>
+                {t("common.signIn")}
+              </Button>
+            ) : null}
           </>
         }
       >

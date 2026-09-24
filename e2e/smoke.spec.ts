@@ -75,9 +75,10 @@ test.describe("static landing — API down", () => {
     await expect(dialog).toBeVisible({ timeout: 5000 }) // opens after a short pause; the card closes
     await expect(card).toHaveCount(0)
     await expect(dialog.locator(".pl-stats dd")).toHaveCount(3)
-    // no registration offer anywhere: «Лабораторії» + «Закрити»
+    // no registration offer; the API is down in the static run, so no «Увійти» either — only «Закрити»
     await expect(dialog.getByRole("link", { name: "Зареєструватися" })).toHaveCount(0)
-    await expect(dialog.getByRole("link", { name: "Лабораторії" })).toHaveAttribute("href", "#labs")
+    await expect(dialog.getByRole("link", { name: "Увійти" })).toHaveCount(0)
+    await expect(dialog.getByRole("button", { name: "Закрити" })).toBeVisible()
     await page.keyboard.press("Escape")
     await expect(dialog).toBeHidden()
     await expect(page.getByRole("button", { name: "Розминку пройдено" })).toBeVisible()
