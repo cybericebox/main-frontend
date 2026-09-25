@@ -48,3 +48,5 @@ certificates
 /.claude/
 /.codex/
 /.agents/
+/graphify-out/
+/.graphify/
