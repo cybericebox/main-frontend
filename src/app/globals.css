@@ -112,3 +112,7 @@
 		scroll-behavior: smooth;
 	}
 }
+
+@keyframes notification-countdown {
+  to { transform: scaleX(0); }
+}
