@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+import type { NextConfig } from "next"
 
 // Static export for main-frontend (apex landing app).
 // - output: 'export' produces the `out/` directory for static hosting.
@@ -11,8 +11,9 @@
 // the single NEXT_PUBLIC_DOMAIN (one source of truth).
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
-const nextConfig = {
-  output: 'export',
+const nextConfig: NextConfig = {
+  // TEMP (local, not committed): static export off so `next start` runs.
+  // output: 'export',
   images: {
     unoptimized: true,
   },

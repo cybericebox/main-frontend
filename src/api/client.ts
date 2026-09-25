@@ -5,6 +5,7 @@
 // bootstrap — a plain credentialed fetch is authoritative.
 
 import { API_ORIGIN } from "@/lib/links"
+import { isUnavailableStatus, reportServiceUnavailable } from "@/lib/serviceStatus"
 
 export class ApiError extends Error {
   constructor(
@@ -74,14 +75,21 @@ async function request<T>(
 ): Promise<T> {
   const url = `${API_ORIGIN}${path}`
 
-  const res = await fetch(url, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  })
+  let res: Response
+  try {
+    res = await fetch(url, {
+      ...init,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(init.headers ?? {}),
+      },
+    })
+  } catch (error) {
+    reportServiceUnavailable()
+    throw error
+  }
+  if (isUnavailableStatus(res.status)) reportServiceUnavailable()
 
   // Centralized auth handling: required (default true) → write return_to cookie
   // and redirect to sign-in. Returning a never-resolving promise stops the

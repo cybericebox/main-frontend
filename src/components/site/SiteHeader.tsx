@@ -3,6 +3,7 @@
 import { Navbar } from "@/components/ib/Navbar"
 import { Button } from "@/components/ib/Button"
 import { AvatarMenu, initials } from "@/components/ib/AvatarMenu"
+import { InboxButton } from "@/components/site/InboxButton"
 import { t } from "@/i18n/t"
 import { useApi } from "@/lib/useApi"
 import { idUrl, isAdminTier } from "@/lib/auth"
@@ -25,17 +26,20 @@ export function SiteHeader({ home }: { home: boolean }) {
         </Button>
       ) : null}
       {up && me ? (
-        <AvatarMenu
-          name={`${me.FirstName} ${me.LastName}`.trim() || me.Email}
-          email={me.Email}
-          picture={mediaUrl(me.Picture)}
-          initials={initials(me.FirstName, me.LastName, me.Email)}
-          items={[
-            { href: idUrl(PROFILE_URI), label: t("nav.profile"), icon: "user" },
-            ...(isAdminTier(me) ? [{ href: ADMIN_ORIGIN, label: t("nav.admin"), icon: "settings" }] : []),
-          ]}
-          footer={{ href: idUrl(SIGN_OUT_URI), label: t("common.signOut"), icon: "logout" }}
-        />
+        <>
+          <InboxButton />
+          <AvatarMenu
+            name={`${me.FirstName} ${me.LastName}`.trim() || me.Email}
+            email={me.Email}
+            picture={mediaUrl(me.Picture)}
+            initials={initials(me.FirstName, me.LastName, me.Email)}
+            items={[
+              { href: idUrl(PROFILE_URI), label: t("nav.profile"), icon: "user" },
+              ...(isAdminTier(me) ? [{ href: ADMIN_ORIGIN, label: t("nav.admin"), icon: "settings" }] : []),
+            ]}
+            footer={{ href: idUrl(SIGN_OUT_URI), label: t("common.signOut"), icon: "logout" }}
+          />
+        </>
       ) : null}
     </div>
   )

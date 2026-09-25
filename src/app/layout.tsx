@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
+import { ServiceStatusGate } from "@/components/ServiceStatusGate"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 
 export const metadata: Metadata = {
@@ -36,8 +37,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
             </head>
-            <body>
-                <ApiProvider>{children}</ApiProvider>
+            {/* Browser extensions can add attributes to body before React hydrates. */}
+            <body suppressHydrationWarning>
+                <ApiProvider><ServiceStatusGate />{children}</ApiProvider>
                 <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
             </body>
         </html>
