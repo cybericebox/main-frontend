@@ -9,7 +9,7 @@ import { t } from "@/i18n/t"
 import { API_ORIGIN } from "@/lib/links"
 import { confirmServiceUnavailable, getServiceStatus, reportServiceAvailable, subscribeServiceStatus } from "@/lib/serviceStatus"
 
-const CONFIRM_MS = 3000
+const CONFIRM_MS = 12000
 const POLL_MS = 5000
 
 async function probe(): Promise<boolean> {
@@ -17,7 +17,7 @@ async function probe(): Promise<boolean> {
     const response = await fetch(`${API_ORIGIN}/api/auth/me`, {
       cache: "no-store",
       credentials: "include",
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(3000),
     })
     return response.ok || response.status === 401
   } catch {

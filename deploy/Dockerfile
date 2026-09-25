@@ -16,7 +16,7 @@ ENV NEXT_PUBLIC_WARMUP_FLAG=$NEXT_PUBLIC_WARMUP_FLAG
 RUN test -n "$NEXT_PUBLIC_WARMUP_FLAG" || (echo "NEXT_PUBLIC_WARMUP_FLAG build arg is required" && exit 1)
 RUN npm run build
 
-FROM nginx:alpine AS runner
+FROM nginx:1.30.5-alpine AS runner
 COPY --from=build /app/out /usr/share/nginx/html
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/docker-entrypoint.sh /docker-entrypoint.d/40-next-public-env.sh

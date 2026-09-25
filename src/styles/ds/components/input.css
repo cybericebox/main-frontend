@@ -19,7 +19,7 @@
   font:var(--ib-w-regular) var(--ib-fs-14)/var(--ib-lh-ui) var(--ib-font);caret-color:var(--ib-action);
   transition:border-color var(--ib-dur-fast) var(--ib-ease);
 }
-.ib-input::placeholder{color:var(--ib-faint);opacity:1}
+.ib-input::placeholder{color:var(--ib-placeholder);opacity:1}
 .ib-input:hover,.ib-input.is-hover{border-color:var(--ib-dim)}
 .ib-input:focus,.ib-input.is-focus{outline:2px solid var(--ib-action);outline-offset:-1px;border-color:var(--ib-action)}
 .ib-input[aria-invalid="true"],.ib-input.is-invalid{border-color:var(--ib-danger)}
