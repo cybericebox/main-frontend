@@ -7,6 +7,7 @@ import { createPortal } from "react-dom"
 import * as Popover from "@radix-ui/react-popover"
 import DOMPurify from "isomorphic-dompurify"
 import { Bell, ChevronLeft, X } from "lucide-react"
+import { BrandLoading } from "@/components/site/BrandLoading"
 
 import { apiGet, apiPatch } from "@/api/client"
 import { t } from "@/i18n/t"
@@ -277,7 +278,7 @@ export function InboxButton() {
           {safeHref(active.Link ?? "") && <a className="mt-4 inline-block text-sm font-medium text-action hover:underline" href={safeHref(active.Link ?? "")!}>{t("inbox.open")}</a>}
         </section> : <>
           <div ref={scrollAreaRef} className="min-h-0 overflow-y-auto">
-            {loading ? <p className="p-4 text-sm text-dim">{t("common.loading")}</p> : items.length === 0 ? <EmptyInbox /> : <ul className="divide-y divide-line">{items.map((item, index) => <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined}><button type="button" onClick={() => void openMessage(item)} className="flex w-full flex-col gap-1 px-4 py-3 text-left text-sm hover:bg-hover focus-visible:outline-2 focus-visible:outline-action"><span className="flex w-full items-center gap-2"><span className={`min-w-0 flex-1 truncate ${item.ReadAt ? "" : "font-semibold"}`}>{item.Title}</span>{!item.ReadAt && <span aria-label={t("inbox.unreadItem")} className="h-2 w-2 shrink-0 rounded-full bg-action" />}</span><time className="text-xs text-dim" dateTime={item.CreatedAt}>{new Date(item.CreatedAt).toLocaleString("uk-UA")}</time></button></li>)}</ul>}
+            {loading ? <BrandLoading label={t("common.loading")} /> : items.length === 0 ? <EmptyInbox /> : <ul className="divide-y divide-line">{items.map((item, index) => <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined}><button type="button" onClick={() => void openMessage(item)} className="flex w-full flex-col gap-1 px-4 py-3 text-left text-sm hover:bg-hover focus-visible:outline-2 focus-visible:outline-action"><span className="flex w-full items-center gap-2"><span className={`min-w-0 flex-1 truncate ${item.ReadAt ? "" : "font-semibold"}`}>{item.Title}</span>{!item.ReadAt && <span aria-label={t("inbox.unreadItem")} className="h-2 w-2 shrink-0 rounded-full bg-action" />}</span><time className="text-xs text-dim" dateTime={item.CreatedAt}>{new Date(item.CreatedAt).toLocaleString("uk-UA")}</time></button></li>)}</ul>}
             {loadingOlder && <p role="status" className="px-4 py-3 text-center text-xs text-dim">{t("common.loading")}</p>}
           </div>
         </>}

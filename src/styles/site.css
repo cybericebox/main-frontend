@@ -5,6 +5,15 @@
 html{scroll-padding-top:calc(var(--ib-16) + var(--ib-2))}
 body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:hidden}
 
+/* One loading pattern across the site: centered logo and quiet pulse.
+   Captions appear only for meaningful multi-step progress. */
+.site-loading{display:flex;min-height:10rem;flex-direction:column;align-items:center;justify-content:center;gap:var(--ib-3);width:100%;padding:var(--ib-6);text-align:center}
+.site-loading--page{min-height:100dvh;background:var(--ib-paper)}
+.site-loading__logo{width:64px;height:64px;object-fit:contain;animation:site-loading-pulse 1.8s ease-in-out infinite}
+.site-loading__label{color:var(--ib-dim);font-size:var(--ib-fs-13)}
+@keyframes site-loading-pulse{50%{opacity:.45;transform:scale(.94)}}
+@media(prefers-reduced-motion:reduce){.site-loading__logo{animation:none}}
+
 /* navbar actions slot: reserves the «Увійти» width so nothing shifts when the API answers */
 .site-nav-slot{display:flex;align-items:center;justify-content:flex-end;gap:var(--ib-2);min-width:88px;min-height:var(--ib-control-h-lg)}
 
