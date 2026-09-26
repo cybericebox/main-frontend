@@ -13,7 +13,7 @@ import { landingLinks } from "./sections"
 
 // Platform navbar. Actions depend on the API probe (lib/useApi): absent while
 // pending/down (their slot keeps its width), «Увійти» for anonymous visitors,
-// the avatar menu for signed-in users (+ «Адмінпанель» for admin-tier).
+// the avatar menu for signed-in users (+ «Адміністрування» for admin-tier).
 export function SiteHeader({ home }: { home: boolean }) {
   const { status, me } = useApi()
   const up = status === "up"

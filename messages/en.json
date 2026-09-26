@@ -136,7 +136,7 @@
   "profile.displayName": "Display name",
   "profile.avatar": "Avatar",
   "nav.profile": "Profile",
-  "nav.admin": "Admin panel",
+  "nav.admin": "Administration",
   "nav.settings": "Settings",
   "nav.signOut": "Sign out",
   "error.notFound": "Page not found",
