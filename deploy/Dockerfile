@@ -1,7 +1,8 @@
 # main-frontend — static export, served by nginx. NEXT_PUBLIC_* are baked as
 # placeholders (= variable names) and substituted at container start by the
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
-# Build with: docker build -f deploy/Dockerfile --build-arg NEXT_PUBLIC_WARMUP_FLAG='ICE{…}' .
+# Build with: docker build -f deploy/Dockerfile .
+# Run with:   -e NEXT_PUBLIC_DOMAIN=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] -e WARMUP_FLAG='ICE{…}'
 FROM node:26-alpine AS build
 WORKDIR /app
 COPY package*.json ./
@@ -9,11 +10,10 @@ RUN npm ci
 COPY . .
 
 ENV NEXT_PUBLIC_DOMAIN="NEXT_PUBLIC_DOMAIN"
-# Warm-up flag: build stage only (hashed + base64 hint file by scripts/warmup.mjs); the nginx
-# stage below copies just out/, so the plaintext is not in the final image.
-ARG NEXT_PUBLIC_WARMUP_FLAG
-ENV NEXT_PUBLIC_WARMUP_FLAG=$NEXT_PUBLIC_WARMUP_FLAG
-RUN test -n "$NEXT_PUBLIC_WARMUP_FLAG" || (echo "NEXT_PUBLIC_WARMUP_FLAG build arg is required" && exit 1)
+ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="NEXT_PUBLIC_GOOGLE_ANALYTICS_ID"
+# Warm-up flag is NOT a build input here: the build bakes a hash placeholder and the entrypoint
+# derives the hash + hint file from WARMUP_FLAG at container start (see scripts/warmup.mjs).
+ENV WARMUP_PLACEHOLDER=1
 RUN npm run build
 
 FROM nginx:1.30.5-alpine AS runner

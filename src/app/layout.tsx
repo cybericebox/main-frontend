@@ -39,7 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
                 <ApiProvider>{children}</ApiProvider>
-                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
+                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />}
             </body>
         </html>
     );
