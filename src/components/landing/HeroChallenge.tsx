@@ -32,8 +32,7 @@ const RANK = { place: 13, points: 100, flags: 1 }
 const TOTAL = 43
 const SOLVED_BEFORE = 3
 
-const RAW_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
-const DOMAIN = RAW_DOMAIN && RAW_DOMAIN !== "NEXT_PUBLIC_DOMAIN" ? RAW_DOMAIN : "cybericebox.app"
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "cybericebox.app"
 /* display text of the window address: this year's event on the current host (not a link) */
 const eventHost = (year: number, host: string) => "ctf" + year + "." + host.replace(/^www\./, "") + "/challenges"
 const SSR_URL = eventHost(new Date().getFullYear(), DOMAIN)
