@@ -49,7 +49,7 @@ test.describe("static landing — API down", () => {
     expect(html).toContain("<!-- розминка: robots.txt -->")
     expect(html).not.toMatch(/ICE\{(?!…)[^}]+\}/)
     const robots = await (await request.get("/robots.txt")).text()
-    const hintPath = robots.match(/Disallow:\s*(\/\.well-known\/ice\/\S+)/)?.[1]
+    const hintPath = robots.match(/(\/\.well-known\/ice\/\S+)/)?.[1] // hint line: "# Розминка: /.well-known/ice/…"
     expect(hintPath).toBeTruthy()
     const FLAG = Buffer.from((await (await request.get(hintPath!)).text()).trim(), "base64").toString("utf8")
     expect(FLAG).toMatch(/^ICE\{[^}]+\}$/)
@@ -78,7 +78,7 @@ test.describe("static landing — API down", () => {
     // no registration offer; the API is down in the static run, so no «Увійти» either — only «Закрити»
     await expect(dialog.getByRole("link", { name: "Зареєструватися" })).toHaveCount(0)
     await expect(dialog.getByRole("link", { name: "Увійти" })).toHaveCount(0)
-    await expect(dialog.getByRole("button", { name: "Закрити" })).toBeVisible()
+    await expect(dialog.getByText("Закрити", { exact: true })).toBeVisible() // text button; the icon close shares the name
     await page.keyboard.press("Escape")
     await expect(dialog).toBeHidden()
     await expect(page.getByRole("button", { name: "Розминку пройдено" })).toBeVisible()
