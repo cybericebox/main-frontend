@@ -11,7 +11,6 @@ import { BrandLoading } from "@/components/site/BrandLoading"
 
 import { apiGet, apiPatch } from "@/api/client"
 import { t } from "@/i18n/t"
-import { onServiceRestored } from "@/lib/serviceStatus"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 
 type Message = {
@@ -176,7 +175,6 @@ export function InboxButton() {
     }
     const pollWhenVisible = () => { if (document.visibilityState !== "hidden") void poll() }
     void poll()
-    const unsubscribe = onServiceRestored(pollWhenVisible)
     const timer = window.setInterval(pollWhenVisible, 8_000)
     document.addEventListener("visibilitychange", pollWhenVisible)
     window.addEventListener("focus", pollWhenVisible)
@@ -184,7 +182,6 @@ export function InboxButton() {
     window.addEventListener("storage", onStorage)
     return () => {
       active = false
-      unsubscribe()
       window.clearInterval(timer)
       document.removeEventListener("visibilitychange", pollWhenVisible)
       window.removeEventListener("focus", pollWhenVisible)

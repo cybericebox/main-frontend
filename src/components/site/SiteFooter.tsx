@@ -1,6 +1,6 @@
 import { Footer } from "@/components/ib/Footer"
 import { t } from "@/i18n/t"
-import { SOURCE_URL, SUPPORT_EMAIL } from "@/lib/links"
+import { SOURCE_URL, CONTACT_EMAIL } from "@/lib/links"
 import { landingLinks } from "./sections"
 
 export function SiteFooter({ home }: { home: boolean }) {
@@ -13,7 +13,7 @@ export function SiteFooter({ home }: { home: boolean }) {
         { href: SOURCE_URL, label: t("landing.footer.github"), external: true },
         { href: "/privacy", label: t("landing.footer.privacy") },
         { href: "/terms", label: t("landing.footer.terms") },
-        { href: `mailto:${SUPPORT_EMAIL}`, label: SUPPORT_EMAIL },
+        { href: `mailto:${CONTACT_EMAIL}`, label: CONTACT_EMAIL },
       ]}
     />
   )

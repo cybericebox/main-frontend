@@ -7,8 +7,11 @@ const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
 // Current platform domain (for illustrative in-product URLs on the landing).
 export const PLATFORM_DOMAIN = DOMAIN || "cybericebox.app"
           
-// Support mailbox on the platform domain (footer on every page, legal pages).
-export const SUPPORT_EMAIL = `support@${PLATFORM_DOMAIN}`
+// Public contact mailbox (footer on every page).
+export const CONTACT_EMAIL = `contact@${PLATFORM_DOMAIN}`
+
+// Privacy / legal questions mailbox (legal pages).
+export const PRIVACY_EMAIL = `privacy@${PLATFORM_DOMAIN}`
 
 export const API_ORIGIN = `https://api.${DOMAIN}`
 

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { t } from "@/i18n/t"
 import { nbsp } from "@/i18n/typo"
-import { SUPPORT_EMAIL } from "@/lib/links"
+import { PRIVACY_EMAIL } from "@/lib/links"
 import "@/styles/ds/components/toc.css"
 import "@/styles/legal.css"
 
@@ -53,7 +53,7 @@ export function LegalPage({
             </section>
           ))}
           <p className="lg-doc__contact">
-            {t("legal.questions")} <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+            {t("legal.questions")} <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>
           </p>
         </div>
       </div>

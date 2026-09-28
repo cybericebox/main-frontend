@@ -6,7 +6,6 @@ import { GoogleAnalytics } from "@next/third-parties/google"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
-import { ServiceStatusGate } from "@/components/ServiceStatusGate"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
     },
 };
 
-// Root layout — HTML shell, theme boot, API probe. Navbar/Footer come
+// Root layout — HTML shell, theme boot, API probe (optional: the landing renders without the API). Navbar/Footer come
 // from the route-group layouts ((main) landing, (legal) documents).
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
@@ -39,7 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </head>
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
-                <ApiProvider><ServiceStatusGate />{children}</ApiProvider>
+                <ApiProvider>{children}</ApiProvider>
                 <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
             </body>
         </html>
