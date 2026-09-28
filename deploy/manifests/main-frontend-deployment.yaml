@@ -31,6 +31,32 @@ spec:
                 configMapKeyRef:
                   name: main-frontend-config
                   key: DOMAIN
+            - name: NEXT_PUBLIC_API_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: API_DOMAIN
+            - name: NEXT_PUBLIC_ID_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: ID_DOMAIN
+            - name: NEXT_PUBLIC_ADMIN_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: ADMIN_DOMAIN
+            - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: GOOGLE_ANALYTICS_ID
+            - name: WARMUP_FLAG
+              valueFrom:
+                secretKeyRef:
+                  name: main-frontend-secret
+                  key: WARMUP_FLAG
+                  optional: true
           ports:
             - containerPort: 3000
               protocol: TCP
