@@ -1,0 +1,85 @@
+/* HeroChallenge — the event app window (challenges board) and the «Розминка» challenge card that opens
+   over it (closed by default). DS tokens only (light = light surfaces,
+   dark = dark surfaces), no shadows. */
+
+.hc{--hc-tile:var(--ib-surface);--hc-chip:var(--ib-paper);--hc-card-line:color-mix(in srgb,var(--ib-brand) 22%,var(--ib-line));
+  position:relative;min-width:0}
+[data-theme="dark"] .hc{--hc-tile:var(--ib-raised);--hc-chip:var(--ib-raised);--hc-card-line:var(--ib-control)}
+
+/* window: 80px into the column, 820px wide (bleeds off the right edge on narrower screens, never stretches);
+   FIXED height: bar + board head + chips + exactly 2 rows of tiles. --hc-rows-top = where the first tile row starts. */
+.hc{--hc-rows-top:136px;--hc-tile-h:92px;--hc-rows:2}
+.hc-win{display:grid;grid-template-rows:34px 1fr;width:820px;margin-left:80px;overflow:hidden;
+  height:calc(var(--hc-rows-top) + var(--hc-rows) * var(--hc-tile-h) + (var(--hc-rows) - 1) * 10px + 20px);
+  border:1px solid var(--ib-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink)}
+.hc-win__bar{display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--ib-paper);border-bottom:1px solid var(--ib-line)}
+.hc-win__bar i{width:10px;height:10px;border-radius:50%;background:var(--ib-line)}
+.hc-win__bar span{margin-left:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:12px var(--ib-mono);color:var(--ib-faint)}
+
+.hc-board{display:grid;grid-template-rows:28px 26px auto;align-content:start;gap:14px;padding:20px 22px}   /* 34 + 20 + 28 + 14 + 26 + 14 = --hc-rows-top */
+.hc-board__head{display:flex;align-items:baseline;gap:16px;height:28px}   /* counter next to the title: the window bleeds off the right edge */
+.hc-board__head h3{margin:0;font-size:20px;font-weight:650;letter-spacing:-.02em}
+.hc-board__head>span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
+.hc-board__cats{display:flex;gap:6px;height:26px;overflow:hidden}
+.hc-board__cats b{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--ib-r);background:var(--hc-chip);font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
+.hc-board__cats b.is-on{background:var(--ib-action);color:var(--ib-on-action)}
+
+.hc-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hc-tile{display:flex;flex-direction:column;justify-content:space-between;min-width:0;height:var(--hc-tile-h);padding:12px;
+  border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);background:var(--hc-tile)}
+.hc-tile small{font-size:11px;color:var(--ib-faint)}
+.hc-tile b{font-size:var(--ib-fs-13);font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-tile .ib-num{display:inline-flex;align-items:center;gap:4px;font-size:var(--ib-fs-13);font-weight:600}
+.hc-tile svg{width:13px;height:13px;flex:none;fill:none;stroke:var(--ib-ok);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hc-tile.is-solved{background:var(--ib-solved);color:var(--ib-dim)}
+.hc-tile.is-warm{border:2px solid var(--ib-action);padding:11px}
+
+/* the «Розминка» tile is a real button: it opens the card */
+button.hc-tile{font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color var(--ib-dur-fast) var(--ib-ease)}
+button.hc-tile:hover{border-color:var(--ib-action-hover)}
+button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
+
+/* the opened challenge: a non-blocking card OVER the window (never in the flow), centred over the tiles,
+   its top on the first tile row; it may extend below the window */
+.hc-card{position:absolute;top:var(--hc-rows-top);left:min(230px,calc(100% - 544px));z-index:1;width:520px;overflow:hidden;
+  border:1px solid var(--hc-card-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink);
+  animation:hc-in 150ms var(--ib-ease)}
+@keyframes hc-in{from{opacity:0;scale:.98}to{opacity:1;scale:1}}   /* `scale`, not transform: the stacked layout centres with translate */
+.hc-card:focus{outline:none}
+.hc-card__head{display:flex;align-items:flex-start;gap:12px;padding:20px 14px 0 22px}
+.hc-card__head>div{flex:1;min-width:0}
+.hc-card__head small{display:block;font-size:var(--ib-fs-12);color:var(--ib-faint)}
+.hc-card__head h2{margin:2px 0 0;font-size:22px;font-weight:650;letter-spacing:-.02em;line-height:1.2}
+.hc-card__pts{flex:none;margin:0;text-align:right}
+.hc-card__pts b{display:block;font-size:22px;font-weight:600}
+.hc-card__pts span{font-size:11px;color:var(--ib-faint)}
+.hc-card__pts,.hc-card__done{min-height:52px}   /* same height in both states */
+.hc-card__done{display:inline-flex;align-items:flex-start;gap:6px;flex:none;margin:4px 0 0;font-size:var(--ib-fs-14);font-weight:600;color:var(--ib-ok)}
+.hc-card__done svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hc-card__close{flex:none;margin-top:-4px}
+
+.hc-card__body{display:grid;gap:14px;padding:14px 22px 18px;font-size:var(--ib-fs-14)}
+.hc-card__body>p:first-child{margin:0;color:var(--ib-dim);line-height:var(--ib-lh-body)}
+.hc-card__body code{padding:1px 6px;border-radius:var(--ib-r-sm);background:var(--hc-chip);font:13px var(--ib-mono);color:var(--ib-ink)}
+.hc-card__kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;padding-top:12px;border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
+.hc-card__kv dt{color:var(--ib-faint)}
+.hc-card__kv dd{margin:0}
+.hc-card__form{display:flex;gap:8px}
+.hc-card__form .ib-input{flex:1;min-width:0;height:44px;font-size:15px}
+.hc-card__form .ib-btn{height:44px;padding:0 18px}
+.hc-card__msg{min-height:20px;margin:-6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
+.hc-card__msg.is-error{color:var(--ib-danger)}
+
+/* stacked: the window sits in the page gutter (no bleed); the card is centred over it */
+@media (max-width:980px){
+  .hc-win{width:100%;margin:0}
+  .hc-card{left:50%;width:min(520px,calc(100% - 24px));transform:translateX(-50%)}
+}
+/* phone: 2 columns × 4 rows — the window is tall enough to hold the card over it */
+@media (max-width:640px){
+  .hc{--hc-rows:4;--hc-rows-top:132px}
+  .hc-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hc-board{padding:16px 14px 18px}
+  .hc-card__head{padding-left:16px}
+  .hc-card__body{padding-left:16px;padding-right:16px}
+}

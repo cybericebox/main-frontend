@@ -3,6 +3,7 @@ name: Build for develop test
 on:
   push:
     branches: [ "develop" ]
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -25,6 +26,7 @@ jobs:
         with:
           context: .
           file: deploy/Dockerfile
+          # warm-up flag is a runtime env (WARMUP_FLAG), not a build input
           push: true
           platforms: linux/amd64
           tags: |

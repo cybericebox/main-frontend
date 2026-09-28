@@ -29,3 +29,24 @@ npm-debug.log*
 next-env.d.ts
 
 certificates
+/.idea
+# brainstorm visual companion
+.superpowers/
+
+# warm-up flag artifacts (scripts/warmup.mjs, generated at build time)
+/src/lib/warmup.generated.ts
+/public/.well-known/ice/
+/test-results/
+/playwright-report/
+
+# Local-only documentation and agent state
+/README.md
+/docs/
+/AGENTS.md
+/CLAUDE.md
+/RTK.md
+/.claude/
+/.codex/
+/.agents/
+/graphify-out/
+/.graphify/

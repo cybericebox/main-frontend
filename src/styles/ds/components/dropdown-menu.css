@@ -1,0 +1,44 @@
+/* copied from ds-v2 2026-09-24 */
+/* Dropdown menu — overlay list of actions (avatar menu «Профіль / Вийти», table row actions «…»).
+   <div class="ib-dropdown" data-ib-dropdown>
+     <button class="ib-avatar-btn | ib-icon-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="m1">…</button>
+     <div class="ib-menu" role="menu" id="m1" hidden>
+       <div class="ib-menu__head"><b>Олена Коваль</b><span>olena@nure.ua</span></div>
+       <button class="ib-menu__item" role="menuitem"><svg/>Профіль</button>
+       <hr class="ib-menu__sep">
+       <button class="ib-menu__item ib-menu__item--danger" role="menuitem">Видалити</button></div></div>
+   Overlay: raised fill, hairline, radius 8, --ib-shadow-overlay (allowed). --end aligns the menu to the trigger's right edge,
+   --up opens above. .is-static renders it in flow (previews). JS: IB.Dropdown. */
+
+.ib-dropdown{position:relative;display:inline-flex}
+.ib-menu{position:absolute;z-index:60;top:calc(100% + 4px);left:0;min-width:200px;max-width:320px;padding:var(--ib-1);
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--ib-raised);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);box-shadow:var(--ib-shadow-overlay);
+  animation:ib-menu-in var(--ib-dur) var(--ib-ease)}
+.ib-menu[hidden]{display:none}
+.ib-dropdown--end>.ib-menu{left:auto;right:0}
+.ib-dropdown--up>.ib-menu{top:auto;bottom:calc(100% + 4px)}
+.ib-menu.is-static{position:relative;top:auto;left:auto;animation:none}
+@keyframes ib-menu-in{from{opacity:0}to{opacity:1}}
+
+.ib-menu__head{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px;margin:0 -4px 4px;border-bottom:1px solid var(--ib-line);min-width:0}
+.ib-menu__head b{color:var(--ib-ink);font-weight:var(--ib-w-semibold);font-size:var(--ib-fs-14);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib-menu__head span{color:var(--ib-dim);font-size:var(--ib-fs-12);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib-menu__label{padding:6px 10px 2px;font-size:var(--ib-fs-12);color:var(--ib-dim)}
+
+.ib-menu__item{display:flex;align-items:center;gap:10px;width:100%;height:var(--ib-control-h);padding:0 10px;
+  border:0;border-radius:var(--ib-r-sm);background:transparent;color:var(--ib-ink);text-align:left;text-decoration:none;
+  font:var(--ib-w-regular) var(--ib-fs-14)/1 var(--ib-font);cursor:pointer;white-space:nowrap}
+.ib-menu__item>svg{width:16px;height:16px;flex:none;color:var(--ib-dim);stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ib-menu__item:hover,.ib-menu__item:focus,.ib-menu__item.is-hover{background:var(--ib-soft);outline:none;text-decoration:none}
+.ib-menu__item:hover>svg,.ib-menu__item:focus>svg,.ib-menu__item.is-hover>svg{color:var(--ib-ink)}
+.ib-menu__item:focus-visible,.ib-menu__item.is-focus{outline:2px solid var(--ib-action);outline-offset:-2px}
+.ib-menu__item .ib-kbd,.ib-menu__item .ib-num{margin-left:auto}
+.ib-menu__item .ib-num{color:var(--ib-dim);font-size:var(--ib-fs-12)}
+.ib-menu__item[aria-checked="true"]{font-weight:var(--ib-w-semibold)}
+.ib-menu__item--danger,.ib-menu__item--danger>svg{color:var(--ib-danger)}
+.ib-menu__item--danger:hover,.ib-menu__item--danger:focus,.ib-menu__item--danger.is-hover{background:var(--ib-danger-bg)}
+.ib-menu__item--danger:hover>svg,.ib-menu__item--danger:focus>svg,.ib-menu__item--danger.is-hover>svg{color:var(--ib-danger)}
+.ib-menu__item:disabled,.ib-menu__item[aria-disabled="true"]{color:var(--ib-faint);cursor:not-allowed;background:none}
+.ib-menu__item:disabled>svg,.ib-menu__item[aria-disabled="true"]>svg{color:var(--ib-faint)}
+.ib-menu__sep{height:1px;border:0;margin:4px -4px;background:var(--ib-line)}

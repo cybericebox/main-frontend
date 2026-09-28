@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+.git
+.env*
+Dockerfile
+.dockerignore
+src/lib/warmup.generated.ts
+public/.well-known/ice

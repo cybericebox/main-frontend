@@ -1,9 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: config
+  name: main-frontend-config
   namespace: cybericebox
 data:
-  RECAPTCHA_SITE_KEY: "recaptcha-site-key"
   DOMAIN: "cybericebox.com"
-

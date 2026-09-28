@@ -1,0 +1,10 @@
+/* Native <dialog> host for the ds-v2 .ib-modal (showModal gives the top layer, focus trap and Esc).
+   The ds backdrop div is replaced by ::backdrop; no drop shadow — the backdrop separates it. Tokens only. */
+dialog.ib-modal{padding:0;margin:auto;max-height:calc(100dvh - var(--ib-8));box-shadow:none;overflow:hidden}
+dialog.ib-modal:not([open]){display:none}
+dialog.ib-modal::backdrop{background:var(--ib-backdrop)}
+/* no body: keep the head off the footer rule */
+dialog.ib-modal .ib-modal__head:has(+ .ib-modal__foot){padding-bottom:var(--ib-5)}
+@media (max-width:480px){
+  dialog.ib-modal{margin:auto var(--ib-2) var(--ib-2);width:auto;max-width:none}
+}

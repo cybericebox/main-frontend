@@ -1,2 +1,3 @@
 User-agent: *
-Allow: *
+Allow: /
+# Розминка: /.well-known/ice/warmup.txt

@@ -1,0 +1,28 @@
+/* copied from ds-v2 2026-09-24 */
+/* Avatar — initials only (no photos yet). Sizes 24 / 32 (default) / 40.
+   .ib-avatar           person: circle, brand fill, white initials (15.7:1 both themes)
+   .ib-avatar--mass     on brand mass (tower, band): --ib-mass-btn fill, brand initials
+   .ib-avatar--team     team: square radius 6, soft fill, ink initials (team ≠ person at a glance)
+   .ib-avatar-btn       button wrapper for the avatar menu trigger (see dropdown-menu).
+   Always give text: aria-hidden on the avatar + visible name next to it, or role="img" aria-label="Олена Коваль". */
+
+.ib-avatar{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;border-radius:50%;
+  background:var(--ib-brand);color:var(--ib-on-brand);font:var(--ib-w-semibold) var(--ib-fs-12)/1 var(--ib-font);letter-spacing:.01em;user-select:none;overflow:hidden}
+.ib-avatar--24{width:24px;height:24px;font-size:10px}
+.ib-avatar--40{width:40px;height:40px;font-size:var(--ib-fs-14)}
+.ib-avatar--mass{background:var(--ib-mass-btn);color:var(--ib-brand)}
+.ib-avatar--team{border-radius:var(--ib-r);background:var(--ib-soft);color:var(--ib-ink)}
+.ib-avatar--team.ib-avatar--24{border-radius:var(--ib-r-sm)}
+
+.ib-avatar-btn{display:inline-flex;align-items:center;gap:var(--ib-2);padding:4px 8px 4px 4px;border:0;border-radius:var(--ib-r);
+  background:transparent;color:var(--ib-ink);font:var(--ib-w-medium) var(--ib-fs-13)/1.2 var(--ib-font);cursor:pointer;text-align:left;
+  transition:background-color var(--ib-dur-fast) var(--ib-ease)}
+.ib-avatar-btn:hover,.ib-avatar-btn.is-hover,.ib-avatar-btn[aria-expanded="true"]{background:color-mix(in srgb,var(--ib-ink) 6%,transparent)}
+.ib-avatar-btn:focus-visible,.ib-avatar-btn.is-focus{outline:2px solid var(--ib-action);outline-offset:2px}
+.ib-avatar-btn>svg{width:14px;height:14px;color:var(--ib-dim);stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib-avatar-btn small{display:block;color:var(--ib-dim);font-size:var(--ib-fs-12);font-weight:var(--ib-w-regular)}
+.ib-mass .ib-avatar-btn{color:var(--ib-on-brand)}
+.ib-mass .ib-avatar-btn small,.ib-mass .ib-avatar-btn>svg{color:var(--ib-on-brand-3)}
+.ib-mass .ib-avatar-btn:hover,.ib-mass .ib-avatar-btn.is-hover,.ib-mass .ib-avatar-btn[aria-expanded="true"]{background:var(--ib-brand-hover)}
+.ib-mass .ib-avatar-btn:focus-visible,.ib-mass .ib-avatar-btn.is-focus{outline-color:var(--ib-on-brand)}
+
