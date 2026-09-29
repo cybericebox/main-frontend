@@ -7,14 +7,18 @@ const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
 // Current platform domain (for illustrative in-product URLs on the landing).
 export const PLATFORM_DOMAIN = DOMAIN || "cybericebox.app"
           
+// The project team's mailboxes live on cybericebox.com whatever domain this build is deployed to
+// (dev/staging domains have no mailboxes).
+const MAIL_DOMAIN = "cybericebox.com"
+
 // Public contact mailbox (footer on every page).
-export const CONTACT_EMAIL = `contact@${PLATFORM_DOMAIN}`
+export const CONTACT_EMAIL = `contact@${MAIL_DOMAIN}`
 
 // Privacy / legal questions mailbox (legal pages).
-export const PRIVACY_EMAIL = `privacy@${PLATFORM_DOMAIN}`
+export const PRIVACY_EMAIL = `privacy@${MAIL_DOMAIN}`
 
 // Vulnerability reports (Terms responsible-disclosure clause, /.well-known/security.txt).
-export const SECURITY_EMAIL = `security@${PLATFORM_DOMAIN}`
+export const SECURITY_EMAIL = `security@${MAIL_DOMAIN}`
 
 export const API_ORIGIN = `https://${process.env.NEXT_PUBLIC_API_DOMAIN || `api.${DOMAIN}`}`
 
