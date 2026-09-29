@@ -40,7 +40,6 @@ certificates
 /playwright-report/
 
 # Local-only documentation and agent state
-/README.md
 /docs/
 /AGENTS.md
 /CLAUDE.md
