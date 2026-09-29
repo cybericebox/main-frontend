@@ -62,6 +62,14 @@ test("a resolved request is read and not open", () => {
   assert.equal(inbox.isOpenRequest(item("p", { Category: "personal" })), false)
 })
 
+test("bell and resolver name", () => {
+  assert.equal(inbox.bellCount(3, null), 3)
+  assert.equal(inbox.bellCount(3, { all: 5, requests: 2, personal: 3, activity: 0 }), 5)
+  assert.equal(inbox.resolverName(item("a", { ResolvedBy: { ID: "u", Name: " Іван П. " } })), "Іван П.")
+  assert.equal(inbox.resolverName(item("b", { ResolvedBy: "u", ResolvedByName: "Іван П." })), "Іван П.")
+  assert.equal(inbox.resolverName(item("c", { ResolvedBy: null })), "")
+})
+
 test("tab membership", () => {
   assert.equal(inbox.inTab(item("x"), "all"), true)
   assert.equal(inbox.inTab(item("x"), "personal"), false)
@@ -71,10 +79,11 @@ test("tab membership", () => {
 test("optimistic counts", () => {
   const counts = { all: 5, requests: 2, personal: 3, activity: 2 }
   assert.deepEqual(inbox.countsAfterRead(counts, item("p", { Category: "personal" })), { all: 4, requests: 2, personal: 2, activity: 2 })
-  assert.deepEqual(inbox.countsAfterRead(counts, item("q", { Category: "requests" })), { all: 4, requests: 2, personal: 3, activity: 2 })
+  // An open request stays in All and Requests until it is resolved.
+  assert.deepEqual(inbox.countsAfterRead(counts, item("q", { Category: "requests" })), counts)
   assert.deepEqual(inbox.countsAfterRead(counts, item("x", { ReadAt: "2026-09-29T10:00:00Z", Category: "personal" })), counts)
   assert.deepEqual(inbox.countsAfterReadAll(counts, "personal"), { all: 2, requests: 2, personal: 0, activity: 2 })
-  assert.deepEqual(inbox.countsAfterReadAll(counts, "all"), { all: 0, requests: 2, personal: 0, activity: 0 })
+  assert.deepEqual(inbox.countsAfterReadAll(counts, "all"), { all: 2, requests: 2, personal: 0, activity: 0 })
   assert.deepEqual(inbox.countsAfterReadAll(counts, "requests"), counts)
 })
 

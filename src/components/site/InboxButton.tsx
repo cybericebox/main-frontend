@@ -19,7 +19,7 @@ import { NotificationMessageCard } from "./NotificationMessageCard"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 import {
   INBOX_TABS, countsAfterRead, countsAfterReadAll, formatInboxTime, inTab, inboxQuery, isUnread, orderForTab,
-  parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab,
+  bellCount, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
   type InboxCounts, type InboxDefaultTab, type InboxMessage as Message, type InboxTab,
 } from "./inboxModel"
 
@@ -53,7 +53,7 @@ function safeHref(value: string): string | null {
 }
 
 function resolvedLine(item: Message): string {
-  const name = item.ResolvedBy?.Name?.trim() ?? ""
+  const name = resolverName(item)
   return t(resolutionKey(item.Resolution, name !== ""), { name, time: formatInboxTime(item.ResolvedAt ?? "") })
 }
 
@@ -250,9 +250,10 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     openInbox(true)
   }, [openInbox])
 
-  const label = unread ? t("inbox.titleUnread", { count: unread }) : t("inbox.title")
+  const badge = bellCount(unread, counts)
+  const label = badge ? t("inbox.titleUnread", { count: badge }) : t("inbox.title")
   const tabs = counts ? INBOX_TABS : []
-  const tabHasUnread = counts && tab !== "requests" ? counts[tab] > 0 : tab === "all" ? unread > 0 || items.some(isUnread) : items.some(isUnread)
+  const tabHasUnread = items.some(isUnread) || (tab === "all" ? unread > 0 : tab !== "requests" && (counts?.[tab] ?? 0) > 0)
 
   function announceRead() {
     try {
@@ -312,7 +313,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     <Popover.Trigger asChild>
       <button type="button" aria-label={label} className="relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-dim hover:bg-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-action">
         <Icon name="bell" size={20} />
-        {unread > 0 && <span className="absolute -right-1 -top-1 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-action px-0.5 text-[10px] font-semibold leading-none text-on-action">{unread > 99 ? "99+" : unread}</span>}
+        {badge > 0 && <span className="absolute -right-1 -top-1 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-action px-0.5 text-[10px] font-semibold leading-none text-on-action">{badge > 99 ? "99+" : badge}</span>}
       </button>
     </Popover.Trigger>
     <Popover.Portal>

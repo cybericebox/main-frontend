@@ -35,7 +35,9 @@ export type InboxMessage = {
   ActionRequired?: boolean | null
   ResolvedAt?: string | null
   Resolution?: string | null
-  ResolvedBy?: { ID: string; Name: string } | null
+  // {ID, Name}, or (domain shape) the resolver's ID with ResolvedByName beside it.
+  ResolvedBy?: { ID: string; Name?: string | null } | string | null
+  ResolvedByName?: string | null
 }
 
 /** Categories are on when the poll carries a Counts object (older backends omit it). */
@@ -84,9 +86,22 @@ export function orderForTab(items: InboxMessage[], tab: InboxTab): InboxMessage[
   return [...items.filter((item) => !item.ResolvedAt), ...items.filter((item) => item.ResolvedAt)]
 }
 
-/** Optimistic counts after one item is read locally (the next poll corrects them). */
+/** Who resolved a request; empty for system resolutions. */
+export function resolverName(item: InboxMessage): string {
+  const by = item.ResolvedBy
+  const name = by && typeof by === "object" ? by.Name : item.ResolvedByName
+  return typeof name === "string" ? name.trim() : ""
+}
+
+/** The bell: unread plus open requests (Counts.All); older backends send only UnreadCount. */
+export function bellCount(unread: number, counts: InboxCounts | null): number {
+  return counts ? counts.all : unread
+}
+
+/** Optimistic counts after one item is read locally (the next poll corrects them).
+ *  Counts.All = open requests + unread personal + unread activity. */
 export function countsAfterRead(counts: InboxCounts, item: InboxMessage): InboxCounts {
-  if (!isUnread(item)) return counts
+  if (!isUnread(item) || isOpenRequest(item)) return counts
   const next = { ...counts, all: Math.max(0, counts.all - 1) }
   if (item.Category === "personal" || item.Category === "activity") next[item.Category] = Math.max(0, next[item.Category] - 1)
   return next
@@ -94,7 +109,7 @@ export function countsAfterRead(counts: InboxCounts, item: InboxMessage): InboxC
 
 /** Optimistic counts after «Позначити прочитаним» on a tab; open requests stay open. */
 export function countsAfterReadAll(counts: InboxCounts, tab: InboxTab): InboxCounts {
-  if (tab === "all") return { ...counts, all: 0, personal: 0, activity: 0 }
+  if (tab === "all") return { ...counts, all: counts.requests, personal: 0, activity: 0 }
   if (tab === "requests") return counts
   return { ...counts, all: Math.max(0, counts.all - counts[tab]), [tab]: 0 }
 }
