@@ -46,5 +46,12 @@ body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:hidden}
 .site-404 p{color:var(--ib-dim)}
 .site-404 .ib-btn{margin-top:var(--ib-2)}
 
+/* error boundary (app/error.tsx, app/global-error.tsx): the 404 layout, full height, warning mark, two actions */
+.site-error{min-height:100dvh;background:var(--ib-paper)}
+.site-error .site-404__box{max-width:480px}
+.site-error__mark{width:32px;height:32px;color:var(--ib-danger)}
+.site-error__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--ib-2);margin-top:var(--ib-2)}
+.site-404 .site-error__actions .ib-btn{margin-top:0}
+
 /* navbar avatar trigger: avatar only (no chevron) — round, symmetric hit area */
 .ib-navbar .ib-avatar-btn{padding:4px;border-radius:50%}
