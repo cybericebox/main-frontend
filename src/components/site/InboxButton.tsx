@@ -279,7 +279,7 @@ export function InboxButton() {
               />
             </li>
           })}</ul>}
-          {loadingOlder && <p role="status" className="px-4 py-3 text-center text-xs text-dim">{t("common.loading")}</p>}
+          {loadingOlder && <BrandLoading label={t("common.loading")} />}
         </div>
       </Popover.Content>
     </Popover.Portal>
