@@ -1,49 +1,34 @@
 import type { ReactNode } from "react"
+import Image from "next/image"
 import { ThemeSwitch } from "./ThemeSwitch"
+import { Wordmark } from "./Wordmark"
 import type { NavLink } from "./Navbar"
 import { t, tRich } from "@/i18n/t"
 import "@/styles/ds/components/footer.css"
 
-// ds-v2 platform footer without the brand (the sticky navbar carries it): labelled link columns,
-// then a bar with «© year Cyber ICE Box · ХНУРЕ · За підтримки …» and the theme switch.
+// ds-v2 platform footer: a brand block (crest + wordmark, tagline, contact email, support line)
+// beside labelled link columns, then a bar with «© year Cyber ICE Box · ХНУРЕ» and the theme switch.
 const YEAR = new Date().getFullYear()
 
 export type FooterLink = NavLink & { external?: boolean }
-// `area` names the grid slot (ds footer.css); `extra` ends the list (e.g. a button that reads as a link).
-export type FooterGroup = { area: "platform" | "docs" | "contacts"; title: string; links: FooterLink[]; extra?: ReactNode }
+// `extra` ends the list (e.g. a button that reads as a link).
+export type FooterGroup = { title: string; links: FooterLink[]; extra?: ReactNode }
 
-export function Footer({ groups }: { groups: FooterGroup[] }) {
+export function Footer({ brandHref, email, groups }: { brandHref: string; email: string; groups: FooterGroup[] }) {
   return (
     <footer className="ib-footer">
       <div className="ib-footer__inner">
-        <nav className="ib-footer__cols" aria-label={t("landing.footer.nav")}>
-          {groups.map((g) => (
-            <section key={g.area} className={`ib-footer__col ib-footer__col--${g.area}`}>
-              <h2 className="ib-footer__title">{g.title}</h2>
-              <ul className="ib-footer__links">
-                {g.links.map((l) => (
-                  <li key={l.href}>
-                    {l.external ? (
-                      <a href={l.href} target="_blank" rel="noopener noreferrer">
-                        {l.label}
-                      </a>
-                    ) : (
-                      <a href={l.href}>{l.label}</a>
-                    )}
-                  </li>
-                ))}
-                {g.extra && <li>{g.extra}</li>}
-              </ul>
-            </section>
-          ))}
-        </nav>
-        <div className="ib-footer__bar">
-          <p className="ib-footer__meta">
-            <span className="ib-footer__legal">{t("landing.footer.copyright", { year: YEAR })}</span>
-            <span className="ib-footer__sep" aria-hidden="true">
-              ·
-            </span>
-            <span className="ib-footer__support">
+        <div className="ib-footer__top">
+          <div className="ib-footer__about">
+            <a className="ib-footer__brand" href={brandHref} aria-label={t("landing.nav.home")}>
+              <Image src="/assets/crest-64.webp" alt="" width={32} height={32} />
+              <Wordmark />
+            </a>
+            <p className="ib-footer__tagline">{t("landing.hero.headline")}</p>
+            <a className="ib-footer__email" href={`mailto:${email}`}>
+              {email}
+            </a>
+            <p className="ib-footer__support">
               {tRich("landing.footer.support", {
                 link: (
                   <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer">
@@ -51,7 +36,40 @@ export function Footer({ groups }: { groups: FooterGroup[] }) {
                   </a>
                 ),
               })}
-            </span>
+            </p>
+          </div>
+          <nav className="ib-footer__cols" aria-label={t("landing.footer.nav")}>
+            {groups.map((g) => (
+              <section key={g.title} className="ib-footer__col">
+                <h2 className="ib-footer__title">{g.title}</h2>
+                <ul className="ib-footer__links">
+                  {g.links.map((l) => (
+                    <li key={l.href}>
+                      {l.external ? (
+                        <a href={l.href} target="_blank" rel="noopener noreferrer">
+                          {l.label}
+                        </a>
+                      ) : (
+                        <a href={l.href}>{l.label}</a>
+                      )}
+                    </li>
+                  ))}
+                  {g.extra && <li>{g.extra}</li>}
+                </ul>
+              </section>
+            ))}
+          </nav>
+        </div>
+        <div className="ib-footer__bar">
+          <p className="ib-footer__legal">
+            {tRich("landing.footer.copyright", {
+              year: YEAR,
+              nure: (
+                <a href="https://nure.ua" target="_blank" rel="noopener noreferrer" title={t("landing.footer.nureFull")}>
+                  {t("landing.footer.nure")}
+                </a>
+              ),
+            })}
           </p>
           <ThemeSwitch />
         </div>
