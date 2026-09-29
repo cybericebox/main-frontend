@@ -28,7 +28,6 @@ jobs:
         with:
           context: .
           file: deploy/Dockerfile
-          # warm-up flag is a runtime env (WARMUP_FLAG), not a build input
           push: true
           platforms: linux/amd64
           tags: |
