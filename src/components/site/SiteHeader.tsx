@@ -18,7 +18,7 @@ import { landingLinks } from "./sections"
 const ACCOUNT_ITEMS: Record<AccountLinkKey, { label: string; icon: string }> = {
   profile: { label: "nav.profile", icon: "user" },
   admin: { label: "nav.admin", icon: "settings" },
-  exercises: { label: "nav.exercises", icon: "flag" },
+  exercises: { label: "nav.exercises", icon: "puzzle" },
   main: { label: "nav.home", icon: "home" },
 }
 
