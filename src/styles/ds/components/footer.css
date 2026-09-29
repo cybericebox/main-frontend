@@ -1,8 +1,8 @@
 /* copied from ds-v2 2026-09-24 */
 /* Footer — platform footer (default) and event footer (--event).
    Source: proto/platform3.html (.ft) and proto/event3.html (.lfoot).
-   Platform: brand block + labelled link columns, then a bar: «© 2026 Cyber ICE Box · ХНУРЕ», theme switch right.
-   Event: organizer line + links. Narrow container (<640px): tighter gutters, columns wrap when they cannot sit side by side. */
+   Platform (--mass): credit + contact links, then a bar: © + legal links, theme switch right.
+   Event: organizer line + links. Narrow container (<640px): groups stack. */
 
 .ib-footer{container:ib-footer/inline-size;background:var(--ib-surface);border-top:1px solid var(--ib-line);color:var(--ib-dim);padding-bottom:env(safe-area-inset-bottom)}
 .ib-footer__inner{max-width:1280px;margin:0 auto;padding:0 var(--ib-10)}
@@ -12,43 +12,43 @@
 .ib-footer__brand:hover{text-decoration:none}
 .ib-footer__brand img{width:32px;height:32px;object-fit:contain}
 
-/* platform: brand block (tagline, email, support line) + link columns, then the bar.
-   ≥1024px: brand left, columns right-aligned to the container edge. Below: brand on top, columns under it. */
-.ib-footer__top{display:flex;flex-direction:column;gap:var(--ib-8);padding:var(--ib-10) 0 var(--ib-8)}
-.ib-footer__about{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ib-2);font-size:var(--ib-fs-14);line-height:1.5}
-.ib-footer__about .ib-footer__brand{margin-bottom:var(--ib-1)}
-.ib-footer__tagline{margin:0 0 var(--ib-2);color:var(--ib-dim)}
-.ib-footer__email{color:var(--ib-ink);font-weight:var(--ib-w-regular);white-space:nowrap}
-.ib-footer__email:hover{color:var(--ib-action)}
-.ib-footer__support{margin:0;color:var(--ib-dim);font-size:var(--ib-fs-13)}
-.ib-footer__cols{display:flex;flex-wrap:wrap;gap:var(--ib-6) var(--ib-16)}
-.ib-footer__title{margin:0 0 var(--ib-3);color:var(--ib-ink);font-size:var(--ib-fs-13);font-weight:var(--ib-w-semibold);line-height:1.4}
-.ib-footer__col .ib-footer__links{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ib-2);margin:0;padding:0;list-style:none}
-.ib-footer__links{display:flex;flex-wrap:wrap;gap:var(--ib-2) var(--ib-6)}
-.ib-footer__links a,.ib-footer__links button{color:var(--ib-dim);font-size:var(--ib-fs-14);font-weight:var(--ib-w-regular);line-height:1.5;text-align:left}
-.ib-footer__links a:hover,.ib-footer__links button:hover{color:var(--ib-ink)}
-.ib-footer__col .ib-footer__links :is(a,button){white-space:nowrap}
+/* platform (--mass): the whole footer on the brand mass in both themes, over a faint ice-cube lattice
+   (the id auth panel's texture) that fades out towards the text side.
+   Top: credit «За підтримки кафедри …, ХНУРЕ» + «Написати нам» / GitHub. Bar: © + legal links, theme switch right. */
+.ib-footer--mass{position:relative;isolation:isolate;overflow-x:clip;background:var(--ib-brand);border-top:0;color:var(--ib-on-brand-2);font-size:var(--ib-fs-13);line-height:1.5}
+.ib-footer--mass::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url(/assets/ice-cubes.svg) repeat;opacity:.1;
+  -webkit-mask-image:linear-gradient(100deg,transparent 30%,#000 90%);mask-image:linear-gradient(100deg,transparent 30%,#000 90%)}
+.ib-footer__top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--ib-4) var(--ib-8);padding:var(--ib-10) 0 var(--ib-8)}
+.ib-footer__credit{margin:0;color:var(--ib-on-brand-2);font-size:var(--ib-fs-16);line-height:1.5}
+.ib-footer__credit .ib-tip{display:inline}
+.ib-footer__credit a,.ib-footer__copy{color:var(--ib-on-brand)}
+.ib-footer__credit a{font-weight:var(--ib-w-medium);text-decoration:none}
+.ib-footer__credit a:hover{color:var(--ib-ice)}
+.ib-footer__links{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ib-2) var(--ib-5);margin:0;padding:0;list-style:none}
+.ib-footer--mass .ib-footer__links a{display:inline-flex;align-items:center;gap:6px;color:var(--ib-on-brand-2);font-size:inherit;font-weight:var(--ib-w-regular);white-space:nowrap;text-decoration:none;
+  transition:color var(--ib-dur-fast) var(--ib-ease)}
+.ib-footer--mass .ib-footer__links a:hover{color:var(--ib-on-brand)}
+.ib-footer__top .ib-footer__links{font-size:var(--ib-fs-14)}
+.ib-footer__links svg{width:16px;height:16px;flex:none}
+.ib-footer--mass a{border-radius:2px}
+.ib-footer--mass a:focus-visible{outline:2px solid var(--ib-on-brand);outline-offset:2px}
+.ib-footer__copy{margin:0;white-space:nowrap}
 
-/* bar: «© 2026 Cyber ICE Box · ХНУРЕ» left, theme switch right */
-.ib-footer__bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--ib-4);padding:var(--ib-5) 0 var(--ib-6);border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
-.ib-footer__bar .ib-theme{flex:none}
-/* the switch sits on the right edge: its last hint opens leftwards, not off-screen */
+.ib-footer__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--ib-3) var(--ib-8);padding:var(--ib-4) 0 var(--ib-5);border-top:1px solid var(--ib-brand-line)}
+/* the legal group wraps inside itself, so the theme switch keeps its place on the right */
+.ib-footer__legal{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:var(--ib-2) var(--ib-8)}
+
+/* theme switch in mass colours */
+.ib-footer--mass .ib-theme{flex:none;border-color:var(--ib-brand-line)}
+.ib-footer--mass .ib-theme__btn{color:var(--ib-on-brand-3)}
+.ib-footer--mass .ib-theme__btn:hover{background:var(--ib-brand-hover);color:var(--ib-on-brand)}
+.ib-footer--mass .ib-theme__btn[aria-checked="true"]{background:var(--ib-brand-active);color:var(--ib-on-brand)}
+.ib-footer--mass .ib-theme__btn:focus-visible{outline-color:var(--ib-on-brand)}
+/* the switch sits on the right edge: its last hint opens leftwards */
 .ib-footer__bar .ib-theme .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
-.ib-footer__legal{margin:0;color:var(--ib-dim)}
-:is(.ib-footer__legal,.ib-footer__support) a{color:var(--ib-ink);font-weight:var(--ib-w-medium);text-decoration:none;white-space:nowrap;border-radius:2px}
-:is(.ib-footer__legal,.ib-footer__support) a:hover{color:var(--ib-ice)}
-:is(.ib-footer__legal,.ib-footer__support) a:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
-/* full-name tooltips on these links: anchored to the text line's start (not the link), so the bubble never
-   leaves the viewport even when the link wraps near the right edge on a phone */
-:is(.ib-footer__legal,.ib-footer__support){position:relative}
-:is(.ib-footer__legal,.ib-footer__support) .ib-tip{position:static;display:inline}
-:is(.ib-footer__legal,.ib-footer__support) .ib-tip>.ib-tip__bubble{max-width:min(320px,calc(100vw - 32px))}
 
-@container ib-footer (min-width: 1024px){
-  .ib-footer__top{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--ib-16);padding:var(--ib-12) 0 var(--ib-10)}
-  .ib-footer__about{max-width:360px}
-  .ib-footer__cols{flex-wrap:nowrap;gap:var(--ib-16) 96px}
-}
+/* hints stay a light surface on the mass, in both themes */
+.ib-footer--mass .ib-tip__bubble{background:#FFFFFF;color:#16152B;border-color:#E4E4EC;max-width:min(320px,calc(100vw - 32px))}
 
 /* event footer: one row, organizer line left, links right */
 .ib-footer--event .ib-footer__inner{max-width:none;padding:0 var(--ib-12)}
@@ -59,14 +59,20 @@
 
 @container ib-footer (max-width: 639px){
   .ib-footer__inner,.ib-footer--event .ib-footer__inner{padding:0 var(--ib-4)}
-  .ib-footer__top{gap:var(--ib-6);padding:var(--ib-8) 0 var(--ib-6)}
-  .ib-footer__cols{gap:var(--ib-6) var(--ib-8)}
+  /* phone: stacked groups — credit, contact links; legal links (one per line), ©, theme switch */
+  .ib-footer__top{flex-direction:column;align-items:flex-start;gap:var(--ib-5);padding:var(--ib-8) 0 var(--ib-6)}
+  .ib-footer__credit{font-size:var(--ib-fs-14)}
+  .ib-footer__top .ib-footer__links{gap:var(--ib-3) var(--ib-6)}
+  .ib-footer--mass .ib-footer__inner{font-size:var(--ib-fs-14)}
+  .ib-footer__bar{flex-direction:column;align-items:flex-start;gap:var(--ib-6);padding:var(--ib-6) 0}
+  .ib-footer__legal{flex-direction:column-reverse;align-items:flex-start;gap:var(--ib-6)}
+  .ib-footer__legal .ib-footer__links{flex-direction:column;align-items:flex-start;gap:var(--ib-3)}
   .ib-footer__row{flex-direction:column;align-items:flex-start;gap:var(--ib-4);padding:var(--ib-6) 0}
   .ib-footer__row+.ib-footer__row{gap:var(--ib-2)}
   .ib-footer--event .ib-footer__row{gap:var(--ib-3)}
   .ib-footer__org span{display:block;margin:var(--ib-1) 0 0}
 }
-/* «За підтримки кафедри …» is one unbreakable segment: a step smaller on the narrowest phones so it fits */
+/* «За підтримки кафедри …,» is one unbreakable segment: a step smaller on the narrowest phones so it fits */
 @container ib-footer (max-width: 359px){
-  .ib-footer__support{font-size:var(--ib-fs-12)}
+  .ib-footer__credit{font-size:var(--ib-fs-13)}
 }

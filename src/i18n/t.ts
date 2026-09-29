@@ -68,6 +68,7 @@ export function richText(text: string, vars: Record<string, ReactNode>): ReactNo
 /**
  * tRich for a « · »-separated credit line: each segment becomes an unbreakable
  * (nowrap) span and keeps its trailing dot, so lines break only after a separator.
+ * `sep` picks another separator («, »): the segment keeps its mark («,»).
  * `groupFrom` glues the segments from that index on into one inline-block group:
  * the group moves to the next line whole and splits (at its dots) only when it
  * cannot fit a line by itself.
@@ -75,14 +76,15 @@ export function richText(text: string, vars: Record<string, ReactNode>): ReactNo
 export function tSegments(
   key: MessageKey | string,
   vars: Record<string, ReactNode>,
-  { groupFrom }: { groupFrom?: number } = {}
+  { groupFrom, sep = " · " }: { groupFrom?: number; sep?: string } = {}
 ): ReactNode[] {
-  const parts = lookup(key).split(" · ")
+  const parts = lookup(key).split(sep)
+  const mark = sep.trimEnd()
   const last = parts.length - 1
   const segment = (part: string, i: number): ReactNode[] => [
     // segments of a fixed message never reorder, so the position is a stable key
     // eslint-disable-next-line @eslint-react/no-array-index-key
-    createElement("span", { key: i, style: { whiteSpace: "nowrap" } }, ...richText(part, vars), i < last ? " ·" : null),
+    createElement("span", { key: i, style: { whiteSpace: "nowrap" } }, ...richText(part, vars), i < last ? mark : null),
     i < last ? " " : null,
   ]
   if (groupFrom === undefined || groupFrom <= 0 || groupFrom > last) return parts.flatMap(segment)

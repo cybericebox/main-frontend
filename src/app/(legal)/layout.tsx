@@ -9,7 +9,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
     <>
       <SiteHeader home={false} />
       <main>{children}</main>
-      <SiteFooter home={false} />
+      <SiteFooter />
     </>
   )
 }

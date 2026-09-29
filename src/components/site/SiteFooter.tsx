@@ -1,30 +1,20 @@
 import { Footer } from "@/components/ib/Footer"
 import { t } from "@/i18n/t"
 import { SOURCE_URL, CONTACT_EMAIL } from "@/lib/links"
-import { landingLinks } from "./sections"
 import { CookieSettingsLink } from "./CookieSettingsLink"
 
-export function SiteFooter({ home }: { home: boolean }) {
-  const [labs, faq] = landingLinks(home ? "" : "/")
+// Landing and legal pages share it; the cookie policy is linked from inside the consent panel.
+export function SiteFooter() {
   return (
     <Footer
-      brandHref={home ? "#top" : "/"}
       email={CONTACT_EMAIL}
-      groups={[
-        {
-          title: t("landing.footer.platform"),
-          links: [labs, faq, { href: SOURCE_URL, label: t("landing.footer.github"), external: true }],
-        },
-        {
-          title: t("landing.footer.docs"),
-          links: [
-            { href: "/privacy", label: t("landing.footer.privacy") },
-            { href: "/terms", label: t("landing.footer.terms") },
-            { href: "/cookies", label: t("landing.footer.cookies") },
-          ],
-          extra: <CookieSettingsLink />,
-        },
+      sourceUrl={SOURCE_URL}
+      legal={[
+        { href: "/privacy", label: t("landing.footer.privacy") },
+        { href: "/terms", label: t("landing.footer.terms") },
+        { href: "/security", label: t("landing.footer.security") },
       ]}
+      extra={<CookieSettingsLink />}
     />
   )
 }

@@ -8,7 +8,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <>
       <SiteHeader home />
       <main id="top">{children}</main>
-      <SiteFooter home />
+      <SiteFooter />
     </>
   )
 }
