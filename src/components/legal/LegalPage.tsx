@@ -4,7 +4,7 @@ import { PRIVACY_EMAIL, SECURITY_EMAIL } from "@/lib/links"
 import "@/styles/ds/components/toc.css"
 import "@/styles/legal.css"
 
-export type LegalDoc = "privacy" | "terms" | "cookies"
+export type LegalDoc = "privacy" | "terms" | "cookies" | "security"
 
 const COLUMNS = ["name", "purpose", "provider", "duration", "category"] as const
 
