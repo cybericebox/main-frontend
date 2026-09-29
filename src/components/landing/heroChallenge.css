@@ -83,3 +83,13 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
   .hc-card__head{padding-left:16px}
   .hc-card__body{padding-left:16px;padding-right:16px}
 }
+
+/* phones / touch screens: the card as a bottom sheet (native modal <dialog>, DS modal look). It rests on the
+   on-screen keyboard: --hc-kb = the keyboard height from visualViewport (set in HeroChallenge). */
+.hc-card.hc-card--sheet{position:fixed;inset:auto 0 var(--hc-kb,0px) 0;left:0;transform:none;width:100%;max-width:none;margin:0;padding:0 0 env(safe-area-inset-bottom);
+  max-height:calc(100dvh - var(--hc-kb,0px) - 24px);overflow:auto;border-width:1px 0 0;border-radius:var(--ib-r-lg) var(--ib-r-lg) 0 0;
+  animation:hc-sheet-in var(--ib-dur-move) var(--ib-ease)}
+.hc-card--sheet::backdrop{background:var(--ib-backdrop)}
+@keyframes hc-sheet-in{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+.hc-card--sheet .hc-card__head{padding-left:16px}
+.hc-card--sheet .hc-card__body{padding:14px 16px 18px}

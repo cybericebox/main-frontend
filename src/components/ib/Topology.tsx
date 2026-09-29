@@ -40,11 +40,11 @@ export function Topology() {
           </text>
           <rect className="ib-topo__subnet" x="476.5" y="44.5" width="212" height="120" rx="6" strokeDasharray="3 3" />
           <text className="ib-topo__note" x="492" y="66">
-            DMZ 10.10.1.0/24
+            {t("landing.labs.topoDmz", { cidr: "10.10.1.0/24" })}
           </text>
           <rect className="ib-topo__subnet" x="476.5" y="220.5" width="212" height="188" rx="6" strokeDasharray="3 3" />
           <text className="ib-topo__note" x="492" y="242">
-            internal 10.10.2.0/24
+            {t("landing.labs.topoInternal", { cidr: "10.10.2.0/24" })}
           </text>
           <g className="ib-topo__link">
             <path d="M144 360H192" />

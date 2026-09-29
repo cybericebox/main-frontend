@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 # Розминка: /.well-known/ice/warmup.txt
+Sitemap: https://cybericebox.com/sitemap.xml

@@ -15,10 +15,10 @@
     "test:e2e": "playwright test",
     "test:e2e:static": "NEXT_PUBLIC_WARMUP_FLAG='ICE{e2e_warmup}' npm run build && E2E_STATIC=1 playwright test",
     "pretypecheck": "node scripts/warmup.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test 'tests/**/*.test.ts'"
   },
   "dependencies": {
-    "@next/third-parties": "16.3.6",
     "@radix-ui/react-popover": "^1.1.23",
     "geist": "^1.7.2",
     "isomorphic-dompurify": "^4.4.0",

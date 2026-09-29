@@ -1,17 +1,13 @@
 "use client"
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react"
-import { Icon } from "./Icon"
+import { Fragment, useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react"
 import "@/styles/ds/components/avatar.css"
 import "@/styles/ds/components/dropdown-menu.css"
 
-export type AvatarMenuItem = { href: string; label: string; icon?: string }
-
-/** Initials for the avatar: first + last name, else the e-mail's first letter. */
-export function initials(first?: string, last?: string, email?: string): string {
-  const both = `${first?.trim()?.[0] ?? ""}${last?.trim()?.[0] ?? ""}`.toUpperCase()
-  return both || (email?.trim()?.[0] ?? "?").toUpperCase()
-}
+// An item is a link; with `onSelect` the navigation is cancelled (when JS runs), the menu closes
+// and hands focus back to its button, then `onSelect` runs.
+export type AvatarMenuItem = { href: string; label: string; ariaLabel?: string; icon?: ReactNode; onSelect?: () => void }
+export type AvatarMenuEntry = AvatarMenuItem | "divider"
 
 // ds-v2 avatar button + .ib-menu (IB.Dropdown behaviour: click toggles, Escape /
 // outside click closes, ↑/↓ move between items). Menu aligned to the right edge.
@@ -21,14 +17,12 @@ export function AvatarMenu({
   picture,
   initials: ini,
   items,
-  footer,
 }: {
   name: string
   email: string
   picture?: string
   initials: string
-  items: AvatarMenuItem[]
-  footer?: AvatarMenuItem
+  items: AvatarMenuEntry[]
 }) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -67,8 +61,19 @@ export function AvatarMenu({
   }
 
   const item = (it: AvatarMenuItem) => (
-    <a key={it.href} className="ib-menu__item" role="menuitem" href={it.href}>
-      {it.icon ? <Icon name={it.icon} /> : null}
+    <a
+      className="ib-menu__item"
+      role="menuitem"
+      href={it.href}
+      aria-label={it.ariaLabel}
+      onClick={it.onSelect ? (e) => {
+        e.preventDefault()
+        setOpen(false)
+        btnRef.current?.focus()
+        it.onSelect?.()
+      } : undefined}
+    >
+      {it.icon}
       {it.label}
     </a>
   )
@@ -99,13 +104,7 @@ export function AvatarMenu({
           <b>{name}</b>
           <span>{email}</span>
         </div>
-        {items.map(item)}
-        {footer ? (
-          <>
-            <hr className="ib-menu__sep" />
-            {item(footer)}
-          </>
-        ) : null}
+        {items.map((it, i) => <Fragment key={i}>{it === "divider" ? <hr className="ib-menu__sep" /> : item(it)}</Fragment>)}
       </div>
     </div>
   )

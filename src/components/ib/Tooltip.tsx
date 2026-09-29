@@ -7,11 +7,13 @@ export function Tooltip({
   content,
   side = "top",
   align = "center",
+  className,
   children,
 }: {
   content: ReactNode
   side?: "top" | "bottom"
   align?: "center" | "start" | "end"
+  className?: string
   children: (describedBy: string) => ReactNode
 }) {
   const id = useId()
@@ -20,6 +22,7 @@ export function Tooltip({
     side === "bottom" && "ib-tip--bottom",
     align === "start" && "ib-tip--start",
     align === "end" && "ib-tip--end",
+    className,
   ]
     .filter(Boolean)
     .join(" ")

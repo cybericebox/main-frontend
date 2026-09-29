@@ -1,0 +1,7 @@
+# Cyber ICE Box — vulnerability disclosure (RFC 9116).
+# Report vulnerabilities in the platform itself, not in training targets.
+Contact: mailto:security@cybericebox.com
+Expires: 2027-09-29T00:00:00Z
+Preferred-Languages: uk, en
+Canonical: https://cybericebox.com/.well-known/security.txt
+Policy: https://cybericebox.com/security

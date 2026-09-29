@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <main className="site-404">
       <div className="site-404__box">
-        <Image src="/assets/crest-128.png" alt="" width={64} height={64} priority />
+        <Image src="/assets/crest-128.webp" alt="" width={64} height={64} priority />
         <Wordmark className="site-404__brand" />
         <p className="site-404__code">404</p>
         <h1>{t("error.notFound")}</h1>

@@ -7,7 +7,7 @@ The public landing of Cyber ICE Box, served on `<domain>` (the apex). It introdu
 - Read what the platform offers: hero, labs and FAQ sections.
 - Solve the warm-up challenge in the hero and check the flag.
 - Sign in, sign up or open your profile on the ID app.
-- When signed in: see your notification inbox; admins get a link to the admin app.
+- When signed in: see your notification inbox; the account menu links to the other apps you can use.
 - Read the terms of service and the privacy policy.
 
 ## Environment variables
@@ -20,6 +20,7 @@ Static builds (`npm run build`, GitHub Pages) read these at build time. The Dock
 | `NEXT_PUBLIC_API_DOMAIN` | no | `api.<domain>` | API host (bare host, no scheme). |
 | `NEXT_PUBLIC_ID_DOMAIN` | no | `id.<domain>` | ID app host. |
 | `NEXT_PUBLIC_ADMIN_DOMAIN` | no | `admin.<domain>` | Admin app host. |
+| `NEXT_PUBLIC_EXERCISES_DOMAIN` | no | `exercises.<domain>` | Exercises app host. |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | analytics off | Google Analytics 4 measurement id (`G-…`). |
 | `NEXT_PUBLIC_WARMUP_FLAG` | yes for static builds | `ICE{dev_warmup}` in dev | Warm-up flag (`ICE{…}`), build time only (static export, GitHub Pages secret). |
 | `WARMUP_FLAG` | no | challenge disabled | Warm-up flag (`ICE{…}`) for the Docker image, read at container start. |

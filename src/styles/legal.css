@@ -1,4 +1,4 @@
-/* Legal documents (/privacy, /terms): one reading column on the ds type scale;
+/* Legal documents (/privacy, /terms, /cookies): one reading column on the ds type scale;
    ≥1024 px a sticky section list on the left (.ib-toc). Tokens only. */
 .lg-doc{padding:var(--ib-16) var(--pl-gut) 96px}
 .lg-doc__grid{display:block}
@@ -10,7 +10,19 @@
 .lg-doc__sec{margin-top:var(--ib-10);padding-top:var(--ib-8);border-top:1px solid var(--ib-line)}
 .lg-doc__sec h2{display:flex;gap:var(--ib-3);font-size:var(--ib-fs-20);letter-spacing:-.015em}
 .lg-doc__sec h2 .ib-num{color:var(--ib-faint);font-weight:var(--ib-w-medium)}
-.lg-doc__sec p,.lg-doc__sec div{margin-top:var(--ib-3);font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__sec p{margin-top:var(--ib-3);font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__intro a,.lg-doc__sec a{color:var(--ib-ink);text-decoration:underline;text-underline-offset:3px}
+.lg-doc__items{margin-top:var(--ib-3);padding:0;list-style:none;font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__items li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:var(--ib-2)}
+.lg-doc__items li+li{margin-top:var(--ib-2)}
+.lg-doc__items .ib-num{color:var(--ib-faint);font-variant-numeric:tabular-nums}
+.lg-doc__table{margin-top:var(--ib-4);overflow-x:auto;border:1px solid var(--ib-line);border-radius:var(--ib-r)}
+.lg-doc__table table{width:100%;border-collapse:collapse;font-size:var(--ib-fs-14);line-height:1.45}
+.lg-doc__table th,.lg-doc__table td{padding:var(--ib-3);text-align:left;vertical-align:top;border-top:1px solid var(--ib-line);color:var(--ib-body)}
+.lg-doc__table thead th{border-top:0;color:var(--ib-dim);font-weight:var(--ib-w-medium);white-space:nowrap}
+.lg-doc__table tbody th{font-weight:var(--ib-w-regular)}
+.lg-doc__table code{font-family:var(--ib-mono);font-size:var(--ib-fs-13);color:var(--ib-ink);white-space:nowrap}
+.lg-doc__table:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 .lg-doc__contact{margin-top:var(--ib-12);padding-top:var(--ib-6);border-top:1px solid var(--ib-line);color:var(--ib-dim);font-size:var(--ib-fs-14)}
 @media (min-width:1024px){
   .lg-doc__grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start}
@@ -20,4 +32,11 @@
   .lg-doc{padding:var(--ib-10) var(--pl-gut) 72px}
   .lg-doc h1{font-size:36px}
   .lg-doc__intro{font-size:17px}
+  /* cookie table: one card per row, column names as labels */
+  .lg-doc__table{border:0;overflow:visible}
+  .lg-doc__table thead{display:none}
+  .lg-doc__table tr{display:block;padding:var(--ib-3) 0;border-top:1px solid var(--ib-line)}
+  .lg-doc__table th,.lg-doc__table td{display:block;padding:var(--ib-1) 0;border:0}
+  .lg-doc__table code{white-space:normal;overflow-wrap:anywhere}
+  .lg-doc__table td::before{content:attr(data-label);display:block;color:var(--ib-faint);font-size:var(--ib-fs-13)}
 }
