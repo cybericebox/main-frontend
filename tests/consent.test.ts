@@ -50,7 +50,7 @@ test("the boot script grants analytics only for a stored analytics:granted", () 
   }
   assert.deepEqual(run(""), ["default"])
   assert.deepEqual(run("cib_consent=analytics:denied"), ["default"])
-  assert.deepEqual(run("ib_theme=dark; cib_consent=analytics:granted"), ["default", "update"])
+  assert.deepEqual(run("cib_theme=dark; cib_consent=analytics:granted"), ["default", "update"])
 })
 
 test("accept all grants analytics_storage only", () => {
@@ -101,7 +101,7 @@ test("the choice is written per category to one cookie on the parent domain", ()
 })
 
 test("the stored choice is read back from the cookie string", () => {
-  assert.deepEqual(consent.parseConsent("ib_theme=dark; cib_consent=analytics:granted"), { analytics: true })
+  assert.deepEqual(consent.parseConsent("cib_theme=dark; cib_consent=analytics:granted"), { analytics: true })
   assert.deepEqual(consent.parseConsent("cib_consent=analytics:denied"), { analytics: false })
   assert.equal(consent.parseConsent("xcib_consent=analytics:granted"), null)
   assert.equal(consent.parseConsent("cib_consent=granted"), null)

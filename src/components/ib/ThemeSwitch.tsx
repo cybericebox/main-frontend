@@ -14,7 +14,7 @@ const OPTIONS: { value: ThemeChoice; icon: typeof Sun; label: string }[] = [
 ]
 
 // Three icon buttons in a row (Світла / Темна / Системна), one click, no menu.
-// The choice lives in the parent-domain `ib_theme` cookie (lib/theme).
+// The choice lives in the parent-domain `cib_theme` cookie (lib/theme).
 export function ThemeSwitch({ className }: { className?: string }) {
   const [choice, setChoice] = useState<ThemeChoice>("system")
   const choiceRef = useRef(choice)
