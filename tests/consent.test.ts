@@ -115,3 +115,27 @@ test("the banner shows only when GA is configured and no choice exists", () => {
   assert.equal(consent.shouldShowBanner(undefined, null), false)
   assert.equal(consent.shouldShowBanner("", null), false)
 })
+
+test("the policy link opens in a new tab, so the panel and its toggles stay", () => {
+  assert.deepEqual(consent.POLICY_LINK_ATTRS, { target: "_blank", rel: "noopener noreferrer" })
+})
+
+test("every link in the banner spreads POLICY_LINK_ATTRS, says so in aria-label and stops the click", async () => {
+  const ts = (await import("typescript")).default
+  const { readFileSync } = await import("node:fs")
+  const file = new URL("../src/components/site/ConsentBanner.tsx", import.meta.url)
+  const sf = ts.createSourceFile("ConsentBanner.tsx", readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
+  const anchors: import("typescript").JsxOpeningLikeElement[] = []
+  const visit = (n: import("typescript").Node) => {
+    if ((ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)) && n.tagName.getText(sf) === "a") anchors.push(n)
+    ts.forEachChild(n, visit)
+  }
+  visit(sf)
+  assert.ok(anchors.length > 0)
+  for (const a of anchors) {
+    const attrs = a.attributes.properties.map((p) => p.getText(sf))
+    assert.ok(attrs.includes("{...POLICY_LINK_ATTRS}"), attrs.join(" "))
+    assert.ok(attrs.some((x) => x.startsWith('aria-label={t("consent.policyLinkNewTab")')), attrs.join(" "))
+    assert.ok(attrs.some((x) => x.includes("stopPropagation")), attrs.join(" "))
+  }
+})

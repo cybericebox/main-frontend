@@ -7,6 +7,7 @@ import {
   ACCEPT_ALL,
   CONSENT_CHANGE_EVENT,
   CONSENT_OPEN_EVENT,
+  POLICY_LINK_ATTRS,
   REJECT_ALL,
   readConsent,
   saveConsent,
@@ -65,6 +66,13 @@ export function ConsentBanner({ gaId, policyHref }: { gaId: string; policyHref: 
     close()
   }
 
+  // New tab; the click must not reach any outer handler, so the banner/panel and its toggles stay.
+  const policyLink = (
+    <a href={policyHref} {...POLICY_LINK_ATTRS} aria-label={t("consent.policyLinkNewTab")} onClick={(e) => e.stopPropagation()}>
+      {t("consent.policyLink")}
+    </a>
+  )
+
   if (stored === "ssr") return null
   const asking = shouldShowBanner(gaId, stored === "none" ? null : { analytics: stored === "granted" })
   const shown = layer ?? (asking ? "banner" : null)
@@ -79,7 +87,7 @@ export function ConsentBanner({ gaId, policyHref }: { gaId: string; policyHref: 
   if (shown === "banner") {
     return (
       <div ref={rootRef} className="cb-consent" role="region" aria-label={t("consent.label")} tabIndex={-1}>
-        <p className="cb-consent__text">{tRich("consent.text", { link: <a href={policyHref}>{t("consent.policyLink")}</a> })}</p>
+        <p className="cb-consent__text">{tRich("consent.text", { link: policyLink })}</p>
         <div className="cb-consent__actions">
           <Button size="sm" onClick={() => setLayer("panel")}>{t("consent.customize")}</Button>
           <Button size="sm" variant="primary" onClick={() => choose(ACCEPT_ALL)}>{t("consent.acceptAll")}</Button>
@@ -119,7 +127,7 @@ export function ConsentBanner({ gaId, policyHref }: { gaId: string; policyHref: 
           </label>
         </li>
       </ul>
-      <p className="cb-consent__policy">{tRich("consent.policy", { link: <a href={policyHref}>{t("consent.policyLink")}</a> })}</p>
+      <p className="cb-consent__policy">{tRich("consent.policy", { link: policyLink })}</p>
       <div className="cb-consent__actions cb-consent__actions--panel">
         <button type="button" className="cb-consent-link" onClick={() => choose(REJECT_ALL)}>{t("consent.rejectAll")}</button>
         <Button size="sm" onClick={() => choose({ analytics })}>{t("consent.acceptSelected")}</Button>
