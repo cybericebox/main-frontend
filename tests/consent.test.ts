@@ -1,5 +1,5 @@
-// Cookie consent (Google Consent Mode v2): denied by default; accept all / accept selected /
-// reject all map to analytics_storage only; the choice is one cookie on the parent domain.
+// Cookie consent (Google Consent Mode v2): denied by default; accept all / save choice
+// map to analytics_storage only; the choice is one cookie on the parent domain.
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
@@ -61,14 +61,14 @@ test("accept all grants analytics_storage only", () => {
   assert.deepEqual(consent.readConsent(), { analytics: true })
 })
 
-test("customize: accept selected with analytics on grants it", () => {
+test("customize: save choice with analytics on grants it", () => {
   const { calls } = fakeBrowser()
   consent.saveConsent({ analytics: true })
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "granted" }]])
   assert.deepEqual(consent.readConsent(), { analytics: true })
 })
 
-test("customize: accept selected with analytics off keeps everything denied", () => {
+test("customize: save choice with analytics off keeps everything denied", () => {
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
   consent.saveConsent({ analytics: false })
@@ -77,11 +77,11 @@ test("customize: accept selected with analytics off keeps everything denied", ()
   assert.ok(!jar.has("_ga"))
 })
 
-test("reject all keeps everything denied and drops GA cookies", () => {
+test("save choice with analytics off after accepting drops GA cookies", () => {
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
   jar.set("_ga_TEST", "GS1.1")
-  consent.saveConsent(consent.REJECT_ALL)
+  consent.saveConsent({ analytics: false })
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "denied" }]])
   assert.deepEqual(consent.readConsent(), { analytics: false })
   assert.ok(!jar.has("_ga") && !jar.has("_ga_TEST"))
@@ -92,7 +92,7 @@ test("the choice is written per category to one cookie on the parent domain", ()
     consent.consentCookie(consent.ACCEPT_ALL, { domain: "cybericebox.com", secure: true }),
     "cib_consent=analytics:granted; path=/; max-age=31536000; SameSite=Lax; domain=.cybericebox.com; Secure",
   )
-  assert.equal(consent.consentCookie(consent.REJECT_ALL, { secure: false }), "cib_consent=analytics:denied; path=/; max-age=31536000; SameSite=Lax")
+  assert.equal(consent.consentCookie({ analytics: false }, { secure: false }), "cib_consent=analytics:denied; path=/; max-age=31536000; SameSite=Lax")
   process.env.NEXT_PUBLIC_DOMAIN = "cybericebox.com"
   const { writes } = fakeBrowser()
   consent.saveConsent(consent.ACCEPT_ALL)

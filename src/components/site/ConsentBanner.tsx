@@ -8,7 +8,6 @@ import {
   CONSENT_CHANGE_EVENT,
   CONSENT_OPEN_EVENT,
   POLICY_LINK_ATTRS,
-  REJECT_ALL,
   readConsent,
   saveConsent,
   shouldShowBanner,
@@ -30,7 +29,7 @@ const serverSnapshot = () => "ssr"
 // Cookie consent in two layers, fixed to the bottom, non-blocking.
 // 1. Banner: a general line, «Прийняти всі» and «Налаштувати».
 // 2. Panel: categories (Необхідні — always on; Аналітика — off by default),
-//    «Прийняти вибрані», «Прийняти всі» and a small «Відхилити всі».
+//    «Зберегти вибір» and «Прийняти всі».
 // Shown when GA is configured and no choice exists; «Налаштування файлів cookie» opens the panel.
 // Esc never counts as consent: it steps back from the panel, or closes a panel opened from settings.
 export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref: string }) {
@@ -129,8 +128,7 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
       </ul>
       <p className="cb-consent__policy">{tRich("consent.policy", { link: policyLink })}</p>
       <div className="cb-consent__actions cb-consent__actions--panel">
-        <button type="button" className="cb-consent-link" onClick={() => choose(REJECT_ALL)}>{t("consent.rejectAll")}</button>
-        <Button size="sm" onClick={() => choose({ analytics })}>{t("consent.acceptSelected")}</Button>
+        <Button size="sm" onClick={() => choose({ analytics })}>{t("consent.saveChoice")}</Button>
         <Button size="sm" variant="primary" onClick={() => choose(ACCEPT_ALL)}>{t("consent.acceptAll")}</Button>
       </div>
     </div>

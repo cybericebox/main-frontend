@@ -419,7 +419,7 @@
   "legal.cookies.s1.body": "Cookies are small text files that a website stores in your browser, for example to keep you signed in or remember your settings.",
   "legal.cookies.s2.heading": "Categories of cookies",
   "legal.cookies.s2.items.1": "Necessary — for sign-in, security and remembering your settings. The Platform cannot work without them, so they are set without separate consent.",
-  "legal.cookies.s2.items.2": "Analytics — Google Analytics. Set only when you click \"Accept all\" or turn on \"Analytics\" in the cookie settings.",
+  "legal.cookies.s2.items.2": "Analytics — Google Analytics. Set only when you click \"Accept all\", or turn on \"Analytics\" in the cookie settings and click \"Save choice\".",
   "legal.cookies.s2.after": "We do not use advertising cookies.",
   "legal.cookies.s3.heading": "List of cookies",
   "legal.cookies.s3.rows.1.name": "__Host-session",
@@ -458,7 +458,7 @@
   "legal.cookies.s4.items.2": "If you accept analytics, Google Analytics collects data about the pages you visit, your device and approximate location. Advertising features are always off.",
   "legal.cookies.s4.items.3": "Google Analytics data is processed by Google, including in the United States; see the [Privacy Policy](/privacy) for details.",
   "legal.cookies.s5.heading": "How to change your choice",
-  "legal.cookies.s5.items.1": "Click \"Cookie settings\" in the site footer or account menu and choose the categories you want. Your choice applies to all Platform sites.",
+  "legal.cookies.s5.items.1": "Click \"Cookie settings\" in the site footer or account menu, turn \"Analytics\" on or off and click \"Save choice\". Your choice applies to all Platform sites.",
   "legal.cookies.s5.items.2": "When you withdraw consent, the Google Analytics cookies are deleted from your browser.",
   "legal.cookies.s5.items.3": "You can also delete or block cookies in your browser settings. If you block necessary cookies, signing in to the Platform will not work.",
   "legal.cookies.s6.heading": "Changes to this Policy",
@@ -512,7 +512,6 @@
   "consent.necessary.switch": "Necessary cookies are always on",
   "consent.analytics.title": "Analytics",
   "consent.analytics.text": "Helps us understand how you use the site so we can improve it (Google Analytics).",
-  "consent.acceptSelected": "Accept selected",
-  "consent.rejectAll": "Reject all",
+  "consent.saveChoice": "Save choice",
   "consent.settings": "Cookie settings"
 }
