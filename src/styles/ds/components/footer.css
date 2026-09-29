@@ -1,21 +1,37 @@
 /* copied from ds-v2 2026-09-24 */
 /* Footer — platform footer (default) and event footer (--event).
    Source: proto/platform3.html (.ft) and proto/event3.html (.lfoot).
-   Platform: brand + links row, then «© 2026 ХНУРЕ» + support line. Event: organizer line + links.
-   Narrow container (<640px): rows stack. */
+   Platform: labelled link columns, then a bar: «© 2026 Cyber ICE Box · ХНУРЕ» + support line, theme switch right.
+   Event: organizer line + links. Narrow container (<640px): 2 columns, meta lines stack, rows stack. */
 
-.ib-footer{container:ib-footer/inline-size;background:var(--ib-surface);border-top:1px solid var(--ib-line);color:var(--ib-dim)}
+.ib-footer{container:ib-footer/inline-size;background:var(--ib-surface);border-top:1px solid var(--ib-line);color:var(--ib-dim);padding-bottom:env(safe-area-inset-bottom)}
 .ib-footer__inner{max-width:1280px;margin:0 auto;padding:0 var(--ib-10)}
 .ib-footer__row{display:flex;align-items:center;justify-content:space-between;gap:var(--ib-6);padding:var(--ib-8) 0}
 .ib-footer__row+.ib-footer__row{padding:var(--ib-5) 0 var(--ib-6);border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
 .ib-footer__brand{display:flex;align-items:center;gap:var(--ib-3);color:var(--ib-ink);font-size:var(--ib-fs-16);font-weight:var(--ib-w-semibold);letter-spacing:-.015em;text-decoration:none}
 .ib-footer__brand:hover{text-decoration:none}
 .ib-footer__brand img{width:32px;height:32px;object-fit:contain}
+
+/* platform: labelled link columns (Платформа · Документи · Контакти), then the bar */
+.ib-footer__cols{display:grid;grid-template-columns:repeat(3,minmax(0,240px));grid-template-areas:"platform docs contacts";gap:var(--ib-8) var(--ib-12);padding:var(--ib-10) 0 var(--ib-8)}
+.ib-footer__col--platform{grid-area:platform}
+.ib-footer__col--docs{grid-area:docs}
+.ib-footer__col--contacts{grid-area:contacts}
+.ib-footer__title{margin:0 0 var(--ib-3);color:var(--ib-ink);font-size:var(--ib-fs-13);font-weight:var(--ib-w-semibold);line-height:1.4}
+.ib-footer__col .ib-footer__links{display:flex;flex-direction:column;align-items:flex-start;gap:var(--ib-2);margin:0;padding:0;list-style:none}
 .ib-footer__links{display:flex;flex-wrap:wrap;gap:var(--ib-2) var(--ib-6)}
-.ib-footer__links a{color:var(--ib-dim);font-size:var(--ib-fs-14);font-weight:var(--ib-w-regular)}
-.ib-footer__links a:hover{color:var(--ib-ink)}
-.ib-footer__legal{color:var(--ib-dim)}
-.ib-footer__support a{color:var(--ib-dim);font-weight:var(--ib-w-regular);text-decoration:underline;text-underline-offset:3px}
+.ib-footer__links a,.ib-footer__links button{color:var(--ib-dim);font-size:var(--ib-fs-14);font-weight:var(--ib-w-regular);line-height:1.5;text-align:left}
+.ib-footer__links a:hover,.ib-footer__links button:hover{color:var(--ib-ink)}
+.ib-footer__col .ib-footer__links a{overflow-wrap:anywhere}
+
+/* bar: meta text left, theme switch right — one row at every width */
+.ib-footer__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--ib-4) var(--ib-6);padding:var(--ib-5) 0 var(--ib-6);border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
+.ib-footer__bar .ib-theme{flex:none}
+/* the switch sits on the right edge: its last hint opens leftwards, not off-screen */
+.ib-footer__bar .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
+.ib-footer__meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .3em;min-width:0;margin:0;line-height:1.5}
+.ib-footer__legal{color:var(--ib-dim);white-space:nowrap}
+.ib-footer__support a{color:var(--ib-dim);font-weight:var(--ib-w-regular);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 .ib-footer__support a:hover{color:var(--ib-ink)}
 
 /* event footer: one row, organizer line left, links right */
@@ -27,6 +43,9 @@
 
 @container ib-footer (max-width: 639px){
   .ib-footer__inner,.ib-footer--event .ib-footer__inner{padding:0 var(--ib-4)}
+  .ib-footer__cols{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"platform contacts" "docs docs";gap:var(--ib-6) var(--ib-4);padding:var(--ib-8) 0 var(--ib-6)}
+  .ib-footer__meta{flex-direction:column;gap:var(--ib-1)}
+  .ib-footer__sep{display:none}
   .ib-footer__row{flex-direction:column;align-items:flex-start;gap:var(--ib-4);padding:var(--ib-6) 0}
   .ib-footer__row+.ib-footer__row{gap:var(--ib-2)}
   .ib-footer--event .ib-footer__row{gap:var(--ib-3)}
