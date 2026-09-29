@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMetadata({ title: t("meta.home.title"), de
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         // data-theme is set by the boot script before hydration — hence suppressHydrationWarning.
-        <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+        <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
             <head>
                 {/* static constant, no user input — runs before paint to avoid a light flash */}
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
