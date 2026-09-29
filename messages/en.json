@@ -134,6 +134,8 @@
   "profile.avatar": "Avatar",
   "nav.profile": "Profile",
   "nav.admin": "Administration",
+  "nav.exercises": "Exercise catalog",
+  "nav.home": "Home",
   "nav.settings": "Settings",
   "nav.signOut": "Sign out",
   "error.notFound": "Page not found",

@@ -134,6 +134,8 @@
   "profile.avatar": "Аватар",
   "nav.profile": "Профіль",
   "nav.admin": "Адміністрування",
+  "nav.exercises": "Каталог завдань",
+  "nav.home": "Головна",
   "nav.settings": "Налаштування",
   "nav.signOut": "Вийти",
   "error.notFound": "Сторінку не знайдено",

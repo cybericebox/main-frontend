@@ -46,6 +46,11 @@ spec:
                 configMapKeyRef:
                   name: main-frontend-config
                   key: ADMIN_DOMAIN
+            - name: NEXT_PUBLIC_EXERCISES_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: EXERCISES_DOMAIN
             - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
               valueFrom:
                 configMapKeyRef:
