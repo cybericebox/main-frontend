@@ -35,8 +35,9 @@
 /* the switch sits on the right edge: its last hint opens leftwards, not off-screen */
 .ib-footer__bar .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
 .ib-footer__legal{margin:0;color:var(--ib-dim);white-space:nowrap}
-:is(.ib-footer__legal,.ib-footer__support) a{color:var(--ib-dim);font-weight:var(--ib-w-regular);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-:is(.ib-footer__legal,.ib-footer__support) a:hover{color:var(--ib-ink)}
+:is(.ib-footer__legal,.ib-footer__support) a{color:var(--ib-ink);font-weight:var(--ib-w-medium);text-decoration:none;white-space:nowrap;border-radius:2px}
+:is(.ib-footer__legal,.ib-footer__support) a:hover{color:var(--ib-ice)}
+:is(.ib-footer__legal,.ib-footer__support) a:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 
 @container ib-footer (min-width: 1024px){
   .ib-footer__top{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--ib-16);padding:var(--ib-12) 0 var(--ib-10)}
