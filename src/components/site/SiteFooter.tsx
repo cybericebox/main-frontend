@@ -2,7 +2,7 @@ import { Footer } from "@/components/ib/Footer"
 import { t } from "@/i18n/t"
 import { SOURCE_URL, CONTACT_EMAIL } from "@/lib/links"
 import { landingLinks } from "./sections"
-import { CookieSettingsButton } from "./CookieSettingsButton"
+import { CookieSettingsLink } from "./CookieSettingsLink"
 
 export function SiteFooter({ home }: { home: boolean }) {
   const [labs, faq] = landingLinks(home ? "" : "/")
@@ -22,7 +22,7 @@ export function SiteFooter({ home }: { home: boolean }) {
             { href: "/terms", label: t("landing.footer.terms") },
             { href: "/cookies", label: t("landing.footer.cookies") },
           ],
-          extra: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ? <CookieSettingsButton /> : undefined,
+          extra: <CookieSettingsLink />,
         },
       ]}
     />

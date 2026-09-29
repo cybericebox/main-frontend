@@ -139,3 +139,21 @@ test("every link in the banner spreads POLICY_LINK_ATTRS, says so in aria-label 
     assert.ok(attrs.some((x) => x.includes("stopPropagation")), attrs.join(" "))
   }
 })
+
+test("«Налаштування файлів cookie» link opens the panel instead of navigating", () => {
+  const events: string[] = []
+  const g = globalThis as Record<string, unknown>
+  g.window = { dispatchEvent: (e: Event) => events.push(e.type) }
+  let prevented = false
+  consent.interceptSettingsLink({ preventDefault: () => { prevented = true } })
+  assert.ok(prevented)
+  assert.deepEqual(events, [consent.CONSENT_OPEN_EVENT])
+})
+
+test("the settings link and the consent panel do not depend on GA being configured", async () => {
+  const { readFileSync } = await import("node:fs")
+  const read = (p: string) => readFileSync(new URL(p, import.meta.url), "utf8")
+  assert.doesNotMatch(read("../src/components/site/SiteFooter.tsx"), /GOOGLE_ANALYTICS/)
+  assert.match(read("../src/components/site/CookieSettingsLink.tsx"), /<a href=\{href\}[^>]*onClick=\{interceptSettingsLink\}/)
+  assert.doesNotMatch(read("../src/app/layout.tsx"), /GOOGLE_ANALYTICS_ID &&/)
+})

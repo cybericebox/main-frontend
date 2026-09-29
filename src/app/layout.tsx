@@ -26,7 +26,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
                 <ApiProvider>{children}</ApiProvider>
-                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />}
+                {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
+                <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
             </body>
         </html>
     );
