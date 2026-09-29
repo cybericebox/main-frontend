@@ -335,7 +335,7 @@
   "legal.privacy.s5.heading": "International transfers",
   "legal.privacy.s5.body": "Some providers may process data outside Ukraine; in that case we rely on their contractual data protection safeguards.",
   "legal.privacy.s6.heading": "Retention",
-  "legal.privacy.s6.items.1": "Account — while it is active. After a deletion request — no longer than 30 days; accounts inactive for over 3 years are deleted after a warning.",
+  "legal.privacy.s6.items.1": "Account — while it is active. An unfinished registration (an invitation or a self sign-up that was never confirmed) is deleted 30 days after it was created, unless it has a live invitation. After a deletion request — no longer than 30 days; accounts inactive for over 3 years are deleted after a warning.",
   "legal.privacy.s6.items.2": "Sign-in, lab and VPN access logs — up to 90 days; email delivery logs — up to 180 days; backups — up to 30 days.",
   "legal.privacy.s6.items.3": "Registration form answers — until the event ends plus 1 year.",
   "legal.privacy.s6.items.4": "Competition results — kept as part of the event history; they are anonymized when the account is deleted.",
