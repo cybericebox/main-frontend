@@ -53,7 +53,7 @@ export function SiteHeader({ home }: { home: boolean }) {
             items={accountMenu(
               "main",
               { adminTier: isAdminTier(me), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
-              { id: ID_ORIGIN, admin: ADMIN_ORIGIN, exercises: EXERCISES_ORIGIN, main: "/" },
+              { id: ID_ORIGIN, admin: ADMIN_ORIGIN, exercises: EXERCISES_ORIGIN },
             ).map(avatarEntry)}
           />
         </>
