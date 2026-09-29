@@ -1,5 +1,5 @@
 // Cross-origin + external links for the landing. Service hosts default to
-// <service>.<NEXT_PUBLIC_DOMAIN>; NEXT_PUBLIC_{API,ID,ADMIN}_DOMAIN override one
+// <service>.<NEXT_PUBLIC_DOMAIN>; NEXT_PUBLIC_{API,ID,ADMIN,EXERCISES}_DOMAIN override one
 // host (bare host, no scheme) — e.g. point the landing at another backend.
 // SOURCE_URL — public GitHub organization (org-level link by product decision).
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
@@ -30,6 +30,9 @@ export const PROFILE_URI = "/profile"
 
 // Admin app (admin.<domain>) — landing CTA target for admin-tier users.
 export const ADMIN_ORIGIN = `https://${process.env.NEXT_PUBLIC_ADMIN_DOMAIN || `admin.${DOMAIN}`}`
+
+// Exercise catalog app (exercises.<domain>) — account menu target for admins and event staff.
+export const EXERCISES_ORIGIN = `https://${process.env.NEXT_PUBLIC_EXERCISES_DOMAIN || `exercises.${DOMAIN}`}`
 
 // Org-level link only (no specific repo).
 export const SOURCE_URL = "https://github.com/cybericebox"
