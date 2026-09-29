@@ -113,6 +113,27 @@ test.describe("static landing — API down", () => {
     await expect(card).toHaveCount(0)
   })
 
+  test.describe("phone", () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
+
+    test("warm-up opens as a bottom sheet in view; Esc closes and returns focus", async ({ page }) => {
+      await page.goto("/")
+      await expect(page.locator("html")).toHaveAttribute("data-api", "down", { timeout: 10_000 })
+      const tryBtn = page.getByRole("button", { name: "Спробувати розминку" })
+      await tryBtn.tap()
+      const sheet = page.getByRole("dialog", { name: "Прапор у коді сторінки" })
+      await expect(sheet).toBeVisible()
+      await expect(sheet).toHaveClass(/hc-card--sheet/)
+      await expect(page.locator("#warmup-flag")).toBeFocused()
+      await expect(page.locator("#warmup-flag")).toBeInViewport()
+      // the sheet sits at the bottom of the viewport, above the fold
+      await expect.poll(async () => Math.round(((b) => b!.y + b!.height)(await sheet.boundingBox()))).toBe(844) // after the slide-in
+      await page.keyboard.press("Escape")
+      await expect(sheet).toHaveCount(0)
+      await expect(tryBtn).toBeFocused()
+    })
+  })
+
   test("theme switch sets data-theme", async ({ page }) => {
     await page.goto("/")
     await expect(page.locator("html")).toHaveAttribute("data-api", "down", { timeout: 10_000 })
