@@ -3,21 +3,10 @@ import "@/app/globals.css"
 import "@/styles/site.css"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
-import localFont from "next/font/local"
+import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
 import { Analytics } from "@/components/site/Analytics"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
-
-// Geist Mono as in geist/font/mono, but not preloaded: it only sets small labels, so it must not compete
-// with the sans face and the hero image for early bandwidth (it swaps in when used).
-const GeistMono = localFont({
-    src: "../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2",
-    variable: "--font-geist-mono",
-    preload: false,
-    adjustFontFallback: false,
-    fallback: ["ui-monospace", "SFMono-Regular", "Roboto Mono", "Menlo", "Monaco", "Liberation Mono", "DejaVu Sans Mono", "Courier New", "monospace"],
-    weight: "100 900",
-})
 
 export const metadata: Metadata = {
     title: "Cyber ICE Box Platform",
