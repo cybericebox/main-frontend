@@ -1,5 +1,5 @@
 import * as React from "react"
-import { t } from "@/i18n/t"
+import { t, tRich } from "@/i18n/t"
 import { nbsp } from "@/i18n/typo"
 import { PRIVACY_EMAIL } from "@/lib/links"
 import "@/styles/ds/components/toc.css"
@@ -40,7 +40,7 @@ export function LegalPage({
         <div className="lg-doc__body">
           <h1>{nbsp(title)}</h1>
           <p className="lg-doc__updated">
-            {t("legal.updated")}: {updated}
+            {t("legal.updated", { date: updated })}
           </p>
           {intro && <p className="lg-doc__intro">{nbsp(intro)}</p>}
           {sections.map((s, i) => (
@@ -53,7 +53,7 @@ export function LegalPage({
             </section>
           ))}
           <p className="lg-doc__contact">
-            {t("legal.questions")} <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>
+            {tRich("legal.questions", { email: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a> })}
           </p>
         </div>
       </div>

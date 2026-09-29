@@ -20,5 +20,5 @@ export function pageMetadata({ title, description, path = "/" }: { title: string
 }
 
 export function pageTitle(page: string): string {
-  return `${page} · ${t("meta.brand")}`
+  return t("meta.pageTitle", { page })
 }

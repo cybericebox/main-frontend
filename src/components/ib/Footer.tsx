@@ -1,6 +1,6 @@
 import { ThemeSwitch } from "./ThemeSwitch"
 import type { NavLink } from "./Navbar"
-import { t } from "@/i18n/t"
+import { t, tRich } from "@/i18n/t"
 import "@/styles/ds/components/footer.css"
 
 // ds-v2 platform footer without the brand (the sticky navbar carries it): links (incl. a mailto),
@@ -28,13 +28,16 @@ export function Footer({ links }: { links: (NavLink & { external?: boolean })[] 
         </div>
         <div className="ib-footer__row">
           <span>
-            <span className="ib-footer__legal">© {YEAR} {t("landing.footer.org")}</span>
+            <span className="ib-footer__legal">{t("landing.footer.copyright", { year: YEAR })}</span>
             {" · "}
             <span className="ib-footer__support">
-              {t("landing.footer.support")}{" "}
-              <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer">
-                {t("landing.footer.supportLink")}
-              </a>
+              {tRich("landing.footer.support", {
+                link: (
+                  <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer">
+                    {t("landing.footer.supportLink")}
+                  </a>
+                ),
+              })}
             </span>
           </span>
           <ThemeSwitch />

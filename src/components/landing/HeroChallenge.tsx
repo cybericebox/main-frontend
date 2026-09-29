@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react"
 import { Button, buttonClass } from "@/components/ib/Button"
 import { Icon } from "@/components/ib/Icon"
 import { Modal } from "@/components/ib/Modal"
-import { t } from "@/i18n/t"
+import { t, tRich } from "@/i18n/t"
 import { WARMUP_SHA256 } from "@/lib/warmup.generated"
 import { useApi } from "@/lib/useApi"
 import { idUrl } from "@/lib/auth"
@@ -25,7 +25,7 @@ import "./heroChallenge.css"
 // Phones / touch screens: the card sits below the fold and the on-screen keyboard would cover it, so there it
 // opens as a bottom sheet (native modal <dialog>) kept above the keyboard via visualViewport.
 
-export const WARMUP_COMMENT = "<!-- розминка: robots.txt -->"
+export const WARMUP_COMMENT = `<!-- ${t("landing.warmup.trail")} -->`
 const SOLVED_KEY = "ib_warmup"
 const SOLVED_EVENT = "ib:warmup-solved"
 const MODAL_DELAY_MS = 1200
@@ -41,17 +41,18 @@ const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "cybericebox.app"
 const eventHost = (year: number, host: string) => "ctf" + year + "." + host.replace(/^www\./, "") + "/challenges"
 const SSR_URL = eventHost(new Date().getFullYear(), DOMAIN)
 
-const CATS = ["Web", "Pwn", "Crypto", "Forensics"]
-/* 8 tiles (2 rows); the warm-up tile (`warm`) is a real button and takes its texts from i18n; ≤640px shows the first 6 */
+/* category and tile texts: landing.ch.cats.<cat>, landing.ch.tiles.<name> */
+const CATS = ["web", "pwn", "crypto", "forensics"]
+/* 8 tiles (2 rows); the warm-up tile (`warm`) is a real button and takes the warm-up texts; ≤640px shows the first 6 */
 const TILES: { cat: string; name: string; points: number; solved?: boolean; warm?: boolean }[] = [
-  { cat: "Web", name: "JWT alg-confusion", points: 250, solved: true },
-  { cat: "", name: "", points: 100, warm: true }, // 2nd: never cut off when the window bleeds off the right edge
-  { cat: "Web", name: "IDOR у REST-роутері", points: 150 },
-  { cat: "Crypto", name: "RSA з малим e", points: 300, solved: true },
-  { cat: "Pwn", name: "Format string у логері", points: 350 },
-  { cat: "Forensics", name: "PCAP з DNS-тунелем", points: 200, solved: true },
-  { cat: "Crypto", name: "Padding oracle", points: 400 },
-  { cat: "Pwn", name: "ROP без libc", points: 450 },
+  { cat: "web", name: "jwt", points: 250, solved: true },
+  { cat: "", name: "warm", points: 100, warm: true }, // 2nd: never cut off when the window bleeds off the right edge
+  { cat: "web", name: "idor", points: 150 },
+  { cat: "crypto", name: "rsa", points: 300, solved: true },
+  { cat: "pwn", name: "fmt", points: 350 },
+  { cat: "forensics", name: "pcap", points: 200, solved: true },
+  { cat: "crypto", name: "oracle", points: 400 },
+  { cat: "pwn", name: "rop", points: 450 },
 ]
 
 async function sha256Hex(s: string): Promise<string> {
@@ -186,7 +187,6 @@ export function HeroChallenge() {
   // warm-up is real events, which need an account.
   const api = useApi()
   const canSignIn = api.status === "up" && !api.me
-  const place = t("landing.ch.place").replace("{place}", String(RANK.place))
 
   const cardInner = (
     <>
@@ -202,7 +202,7 @@ export function HeroChallenge() {
           </p>
         ) : (
           <p className="hc-card__pts">
-            <b className="ib-num">+{RANK.points}</b>
+            <b className="ib-num">{t("landing.ch.pointsValue", { points: RANK.points })}</b>
             <span>{t("landing.ch.points")}</span>
           </p>
         )}
@@ -212,11 +212,11 @@ export function HeroChallenge() {
       </header>
       <div className="hc-card__body">
         <p>
-          {t("landing.ch.text1")} <code>view-source</code> {t("landing.ch.text2")}
+          {tRich("landing.ch.text", { source: <code>view-source</code> })}
         </p>
         <dl className="hc-card__kv">
           <dt>{t("landing.ch.format")}</dt>
-          <dd className="ib-num">ICE{"{…}"}</dd>
+          <dd className="ib-num">{t("landing.ch.formatValue")}</dd>
           <dt>{t("landing.ch.reward")}</dt>
           <dd>{t("landing.ch.rewardValue")}</dd>
         </dl>
@@ -229,7 +229,7 @@ export function HeroChallenge() {
             className="ib-input ib-input--mono"
             id="warmup-flag"
             name="flag"
-            placeholder={done ? "ICE{…} ✓" : "ICE{…}"}
+            placeholder={t(done ? "landing.ch.flagPlaceholderDone" : "landing.ch.flagPlaceholder")}
             spellCheck={false}
             aria-describedby="warmup-msg"
             // sheet: keep the field in view inside the (keyboard-shortened) sheet
@@ -247,7 +247,7 @@ export function HeroChallenge() {
           </Button>
         </form>
         <p id="warmup-msg" className={"hc-card__msg" + (error ? " is-error" : done ? " ib-status ib-status--ok" : "")} role="status">
-          {error || (done ? t("landing.ch.solved") + " · " + place : "")}
+          {error || (done ? t("landing.ch.solvedPlace", { place: RANK.place }) : "")}
         </p>
       </div>
     </>
@@ -293,16 +293,15 @@ export function HeroChallenge() {
               <div className="hc-board__head" aria-hidden="true">
                 <h3>{t("landing.ch.board")}</h3>
                 <span>
-                  {t("landing.ch.solvedOf")}{" "}
-                  <span className="ib-num">
-                    {SOLVED_BEFORE + (done ? 1 : 0)} {t("landing.ch.of")} {TOTAL}
-                  </span>
+                  {tRich("landing.ch.solvedOf", {
+                    count: <span className="ib-num">{t("landing.ch.count", { solved: SOLVED_BEFORE + (done ? 1 : 0), total: TOTAL })}</span>,
+                  })}
                 </span>
               </div>
               <div className="hc-board__cats" aria-hidden="true">
                 <b className="is-on">{t("landing.ch.all")}</b>
                 {CATS.map((c) => (
-                  <b key={c}>{c}</b>
+                  <b key={c}>{t(`landing.ch.cats.${c}`)}</b>
                 ))}
               </div>
               <div className="hc-tiles">
@@ -311,8 +310,8 @@ export function HeroChallenge() {
                   const cls = "hc-tile" + (solved ? " is-solved" : "") + (x.warm ? " is-warm" : "")
                   const inner = (
                     <>
-                      <small>{x.warm ? t("landing.ch.cat") : x.cat}</small>
-                      <b>{x.warm ? t("landing.ch.title") : x.name}</b>
+                      <small>{x.warm ? t("landing.ch.cat") : t(`landing.ch.cats.${x.cat}`)}</small>
+                      <b>{x.warm ? t("landing.ch.title") : t(`landing.ch.tiles.${x.name}`)}</b>
                       <span className="ib-num">
                         {solved ? CHECK : null}
                         {x.points}
