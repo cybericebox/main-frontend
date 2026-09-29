@@ -1,46 +1,68 @@
-"use client"
-
 /**
- * src/lib/accountMenu.ts — the platform-wide account menu.
+ * accountMenu.ts — the platform-wide account menu, one copy per app (keep them identical).
  *
- * Every frontend shows the same items in the same order: «Профіль»,
- * «Адміністрування» (admin-tier), «Каталог завдань» (admins and event staff),
- * «Головна», then «Вийти». The item pointing to the current app is hidden.
+ * Every frontend shows the same entries in the same order, with the same labels and icons:
+ * «Профіль», «Головна», «Адміністрування» (admin-tier), «Каталог завдань» (admins and event
+ * staff), a divider, «Файли cookie», a divider, «Вийти». The link to the current app is hidden.
+ * The app renders the entries; sign-out and the cookie panel are app-specific.
  */
 
-import { useEffect, useState } from "react"
-import { apiGet } from "@/api/client"
-import { isAdminTier, type Me } from "@/lib/auth"
-import { ADMIN_ORIGIN, EXERCISES_ORIGIN, ID_ORIGIN, PROFILE_URI } from "@/lib/links"
+import { Cookie, House, LogOut, Puzzle, Settings, UserRound, type LucideIcon } from "lucide-react"
 
-export type AccountLinkKey = "profile" | "admin" | "exercises" | "main"
+export type AccountApp = "main" | "id" | "admin" | "exercises" | "event"
+export type AccountLinkKey = "profile" | "main" | "admin" | "exercises"
 export type AccountLink = { key: AccountLinkKey; href: string }
+export type AccountOrigins = { id: string; admin: string; exercises: string; main: string }
+export type AccountAccess = { adminTier: boolean; catalog: boolean; returnTo: string }
+export type AccountMenuEntry =
+  | ({ kind: "link" } & AccountLink)
+  | { kind: "divider" }
+  | { kind: "cookies" }
+  | { kind: "signOut" }
 
-/** Account menu links for the landing (the landing itself is «Головна», hidden). */
-export function accountLinks({ adminTier, catalog, returnTo }: { adminTier: boolean; catalog: boolean; returnTo: string }): AccountLink[] {
-  const profile = new URL(PROFILE_URI, ID_ORIGIN)
-  if (returnTo) profile.searchParams.set("return_to", returnTo)
+/** i18n keys, the same in every app. `cookiesAria` is the full name of the short cookie label. */
+export const ACCOUNT_MENU_LABELS = {
+  profile: "accountMenu.profile",
+  main: "accountMenu.home",
+  admin: "accountMenu.admin",
+  exercises: "accountMenu.exercises",
+  cookies: "consent.menuLabel",
+  cookiesAria: "consent.settings",
+  signOut: "accountMenu.signOut",
+} as const
+
+/** lucide icons, the same in every app; rendered with ACCOUNT_MENU_ICON_PROPS in the dim text colour. */
+export const ACCOUNT_MENU_ICONS: Record<AccountLinkKey | "cookies" | "signOut", LucideIcon> = {
+  profile: UserRound,
+  main: House,
+  admin: Settings,
+  exercises: Puzzle,
+  cookies: Cookie,
+  signOut: LogOut,
+}
+export const ACCOUNT_MENU_ICON_PROPS = { size: 16, strokeWidth: 1.6, "aria-hidden": true } as const
+
+export function accountLinks(current: AccountApp, { adminTier, catalog, returnTo }: AccountAccess, origins: AccountOrigins): AccountLink[] {
+  const links: AccountLink[] = []
+  if (current !== "id") links.push({ key: "profile", href: `${origins.id}/profile${returnTo ? `?return_to=${encodeURIComponent(returnTo)}` : ""}` })
+  if (current !== "main") links.push({ key: "main", href: origins.main || "/" })
+  if (current !== "admin" && adminTier) links.push({ key: "admin", href: origins.admin || "/" })
+  if (current !== "exercises" && catalog) links.push({ key: "exercises", href: origins.exercises || "/" })
+  return links
+}
+
+/** The whole menu below the name/email header. The event site adds its own items after the links. */
+export function accountMenu(current: AccountApp, access: AccountAccess, origins: AccountOrigins): AccountMenuEntry[] {
   return [
-    { key: "profile", href: profile.toString() },
-    ...(adminTier ? [{ key: "admin" as const, href: ADMIN_ORIGIN }] : []),
-    ...(catalog ? [{ key: "exercises" as const, href: EXERCISES_ORIGIN }] : []),
+    ...accountLinks(current, access, origins).map((link) => ({ kind: "link" as const, ...link })),
+    { kind: "divider" },
+    { kind: "cookies" },
+    { kind: "divider" },
+    { kind: "signOut" },
   ]
 }
 
-/**
- * Whether the exercise catalog opens for this user: admin-tier, or staff of at
- * least one event (GET /api/exercises/access — the same rule as the catalog's gate).
- */
-export function useCatalogAccess(me: Me | null): boolean {
-  const adminTier = me ? isAdminTier(me) : false
-  const [staff, setStaff] = useState(false)
-  useEffect(() => {
-    if (!me || adminTier) return
-    let cancelled = false
-    apiGet<{ IsAdmin?: boolean; Events?: unknown[] | null } | null>("/api/exercises/access", undefined, { required: false })
-      .then((access) => { if (!cancelled) setStaff(Boolean(access?.IsAdmin) || (access?.Events?.length ?? 0) > 0) })
-      .catch(() => { if (!cancelled) setStaff(false) })
-    return () => { cancelled = true }
-  }, [me, adminTier])
-  return adminTier || staff
+/** Catalog visibility from GET /exercises/access — the same rule as the catalog's own gate. */
+export function catalogAllowed(access: { IsAdmin?: boolean; Events?: unknown[] | null } | null | undefined): boolean {
+  return Boolean(access?.IsAdmin) || (access?.Events?.length ?? 0) > 0
 }

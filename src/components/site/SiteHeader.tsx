@@ -2,25 +2,32 @@
 
 import { Navbar } from "@/components/ib/Navbar"
 import { Button } from "@/components/ib/Button"
-import { AvatarMenu } from "@/components/ib/AvatarMenu"
+import { AvatarMenu, type AvatarMenuEntry } from "@/components/ib/AvatarMenu"
 import { initials } from "@/lib/initials"
 import { InboxButton } from "@/components/site/InboxButton"
 import { t } from "@/i18n/t"
 import { useApi } from "@/lib/useApi"
 import { idUrl, isAdminTier } from "@/lib/auth"
-import { SIGN_IN_URI, SIGN_OUT_URI } from "@/lib/links"
-import { accountLinks, useCatalogAccess, type AccountLinkKey } from "@/lib/accountMenu"
+import { ADMIN_ORIGIN, EXERCISES_ORIGIN, ID_ORIGIN, SIGN_IN_URI, SIGN_OUT_URI } from "@/lib/links"
+import { ACCOUNT_MENU_ICON_PROPS, ACCOUNT_MENU_ICONS, ACCOUNT_MENU_LABELS, accountMenu, type AccountMenuEntry } from "@/lib/accountMenu"
+import { useCatalogAccess } from "@/lib/useCatalogAccess"
+import { openConsentSettings } from "@/lib/consent"
 import { mediaUrl } from "@/api/client"
 import { landingLinks } from "./sections"
 
 // Platform navbar. Actions depend on the API probe (lib/useApi): absent while
 // pending/down (their slot keeps its width), «Увійти» for anonymous visitors,
-// the avatar menu (lib/accountMenu) for signed-in users.
-const ACCOUNT_ITEMS: Record<AccountLinkKey, { label: string; icon: string }> = {
-  profile: { label: "nav.profile", icon: "user" },
-  admin: { label: "nav.admin", icon: "settings" },
-  exercises: { label: "nav.exercises", icon: "puzzle" },
-  main: { label: "nav.home", icon: "home" },
+// the avatar menu (lib/accountMenu: same entries, labels and icons in every app) for signed-in users.
+function avatarEntry(entry: AccountMenuEntry): AvatarMenuEntry {
+  if (entry.kind === "divider") return "divider"
+  const key = entry.kind === "link" ? entry.key : entry.kind
+  const Icon = ACCOUNT_MENU_ICONS[key]
+  const icon = <Icon {...ACCOUNT_MENU_ICON_PROPS} />
+  // «Файли cookie» is a link to the cookie policy that opens the consent panel instead (with JS).
+  if (entry.kind === "cookies") {
+    return { href: "/cookies", label: t(ACCOUNT_MENU_LABELS.cookies), ariaLabel: t(ACCOUNT_MENU_LABELS.cookiesAria), icon, onSelect: openConsentSettings }
+  }
+  return { href: entry.kind === "link" ? entry.href : idUrl(SIGN_OUT_URI), label: t(ACCOUNT_MENU_LABELS[key]), icon }
 }
 
 export function SiteHeader({ home }: { home: boolean }) {
@@ -43,12 +50,11 @@ export function SiteHeader({ home }: { home: boolean }) {
             email={me.Email}
             picture={mediaUrl(me.Picture)}
             initials={initials(me.FirstName, me.LastName, me.Email)}
-            items={accountLinks({
-              adminTier: isAdminTier(me),
-              catalog,
-              returnTo: typeof window !== "undefined" ? window.location.href : "",
-            }).map(({ key, href }) => ({ href, label: t(ACCOUNT_ITEMS[key].label), icon: ACCOUNT_ITEMS[key].icon }))}
-            footer={{ href: idUrl(SIGN_OUT_URI), label: t("common.signOut"), icon: "logout" }}
+            items={accountMenu(
+              "main",
+              { adminTier: isAdminTier(me), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
+              { id: ID_ORIGIN, admin: ADMIN_ORIGIN, exercises: EXERCISES_ORIGIN, main: "/" },
+            ).map(avatarEntry)}
           />
         </>
       ) : null}
