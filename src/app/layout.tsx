@@ -2,10 +2,10 @@ import type React from "react"
 import "@/app/globals.css"
 import "@/styles/site.css"
 import type { Metadata } from "next"
-import { GoogleAnalytics } from "@next/third-parties/google"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
+import { Analytics } from "@/components/site/Analytics"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
                 <ApiProvider>{children}</ApiProvider>
-                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />}
+                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />}
             </body>
         </html>
     );

@@ -7,7 +7,7 @@ import { extname, join, normalize } from "node:path"
 const ROOT = join(import.meta.dirname, "..", "out")
 const PORT = Number(process.env.PORT || 4173)
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
-  ".png": "image/png", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2", ".txt": "text/plain" }
+  ".png": "image/png", ".webp": "image/webp", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2", ".txt": "text/plain" }
 
 async function resolve(urlPath) {
   const p = join(ROOT, normalize(decodeURIComponent(urlPath)).replace(/^(\.\.[/\\])+/, ""))
