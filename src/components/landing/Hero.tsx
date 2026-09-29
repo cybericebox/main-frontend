@@ -5,7 +5,7 @@ import { HeroChallenge, WARMUP_COMMENT } from "./HeroChallenge"
 // app window; the warm-up challenge opens over it (the real flag form). Both columns: HeroChallenge.
 export function Hero() {
   // The hero waves (a CSS ::before background, see ds/base.css) are the LCP image: announce them in the
-  // document head so the fetch starts with the HTML, not after the CSS is parsed. Same file image-set picks.
+  // document head so the fetch starts with the HTML, not after the CSS is parsed.
   preload("/assets/waves.webp", { as: "image", type: "image/webp", fetchPriority: "high" })
   return (
     <section className="pl-hero ib-waves-quiet" aria-labelledby="hero-h">

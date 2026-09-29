@@ -1,5 +1,6 @@
 /* copied from ds-v2 2026-09-24 */
-/* Change vs source: waves url is absolute (/assets/waves.*); WebP (lossless) via image-set, PNG as fallback. */
+/* Change vs source: waves url is absolute and WebP (/assets/waves.webp, lossless re-encode of waves.png). Every
+   supported browser decodes WebP, so no PNG fallback; image-set() is avoided: Turbopack drops its second url. */
 /* Base layer: reset, typography, focus, utilities. Depends on tokens.css. */
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -23,7 +24,7 @@ code{font-size:.92em;background:var(--ib-soft);padding:1px 5px;border-radius:var
 /* brand mass — deepest surface in both themes */
 .ib-mass{background:var(--ib-brand);color:var(--ib-on-brand);position:relative;isolation:isolate}
 .ib-mass .ib-dim{color:var(--ib-on-brand-3)}
-.ib-mass-waves::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/waves.png") center/cover no-repeat;background-image:image-set(url("/assets/waves.webp") type("image/webp"),url("/assets/waves.png") type("image/png"));filter:var(--ib-wave-filter);opacity:var(--ib-wave-opacity);pointer-events:none}
+.ib-mass-waves::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/waves.webp") center/cover no-repeat;filter:var(--ib-wave-filter);opacity:var(--ib-wave-opacity);pointer-events:none}
 /* waves on a quiet light zone (hero left side, empty panels). Tokens --ib-wave-quiet-* per theme. */
 .ib-waves-quiet{position:relative;isolation:isolate}
-.ib-waves-quiet::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/waves.png") left center/cover no-repeat;background-image:image-set(url("/assets/waves.webp") type("image/webp"),url("/assets/waves.png") type("image/png"));filter:var(--ib-wave-quiet-filter);opacity:var(--ib-wave-quiet-opacity);pointer-events:none}
+.ib-waves-quiet::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/waves.webp") left center/cover no-repeat;filter:var(--ib-wave-quiet-filter);opacity:var(--ib-wave-quiet-opacity);pointer-events:none}
