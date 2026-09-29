@@ -122,9 +122,12 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
           {sections.map((n) => (
             <Section key={n} doc={doc} n={n} />
           ))}
-          <p className="lg-doc__contact">
-            {tRich("legal.questions", { email: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a> })}
-          </p>
+          {/* /security already names its own mailbox in the text; the privacy@ line would misdirect reports */}
+          {doc !== "security" && (
+            <p className="lg-doc__contact">
+              {tRich("legal.questions", { email: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a> })}
+            </p>
+          )}
         </div>
       </div>
     </article>
