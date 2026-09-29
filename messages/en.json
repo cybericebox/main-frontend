@@ -29,7 +29,7 @@
   "landing.hero.headline": "A range for CTF‑contests and labs",
   "landing.hero.subhead": "Solve challenges, break into the lab, follow the leaderboard.",
   "landing.labs.title": "A separate lab for every challenge",
-  "landing.labs.body": "Every challenge runs in its own isolated L2/L3 network with vulnerable hosts. Reset it at any time.",
+  "landing.labs.body": "Every challenge runs in its own isolated L2/L3 network with vulnerable hosts.",
   "landing.ch.board": "Challenges",
   "landing.ch.solvedOf": "Solved",
   "landing.ch.of": "of",
