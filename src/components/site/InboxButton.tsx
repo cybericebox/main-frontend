@@ -230,7 +230,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     setOlderCursor(null)
     olderCursorRef.current = null
     setLoading(true)
-    scrollAreaRef.current?.scrollTo({ top: 0 })
+    if (scrollAreaRef.current) scrollAreaRef.current.scrollTop = 0
     void refresh()
   }, [refresh])
 
