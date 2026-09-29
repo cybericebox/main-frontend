@@ -167,7 +167,7 @@ export function Navbar({
     <header ref={rootRef} className="ib-navbar ib-navbar--platform">
       <div className="ib-navbar__bar">
         <a className="ib-navbar__brand" href={brandHref} aria-label={t("landing.nav.home")}>
-          <Image className="ib-navbar__crest" src="/assets/crest-128.png" alt="" width={32} height={32} priority />
+          <Image className="ib-navbar__crest" src="/assets/crest-64.webp" alt="" width={32} height={32} priority />
           <span className="ib-navbar__name">
             <Wordmark />
           </span>
