@@ -1,6 +1,6 @@
 import * as React from "react"
 import { has, richText, t, tRich } from "@/i18n/t"
-import { CONTACT_EMAIL, PRIVACY_EMAIL } from "@/lib/links"
+import { PRIVACY_EMAIL, SECURITY_EMAIL } from "@/lib/links"
 import "@/styles/ds/components/toc.css"
 import "@/styles/legal.css"
 
@@ -8,11 +8,11 @@ export type LegalDoc = "privacy" | "terms" | "cookies"
 
 const COLUMNS = ["name", "purpose", "provider", "duration", "category"] as const
 
-// Inside any paragraph or item: {privacyEmail} / {contactEmail} become mailto links, and
+// Inside any paragraph or item: {privacyEmail} / {securityEmail} become mailto links, and
 // [text](/path) a link to another legal page (the text carries the grammatical case).
 const EMAILS: Record<string, React.ReactNode> = {
   privacyEmail: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>,
-  contactEmail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>,
+  securityEmail: <a href={`mailto:${SECURITY_EMAIL}`}>{SECURITY_EMAIL}</a>,
 }
 const DOC_LINK = /\[([^\]]+)\]\((\/[a-z]+)\)/g
 
@@ -34,7 +34,7 @@ function count(prefix: (i: number) => string): number[] {
 }
 
 // A section of legal.<doc>.sN: heading, then any of body (paragraph), items.M (numbered
-// sub-points N.M), rows.M.<column> (cookie table), after (closing paragraph).
+// sub-points N.M, anchor #sN-M), rows.M.<column> (cookie table), after (closing paragraph).
 function Section({ doc, n }: { doc: LegalDoc; n: number }) {
   const k = `legal.${doc}.s${n}`
   const items = count((i) => `${k}.items.${i}`)
@@ -49,7 +49,7 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
       {items.length > 0 && (
         <ol className="lg-doc__items">
           {items.map((i) => (
-            <li key={i}>
+            <li key={i} id={`s${n}-${i}`}>
               <span className="ib-num">
                 {n}.{i}.
               </span>

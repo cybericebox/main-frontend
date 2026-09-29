@@ -13,6 +13,9 @@ export const CONTACT_EMAIL = `contact@${PLATFORM_DOMAIN}`
 // Privacy / legal questions mailbox (legal pages).
 export const PRIVACY_EMAIL = `privacy@${PLATFORM_DOMAIN}`
 
+// Vulnerability reports (Terms responsible-disclosure clause, /.well-known/security.txt).
+export const SECURITY_EMAIL = `security@${PLATFORM_DOMAIN}`
+
 export const API_ORIGIN = `https://${process.env.NEXT_PUBLIC_API_DOMAIN || `api.${DOMAIN}`}`
 
 export const ID_ORIGIN = `https://${process.env.NEXT_PUBLIC_ID_DOMAIN || `id.${DOMAIN}`}`
