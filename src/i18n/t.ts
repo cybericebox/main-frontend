@@ -26,6 +26,11 @@ function lookup(key: string): string {
   return f ?? key
 }
 
+/** Whether a key exists in the canonical catalog (structured texts: legal.<doc>.sN.items.M). */
+export function has(key: string): boolean {
+  return key in fallback
+}
+
 // `{name}` placeholders; other braces (the flag format «ICE{…}») stay as they are.
 const VAR = /\{(\w+)\}/g
 
@@ -45,7 +50,12 @@ export function t(key: MessageKey | string, vars?: Vars): string {
  * split around them (keyed fragments), ready to render as children.
  */
 export function tRich(key: MessageKey | string, vars: Record<string, ReactNode>): ReactNode[] {
-  return lookup(key)
+  return richText(lookup(key), vars)
+}
+
+/** tRich for an already translated string (e.g. one with extra placeholders added by the caller). */
+export function richText(text: string, vars: Record<string, ReactNode>): ReactNode[] {
+  return text
     .split(/(\{\w+\})/)
     .map((part, i) => {
       const name = /^\{(\w+)\}$/.exec(part)?.[1]
