@@ -1,4 +1,11 @@
 {
+  "role.super_admin": "Super administrator",
+  "role.admin": "Administrator",
+  "role.admin_viewer": "Administrator (view-only)",
+  "role.user": "User",
+  "role.event.owner": "Owner",
+  "role.event.moderator": "Moderator",
+  "role.event.observer": "Observer",
   "common.signIn": "Sign in",
   "inbox.title": "Inbox",
   "inbox.new": "New notification",
