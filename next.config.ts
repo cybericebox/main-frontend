@@ -1,7 +1,8 @@
 import type { NextConfig } from "next"
 
 // Static export for main-frontend (apex landing app).
-// - output: 'export' produces the `out/` directory for static hosting.
+// - output: 'export' (production builds only) produces the `out/` directory for static hosting;
+//   `next dev` runs as a normal Next app.
 // - images.unoptimized: true is required when using static export (no server-side image optimization).
 // - no trailingSlash: pages export as /<path>.html and URLs carry no trailing slash,
 //   same as id-frontend (nginx resolves $uri.html); 404.html is still emitted.
@@ -12,7 +13,7 @@ import type { NextConfig } from "next"
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   images: {
     unoptimized: true,
   },
