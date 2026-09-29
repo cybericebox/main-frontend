@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import Image from "next/image"
 import { ThemeSwitch } from "./ThemeSwitch"
+import { Tooltip } from "./Tooltip"
 import { Wordmark } from "./Wordmark"
 import type { NavLink } from "./Navbar"
 import { t, tRich } from "@/i18n/t"
@@ -31,9 +32,13 @@ export function Footer({ brandHref, email, groups }: { brandHref: string; email:
             <p className="ib-footer__support">
               {tRich("landing.footer.support", {
                 link: (
-                  <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer">
-                    {t("landing.footer.supportLink")}
-                  </a>
+                  <Tooltip content={t("landing.footer.departmentFull")} align="start">
+                    {(tipId) => (
+                      <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
+                        {t("landing.footer.supportLink")}
+                      </a>
+                    )}
+                  </Tooltip>
                 ),
               })}
             </p>
@@ -65,9 +70,13 @@ export function Footer({ brandHref, email, groups }: { brandHref: string; email:
             {tRich("landing.footer.copyright", {
               year: YEAR,
               nure: (
-                <a href="https://nure.ua" target="_blank" rel="noopener noreferrer" title={t("landing.footer.nureFull")}>
-                  {t("landing.footer.nure")}
-                </a>
+                <Tooltip content={t("landing.footer.nureFull")} align="start">
+                  {(tipId) => (
+                    <a href="https://nure.ua" target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
+                      {t("landing.footer.nure")}
+                    </a>
+                  )}
+                </Tooltip>
               ),
             })}
           </p>

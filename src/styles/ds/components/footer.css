@@ -33,11 +33,16 @@
 .ib-footer__bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--ib-4);padding:var(--ib-5) 0 var(--ib-6);border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
 .ib-footer__bar .ib-theme{flex:none}
 /* the switch sits on the right edge: its last hint opens leftwards, not off-screen */
-.ib-footer__bar .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
+.ib-footer__bar .ib-theme .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
 .ib-footer__legal{margin:0;color:var(--ib-dim);white-space:nowrap}
 :is(.ib-footer__legal,.ib-footer__support) a{color:var(--ib-ink);font-weight:var(--ib-w-medium);text-decoration:none;white-space:nowrap;border-radius:2px}
 :is(.ib-footer__legal,.ib-footer__support) a:hover{color:var(--ib-ice)}
 :is(.ib-footer__legal,.ib-footer__support) a:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
+/* full-name tooltips on these links: anchored to the text line's start (not the link), so the bubble never
+   leaves the viewport even when the link wraps near the right edge on a phone */
+:is(.ib-footer__legal,.ib-footer__support){position:relative}
+:is(.ib-footer__legal,.ib-footer__support) .ib-tip{position:static;display:inline}
+:is(.ib-footer__legal,.ib-footer__support) .ib-tip>.ib-tip__bubble{max-width:min(320px,calc(100vw - 32px))}
 
 @container ib-footer (min-width: 1024px){
   .ib-footer__top{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--ib-16);padding:var(--ib-12) 0 var(--ib-10)}
