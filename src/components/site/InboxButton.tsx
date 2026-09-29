@@ -13,12 +13,13 @@ import { BrandLoading } from "@/components/site/BrandLoading"
 import { EmptyState } from "@/components/site/EmptyState"
 import { Icon } from "@/components/ib/Icon"
 
-import { apiGet, apiPatch } from "@/api/client"
+import { apiGet, apiPatch, apiPost } from "@/api/client"
+import { localizedError } from "@/i18n/apiError"
 import { t } from "@/i18n/t"
 import { NotificationMessageCard } from "./NotificationMessageCard"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 import {
-  INBOX_TABS, countsAfterRead, countsAfterReadAll, formatInboxTime, inTab, inboxQuery, isUnread, orderForTab,
+  INBOX_TABS, canResolve, countsAfterRead, countsAfterReadAll, countsAfterResolve, formatInboxTime, inTab, inboxQuery, isUnread, orderForTab,
   bellCount, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
   type InboxCounts, type InboxDefaultTab, type InboxMessage as Message, type InboxTab,
 } from "./inboxModel"
@@ -71,6 +72,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   const [counts, setCounts] = useState<InboxCounts | null>(null)
   const [otherEvents, setOtherEvents] = useState(0)
   const [error, setError] = useState("")
+  const [resolving, setResolving] = useState<string | null>(null)
   const cursorRef = useRef<InboxCursor | null>(null)
   const unreadCountRef = useRef(0)
   const countsRef = useRef<InboxCounts | null>(null)
@@ -285,6 +287,29 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     window.location.assign(href)
   }
 
+  // «Вирішено» closes a «Лабораторія впала» request for every recipient (§8.2).
+  async function resolve(item: Message) {
+    setError("")
+    setResolving(item.ID)
+    let failure = ""
+    try {
+      await apiPost(`/api/notifications/inbox/${encodeURIComponent(item.ID)}/resolve`, {})
+      if (countsRef.current) applyCounts(countsAfterResolve(countsRef.current, item))
+      if (isUnread(item)) {
+        unreadCountRef.current = Math.max(0, unreadCountRef.current - 1)
+        setUnread(unreadCountRef.current)
+      }
+      announceRead()
+    } catch (err) {
+      // 30217 not found, 20218 not resolvable by hand, 70219 already resolved: show why, then the current state.
+      failure = localizedError(err)
+    }
+    setResolving(null)
+    await refresh()
+    if (failure) setError(failure)
+    else pollNowRef.current()
+  }
+
   // «Позначити прочитаним» acts on the current tab only.
   async function readAll() {
     setError("")
@@ -347,7 +372,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
           {/* loading and empty share one centered box of the same height, so nothing jumps */}
           {loading || items.length === 0 ? <div className="flex min-h-48 flex-1 items-center justify-center">{loading ? <BrandLoading label={t("common.loading")} /> : <EmptyState message={emptyMessage} />}</div> : <ul className="divide-y divide-line">{items.map((item, index) => {
             const href = safeHref(item.Link ?? "")
-            const resolved = item.Category === "requests" && !!item.ResolvedAt
+            const resolved = !!item.ResolvedAt
             const unreadItem = isUnread(item)
             return <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined} className={`px-4 py-3 hover:bg-hover ${resolved ? "opacity-60" : ""}`}>
               <NotificationMessageCard
@@ -360,7 +385,12 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
                     : <time dateTime={item.CreatedAt} className="min-w-0 truncate">{formatInboxTime(item.CreatedAt)}</time>}
                   {!event && <EventLabel name={item.EventName} />}
                 </span>}
-                actions={href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : undefined}
+                actions={href || unreadItem || canResolve(item) ? <>
+                  {href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : null}
+                  {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
+                    {resolving === item.ID ? <BrandLoading compact label={t("common.loading")} /> : <Icon name="check" />}{t("inbox.resolve")}
+                  </button>}
+                </> : undefined}
               />
             </li>
           })}</ul>}

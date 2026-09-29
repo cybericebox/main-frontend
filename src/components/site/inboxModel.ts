@@ -11,8 +11,11 @@ export type InboxDefaultTab = InboxTab | "requestsIfOpen"
 /** Tab counts: requests = open requests; the others = unread. */
 export type InboxCounts = Record<InboxTab, number>
 
-export type InboxResolution = "approved" | "rejected" | "accepted" | "declined" | "revoked" | "expired" | "fixed" | "withdrawn"
-export const INBOX_RESOLUTIONS: readonly InboxResolution[] = ["approved", "rejected", "accepted", "declined", "revoked", "expired", "fixed", "withdrawn"]
+export type InboxResolution = "approved" | "rejected" | "fixed" | "resolved"
+export const INBOX_RESOLUTIONS: readonly InboxResolution[] = ["approved", "rejected", "fixed", "resolved"]
+
+/** The only request type a person may close by hand (§8.1): «Лабораторія впала». */
+export const MANUALLY_RESOLVABLE_TYPE = "event.lab.failed"
 
 export type InboxMessage = {
   ID: string
@@ -30,14 +33,14 @@ export type InboxMessage = {
   EventID?: string | null
   EventName?: string | null
   EventTag?: string | null
-  // Categories (newer backend; absent on older ones).
-  Category?: InboxCategory | null
-  ActionRequired?: boolean | null
+  // Categories (docs/INBOX-DESIGN.md §8.3; absent on older backends).
+  Type?: string
+  Category?: InboxCategory
+  ActionRequired?: boolean
   ResolvedAt?: string | null
-  Resolution?: string | null
-  // {ID, Name}, or (domain shape) the resolver's ID with ResolvedByName beside it.
-  ResolvedBy?: { ID: string; Name?: string | null } | string | null
-  ResolvedByName?: string | null
+  Resolution?: InboxResolution | null
+  // null when the system closed the request.
+  ResolvedBy?: { ID: string; Name: string } | null
 }
 
 /** Categories are on when the poll carries a Counts object (older backends omit it). */
@@ -59,14 +62,19 @@ export function isCategory(value: unknown): value is InboxCategory {
   return value === "requests" || value === "personal" || value === "activity"
 }
 
-/** An open request waits for a decision; it leaves «Запити» once resolved. */
+/** An open request waits for a decision (§8.3: ActionRequired and not resolved); it counts in «Запити» even when read. */
 export function isOpenRequest(item: InboxMessage): boolean {
-  return item.Category === "requests" && !item.ResolvedAt
+  return !!item.ActionRequired && !item.ResolvedAt
 }
 
-/** A resolved request counts as read even if ReadAt has not caught up yet. */
+/** The server marks resolved copies read, so ReadAt alone decides. */
 export function isUnread(item: InboxMessage): boolean {
-  return !item.ReadAt && !item.ResolvedAt
+  return !item.ReadAt
+}
+
+/** «Вирішено» is offered only on open «Лабораторія впала» requests; the rest close by decision. */
+export function canResolve(item: InboxMessage): boolean {
+  return isOpenRequest(item) && item.Type === MANUALLY_RESOLVABLE_TYPE
 }
 
 export function resolveDefaultTab(defaultTab: InboxDefaultTab, counts: InboxCounts | null): InboxTab {
@@ -80,17 +88,15 @@ export function inTab(item: InboxMessage, tab: InboxTab): boolean {
   return tab === "all" || item.Category === tab
 }
 
-/** «Запити»: open requests first, resolved below; each group keeps the server's newest-first order. */
+/** «Запити»: open requests first, the rest below; each group keeps the server's newest-first order. */
 export function orderForTab(items: InboxMessage[], tab: InboxTab): InboxMessage[] {
   if (tab !== "requests") return items
-  return [...items.filter((item) => !item.ResolvedAt), ...items.filter((item) => item.ResolvedAt)]
+  return [...items.filter(isOpenRequest), ...items.filter((item) => !isOpenRequest(item))]
 }
 
 /** Who resolved a request; empty for system resolutions. */
 export function resolverName(item: InboxMessage): string {
-  const by = item.ResolvedBy
-  const name = by && typeof by === "object" ? by.Name : item.ResolvedByName
-  return typeof name === "string" ? name.trim() : ""
+  return item.ResolvedBy?.Name?.trim() ?? ""
 }
 
 /** The bell: unread plus open requests (Counts.All); older backends send only UnreadCount. */
@@ -105,6 +111,12 @@ export function countsAfterRead(counts: InboxCounts, item: InboxMessage): InboxC
   const next = { ...counts, all: Math.max(0, counts.all - 1) }
   if (item.Category === "personal" || item.Category === "activity") next[item.Category] = Math.max(0, next[item.Category] - 1)
   return next
+}
+
+/** Optimistic counts after «Вирішено»: the request leaves «Запити» and the bell. */
+export function countsAfterResolve(counts: InboxCounts, item: InboxMessage): InboxCounts {
+  if (!isOpenRequest(item)) return counts
+  return { ...counts, all: Math.max(0, counts.all - 1), requests: Math.max(0, counts.requests - 1) }
 }
 
 /** Optimistic counts after «Позначити прочитаним» on a tab; open requests stay open. */

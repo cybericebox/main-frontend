@@ -43,30 +43,40 @@ test("default tab per app", () => {
   assert.equal(inbox.resolveDefaultTab("requestsIfOpen", none), "all")
 })
 
+const request = (id: string, fields: Partial<Message> = {}) => item(id, { Category: "requests", ActionRequired: true, ...fields })
+
 test("requests: open first, resolved below, order kept inside each group", () => {
   const list = [
-    item("r1", { Category: "requests", ResolvedAt: "2026-09-29T10:00:00Z" }),
-    item("o1", { Category: "requests" }),
-    item("r2", { Category: "requests", ResolvedAt: "2026-09-29T08:00:00Z" }),
-    item("o2", { Category: "requests" }),
+    request("r1", { ResolvedAt: "2026-09-29T10:00:00Z" }),
+    request("o1"),
+    request("r2", { ResolvedAt: "2026-09-29T08:00:00Z" }),
+    request("o2"),
   ]
   assert.deepEqual(inbox.orderForTab(list, "requests").map((entry) => entry.ID), ["o1", "o2", "r1", "r2"])
   assert.deepEqual(inbox.orderForTab(list, "all").map((entry) => entry.ID), ["r1", "o1", "r2", "o2"])
 })
 
-test("a resolved request is read and not open", () => {
-  const resolved = item("r", { Category: "requests", ResolvedAt: "2026-09-29T10:00:00Z" })
-  assert.equal(inbox.isUnread(resolved), false)
-  assert.equal(inbox.isOpenRequest(resolved), false)
-  assert.equal(inbox.isOpenRequest(item("o", { Category: "requests" })), true)
-  assert.equal(inbox.isOpenRequest(item("p", { Category: "personal" })), false)
+test("open = ActionRequired and not resolved (§8.3)", () => {
+  assert.equal(inbox.isOpenRequest(request("r", { ResolvedAt: "2026-09-29T10:00:00Z" })), false)
+  assert.equal(inbox.isOpenRequest(request("o")), true)
+  assert.equal(inbox.isOpenRequest(request("read", { ReadAt: "2026-09-29T10:00:00Z" })), true)
+  // Backfilled legacy rows keep ActionRequired false even in «Запити».
+  assert.equal(inbox.isOpenRequest(item("legacy", { Category: "requests" })), false)
+  assert.equal(inbox.isUnread(item("u")), true)
+  assert.equal(inbox.isUnread(item("x", { ReadAt: "2026-09-29T10:00:00Z" })), false)
+})
+
+test("«Вирішено» only on open «Лабораторія впала» requests", () => {
+  assert.equal(inbox.canResolve(request("lab", { Type: "event.lab.failed" })), true)
+  assert.equal(inbox.canResolve(request("lab", { Type: "event.lab.failed", ResolvedAt: "2026-09-29T10:00:00Z" })), false)
+  assert.equal(inbox.canResolve(request("app", { Type: "event.application.submitted" })), false)
+  assert.equal(inbox.canResolve(item("fyi", { Type: "event.lab.failed" })), false)
 })
 
 test("bell and resolver name", () => {
   assert.equal(inbox.bellCount(3, null), 3)
   assert.equal(inbox.bellCount(3, { all: 5, requests: 2, personal: 3, activity: 0 }), 5)
   assert.equal(inbox.resolverName(item("a", { ResolvedBy: { ID: "u", Name: " Іван П. " } })), "Іван П.")
-  assert.equal(inbox.resolverName(item("b", { ResolvedBy: "u", ResolvedByName: "Іван П." })), "Іван П.")
   assert.equal(inbox.resolverName(item("c", { ResolvedBy: null })), "")
 })
 
@@ -80,7 +90,9 @@ test("optimistic counts", () => {
   const counts = { all: 5, requests: 2, personal: 3, activity: 2 }
   assert.deepEqual(inbox.countsAfterRead(counts, item("p", { Category: "personal" })), { all: 4, requests: 2, personal: 2, activity: 2 })
   // An open request stays in All and Requests until it is resolved.
-  assert.deepEqual(inbox.countsAfterRead(counts, item("q", { Category: "requests" })), counts)
+  assert.deepEqual(inbox.countsAfterRead(counts, request("q")), counts)
+  assert.deepEqual(inbox.countsAfterResolve(counts, request("q")), { all: 4, requests: 1, personal: 3, activity: 2 })
+  assert.deepEqual(inbox.countsAfterResolve(counts, item("p", { Category: "personal" })), counts)
   assert.deepEqual(inbox.countsAfterRead(counts, item("x", { ReadAt: "2026-09-29T10:00:00Z", Category: "personal" })), counts)
   assert.deepEqual(inbox.countsAfterReadAll(counts, "personal"), { all: 2, requests: 2, personal: 0, activity: 2 })
   assert.deepEqual(inbox.countsAfterReadAll(counts, "all"), { all: 2, requests: 2, personal: 0, activity: 0 })
@@ -96,7 +108,7 @@ test("queries carry the category and the event scope", () => {
 
 test("resolved line keys exist in both catalogs", () => {
   assert.equal(inbox.resolutionKey("approved", true), "inbox.resolved.approved")
-  assert.equal(inbox.resolutionKey("expired", false), "inbox.resolved.expired.system")
+  assert.equal(inbox.resolutionKey("fixed", false), "inbox.resolved.fixed.system")
   assert.equal(inbox.resolutionKey("something-new", true), "inbox.resolved.other")
   assert.equal(inbox.resolutionKey(null, false), "inbox.resolved.other.system")
   for (const lang of ["uk", "en"]) {
@@ -106,7 +118,7 @@ test("resolved line keys exist in both catalogs", () => {
         const key = inbox.resolutionKey(resolution, named)
         assert.ok(catalog[key], `${lang}: ${key}`)
         assert.ok(catalog[key].includes("{time}"), `${lang}: ${key} has {time}`)
-        if (named && resolution !== "expired") assert.ok(catalog[key].includes("{name}"), `${lang}: ${key} has {name}`)
+        if (named) assert.ok(catalog[key].includes("{name}"), `${lang}: ${key} has {name}`)
       }
     }
     for (const tab of inbox.INBOX_TABS) assert.ok(catalog[`inbox.tab.${tab}`], `${lang}: inbox.tab.${tab}`)
