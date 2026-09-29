@@ -7,23 +7,10 @@ import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
 import { Analytics } from "@/components/site/Analytics"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
+import { pageMetadata } from "@/lib/metadata"
+import { t } from "@/i18n/t"
 
-export const metadata: Metadata = {
-    title: "Cyber ICE Box Platform",
-    description: "A platform for running cyber events and competitions",
-    openGraph: {
-        title: "Cyber ICE Box Platform",
-        description: "A platform for running cyber events and competitions",
-        type: "website",
-        url: `https://${process.env.NEXT_PUBLIC_DOMAIN}`,
-        images: [
-            {
-                url: `https://${process.env.NEXT_PUBLIC_DOMAIN}/assets/crest.png`,
-                alt: "Cyber ICE Box Platform",
-            },
-        ],
-    },
-};
+export const metadata: Metadata = pageMetadata({ title: t("meta.home.title"), description: t("meta.home.description") })
 
 // Root layout — HTML shell, theme boot, API probe (optional: the landing renders without the API). Navbar/Footer come
 // from the route-group layouts ((main) landing, (legal) documents).

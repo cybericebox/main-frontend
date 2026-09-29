@@ -246,5 +246,12 @@
   "landing.warmup.statPlace": "Place",
   "landing.warmup.statPoints": "Points",
   "landing.warmup.statFlags": "Flags",
-  "landing.footer.org": "Cyber ICE Box · KhNURE"
+  "landing.footer.org": "Cyber ICE Box · KhNURE",
+  "meta.brand": "Cyber ICE Box",
+  "meta.home.title": "Cyber ICE Box · A range for CTF competitions and labs",
+  "meta.home.description": "A platform for cybersecurity CTF competitions and hands-on labs: challenges, teams, a live leaderboard.",
+  "meta.privacy.title": "Privacy Policy",
+  "meta.privacy.description": "What data Cyber ICE Box collects, why, and how it is protected.",
+  "meta.terms.title": "Terms of Use",
+  "meta.terms.description": "Rules for using the Cyber ICE Box platform: accounts, competitions, labs."
 }

@@ -246,5 +246,12 @@
   "landing.warmup.statPlace": "Місце",
   "landing.warmup.statPoints": "Бали",
   "landing.warmup.statFlags": "Прапори",
-  "landing.footer.org": "Cyber ICE Box · ХНУРЕ"
+  "landing.footer.org": "Cyber ICE Box · ХНУРЕ",
+  "meta.brand": "Cyber ICE Box",
+  "meta.home.title": "Cyber ICE Box · Полігон для CTF-змагань і лабораторій",
+  "meta.home.description": "Платформа для CTF-змагань і практичних лабораторій з кібербезпеки: завдання, команди, рейтинг у реальному часі.",
+  "meta.privacy.title": "Політика конфіденційності",
+  "meta.privacy.description": "Які дані збирає Cyber ICE Box, навіщо і як їх захищає.",
+  "meta.terms.title": "Умови використання",
+  "meta.terms.description": "Правила користування платформою Cyber ICE Box: акаунти, змагання, лабораторії."
 }
