@@ -72,6 +72,7 @@
   "landing.footer.github": "GitHub",
   "landing.footer.privacy": "Privacy",
   "landing.footer.terms": "Terms",
+  "landing.footer.cookies": "Cookies",
   "signIn.title": "Sign in",
   "signIn.subtitle": "Enter your credentials to access your account",
   "signIn.forgotPassword": "Forgot password?",
@@ -303,5 +304,11 @@
   "legal.privacy.s6.heading": "Security",
   "legal.privacy.s6.body": "Access to labs is isolated at network level; training targets contain no real personal data. Data in transit is encrypted (TLS, WireGuard).",
   "legal.privacy.s7.heading": "Your rights",
-  "legal.privacy.s7.body": "You have the right to access, rectify and erase your data, and to obtain a copy of it. To exercise these rights, contact us using the details below."
+  "legal.privacy.s7.body": "You have the right to access, rectify and erase your data, and to obtain a copy of it. To exercise these rights, contact us using the details below.",
+  "consent.title": "Analytics cookies",
+  "consent.text": "We would like to use Google Analytics to understand how visitors use the platform. Analytics cookies are set only with your consent; declining does not limit any features. See the {link} for details.",
+  "consent.policyLink": "Cookie Policy",
+  "consent.accept": "Accept analytics",
+  "consent.reject": "Decline",
+  "consent.settings": "Cookie settings"
 }

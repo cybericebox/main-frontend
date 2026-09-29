@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { ThemeSwitch } from "./ThemeSwitch"
 import type { NavLink } from "./Navbar"
 import { t, tRich } from "@/i18n/t"
@@ -7,7 +8,8 @@ import "@/styles/ds/components/footer.css"
 // then «© year Cyber ICE Box · ХНУРЕ · За підтримки …» and the theme switch.
 const YEAR = new Date().getFullYear()
 
-export function Footer({ links }: { links: (NavLink & { external?: boolean })[] }) {
+// `extra` ends the links row (e.g. a button that reads as a link).
+export function Footer({ links, extra }: { links: (NavLink & { external?: boolean })[]; extra?: ReactNode }) {
   return (
     <footer className="ib-footer">
       <div className="ib-footer__inner">
@@ -24,6 +26,7 @@ export function Footer({ links }: { links: (NavLink & { external?: boolean })[] 
                 </a>
               )
             )}
+            {extra}
           </nav>
         </div>
         <div className="ib-footer__row">
