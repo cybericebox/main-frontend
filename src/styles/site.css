@@ -10,6 +10,8 @@ body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:hidden}
 .site-loading{display:flex;min-height:10rem;flex-direction:column;align-items:center;justify-content:center;gap:var(--ib-3);width:100%;padding:var(--ib-6);text-align:center}
 .site-loading--page{min-height:100dvh;background:var(--ib-paper)}
 .site-loading__logo{width:64px;height:64px;object-fit:contain;animation:site-loading-pulse 1.8s ease-in-out infinite}
+.site-loading--compact{min-height:0;padding:var(--ib-3) var(--ib-4)}
+.site-loading--compact .site-loading__logo{width:20px;height:20px}
 .site-loading__label{color:var(--ib-dim);font-size:var(--ib-fs-13)}
 @keyframes site-loading-pulse{50%{opacity:.45;transform:scale(.94)}}
 @media(prefers-reduced-motion:reduce){.site-loading__logo{animation:none}}

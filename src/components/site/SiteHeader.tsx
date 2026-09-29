@@ -2,7 +2,8 @@
 
 import { Navbar } from "@/components/ib/Navbar"
 import { Button } from "@/components/ib/Button"
-import { AvatarMenu, initials } from "@/components/ib/AvatarMenu"
+import { AvatarMenu } from "@/components/ib/AvatarMenu"
+import { initials } from "@/lib/initials"
 import { InboxButton } from "@/components/site/InboxButton"
 import { t } from "@/i18n/t"
 import { useApi } from "@/lib/useApi"

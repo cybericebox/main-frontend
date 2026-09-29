@@ -272,7 +272,7 @@ export function InboxButton() {
               />
             </li>
           })}</ul>}
-          {loadingOlder && <BrandLoading label={t("common.loading")} />}
+          {loadingOlder && <BrandLoading compact label={t("common.loading")} />}
         </div>
       </Popover.Content>
     </Popover.Portal>

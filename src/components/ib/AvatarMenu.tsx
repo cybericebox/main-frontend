@@ -7,12 +7,6 @@ import "@/styles/ds/components/dropdown-menu.css"
 
 export type AvatarMenuItem = { href: string; label: string; icon?: string }
 
-/** Initials for the avatar: first + last name, else the e-mail's first letter. */
-export function initials(first?: string, last?: string, email?: string): string {
-  const both = `${first?.trim()?.[0] ?? ""}${last?.trim()?.[0] ?? ""}`.toUpperCase()
-  return both || (email?.trim()?.[0] ?? "?").toUpperCase()
-}
-
 // ds-v2 avatar button + .ib-menu (IB.Dropdown behaviour: click toggles, Escape /
 // outside click closes, ↑/↓ move between items). Menu aligned to the right edge.
 export function AvatarMenu({
