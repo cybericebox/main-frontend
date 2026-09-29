@@ -25,6 +25,10 @@ type Message = {
   Actions?: { label: string; href: string }[] | null
   ReadAt: string | null
   CreatedAt: string
+  // Set when the notification belongs to an Event (W7 inbox scope).
+  EventID?: string | null
+  EventName?: string | null
+  EventTag?: string | null
 }
 type InboxCursor = { ID: string; CreatedAt: string }
 type InboxPoll = { Cursor: InboxCursor | null; NewInbox: Message[]; UnreadCount: number }
@@ -36,6 +40,11 @@ function safeHref(value: string): string | null {
   if (href.startsWith("/") && !href.startsWith("//")) return href
   if (href.startsWith("#") || /^https?:\/\/|^mailto:/i.test(href)) return href
   return null
+}
+
+function EventLabel({ name }: { name?: string | null }) {
+  if (!name) return null
+  return <span className="max-w-[60%] truncate rounded bg-soft px-1.5 py-0.5 text-[11px] font-medium text-dim">{name}</span>
 }
 
 function EmptyInbox() {
@@ -270,12 +279,12 @@ export function InboxButton() {
         </div>
         {error && <p role="alert" className="mx-3 mt-3 rounded-md bg-[var(--ib-danger-bg)] p-2 text-xs text-[var(--ib-danger)]">{error}</p>}
         {active ? <section className="min-h-0 overflow-y-auto p-4" aria-label={t("inbox.message")}>
-          <time className="block text-xs text-dim" dateTime={active.CreatedAt}>{new Date(active.CreatedAt).toLocaleString("uk-UA")}</time>
+          <span className="flex items-center gap-2"><time className="text-xs text-dim" dateTime={active.CreatedAt}>{new Date(active.CreatedAt).toLocaleString("uk-UA")}</time><EventLabel name={active.EventName} /></span>
           <div className="mt-4 break-words text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(active.Body ?? "") }} />
           {safeHref(active.Link ?? "") && <a className="mt-4 inline-block text-sm font-medium text-action hover:underline" href={safeHref(active.Link ?? "")!}>{t("inbox.open")}</a>}
         </section> : <>
           <div ref={scrollAreaRef} className="min-h-0 overflow-y-auto">
-            {loading ? <BrandLoading label={t("common.loading")} /> : items.length === 0 ? <EmptyInbox /> : <ul className="divide-y divide-line">{items.map((item, index) => <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined}><button type="button" onClick={() => void openMessage(item)} className="flex w-full flex-col gap-1 px-4 py-3 text-left text-sm hover:bg-hover focus-visible:outline-2 focus-visible:outline-action"><span className="flex w-full items-center gap-2"><span className={`min-w-0 flex-1 truncate ${item.ReadAt ? "" : "font-semibold"}`}>{item.Title}</span>{!item.ReadAt && <span aria-label={t("inbox.unreadItem")} className="h-2 w-2 shrink-0 rounded-full bg-action" />}</span><time className="text-xs text-dim" dateTime={item.CreatedAt}>{new Date(item.CreatedAt).toLocaleString("uk-UA")}</time></button></li>)}</ul>}
+            {loading ? <BrandLoading label={t("common.loading")} /> : items.length === 0 ? <EmptyInbox /> : <ul className="divide-y divide-line">{items.map((item, index) => <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined}><button type="button" onClick={() => void openMessage(item)} className="flex w-full flex-col gap-1 px-4 py-3 text-left text-sm hover:bg-hover focus-visible:outline-2 focus-visible:outline-action"><span className="flex w-full items-center gap-2"><span className={`min-w-0 flex-1 truncate ${item.ReadAt ? "" : "font-semibold"}`}>{item.Title}</span>{!item.ReadAt && <span aria-label={t("inbox.unreadItem")} className="h-2 w-2 shrink-0 rounded-full bg-action" />}</span><span className="flex min-w-0 items-center gap-2"><time className="shrink-0 text-xs text-dim" dateTime={item.CreatedAt}>{new Date(item.CreatedAt).toLocaleString("uk-UA")}</time><EventLabel name={item.EventName} /></span></button></li>)}</ul>}
             {loadingOlder && <p role="status" className="px-4 py-3 text-center text-xs text-dim">{t("common.loading")}</p>}
           </div>
         </>}
