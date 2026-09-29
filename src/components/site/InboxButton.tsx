@@ -15,6 +15,9 @@ import { t } from "@/i18n/t"
 import { NotificationMessageCard } from "./NotificationMessageCard"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 
+// Dropdown height cap, the same in every app: tune it here.
+const panelMaxHeight = "max-h-[min(28rem,calc(100vh-6rem))]"
+
 type Message = {
   ID: string
   Title: string
@@ -246,7 +249,7 @@ export function InboxButton() {
       </button>
     </Popover.Trigger>
     <Popover.Portal>
-      <Popover.Content align="end" sideOffset={20} collisionPadding={12} aria-label={t("inbox.title")} className="z-50 flex max-h-[min(38rem,calc(100vh-5rem))] w-[min(32rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-lg border border-line bg-surface text-ink shadow-[var(--ib-shadow-overlay)] outline-none">
+      <Popover.Content align="end" sideOffset={20} collisionPadding={12} aria-label={t("inbox.title")} className={`z-50 flex ${panelMaxHeight} w-[min(32rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-lg border border-line bg-surface text-ink outline-none`}>
         <div className="flex shrink-0 items-center justify-between gap-2 border-b border-line px-4 py-3">
           <h2><span className="sr-only">{t("inbox.title")}</span><Bell size={19} aria-hidden="true" className="text-dim" /></h2>
           <div className="flex shrink-0 items-center gap-2">
