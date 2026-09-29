@@ -64,3 +64,17 @@ export function richText(text: string, vars: Record<string, ReactNode>): ReactNo
       return createElement(Fragment, { key: i }, name !== undefined && name in vars ? vars[name] : part)
     })
 }
+
+/**
+ * tRich for a « · »-separated credit line: each segment becomes an unbreakable
+ * (nowrap) span and keeps its trailing dot, so lines break only after a separator.
+ */
+export function tSegments(key: MessageKey | string, vars: Record<string, ReactNode>): ReactNode[] {
+  const parts = lookup(key).split(" · ")
+  return parts.flatMap((part, i) => [
+    // segments of a fixed message never reorder, so the position is a stable key
+    // eslint-disable-next-line @eslint-react/no-array-index-key
+    createElement("span", { key: i, style: { whiteSpace: "nowrap" } }, ...richText(part, vars), i < parts.length - 1 ? " ·" : null),
+    i < parts.length - 1 ? " " : null,
+  ])
+}

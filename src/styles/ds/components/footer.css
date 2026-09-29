@@ -34,7 +34,7 @@
 .ib-footer__bar .ib-theme{flex:none}
 /* the switch sits on the right edge: its last hint opens leftwards, not off-screen */
 .ib-footer__bar .ib-theme .ib-tip:last-child>.ib-tip__bubble{left:auto;right:0;transform:none}
-.ib-footer__legal{margin:0;color:var(--ib-dim);white-space:nowrap}
+.ib-footer__legal{margin:0;color:var(--ib-dim)}
 :is(.ib-footer__legal,.ib-footer__support) a{color:var(--ib-ink);font-weight:var(--ib-w-medium);text-decoration:none;white-space:nowrap;border-radius:2px}
 :is(.ib-footer__legal,.ib-footer__support) a:hover{color:var(--ib-ice)}
 :is(.ib-footer__legal,.ib-footer__support) a:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
@@ -65,4 +65,8 @@
   .ib-footer__row+.ib-footer__row{gap:var(--ib-2)}
   .ib-footer--event .ib-footer__row{gap:var(--ib-3)}
   .ib-footer__org span{display:block;margin:var(--ib-1) 0 0}
+}
+/* «За підтримки кафедри …» is one unbreakable segment: a step smaller on the narrowest phones so it fits */
+@container ib-footer (max-width: 359px){
+  .ib-footer__support{font-size:var(--ib-fs-12)}
 }

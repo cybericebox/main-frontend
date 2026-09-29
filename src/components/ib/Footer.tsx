@@ -4,7 +4,7 @@ import { ThemeSwitch } from "./ThemeSwitch"
 import { Tooltip } from "./Tooltip"
 import { Wordmark } from "./Wordmark"
 import type { NavLink } from "./Navbar"
-import { t, tRich } from "@/i18n/t"
+import { t, tSegments } from "@/i18n/t"
 import "@/styles/ds/components/footer.css"
 
 // ds-v2 platform footer: a brand block (crest + wordmark, tagline, contact email, support line)
@@ -30,7 +30,7 @@ export function Footer({ brandHref, email, groups }: { brandHref: string; email:
               {email}
             </a>
             <p className="ib-footer__support">
-              {tRich("landing.footer.support", {
+              {tSegments("landing.footer.support", {
                 link: (
                   <Tooltip content={t("landing.footer.departmentFull")} align="start">
                     {(tipId) => (
@@ -67,7 +67,7 @@ export function Footer({ brandHref, email, groups }: { brandHref: string; email:
         </div>
         <div className="ib-footer__bar">
           <p className="ib-footer__legal">
-            {tRich("landing.footer.copyright", {
+            {tSegments("landing.footer.copyright", {
               year: YEAR,
               nure: (
                 <Tooltip content={t("landing.footer.nureFull")} align="start">
