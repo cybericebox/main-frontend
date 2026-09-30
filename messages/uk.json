@@ -529,5 +529,8 @@
   "accountMenu.exercises": "Каталог завдань",
   "accountMenu.signOut": "Вийти",
   "consent.menuLabel": "Файли cookie",
-  "consent.settings": "Налаштування файлів cookie"
+  "consent.settings": "Налаштування файлів cookie",
+  "siteBanner.label": "Оголошення",
+  "siteBanner.dismiss": "Закрити оголошення",
+  "siteBanner.more": "Докладніше"
 }

@@ -529,5 +529,8 @@
   "accountMenu.exercises": "Exercise catalog",
   "accountMenu.signOut": "Sign out",
   "consent.menuLabel": "Cookies",
-  "consent.settings": "Cookie settings"
+  "consent.settings": "Cookie settings",
+  "siteBanner.label": "Announcements",
+  "siteBanner.dismiss": "Dismiss announcement",
+  "siteBanner.more": "Learn more"
 }
