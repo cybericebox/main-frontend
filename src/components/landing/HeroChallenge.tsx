@@ -13,6 +13,7 @@ import "@/styles/ds/components/icon-button.css"
 import "@/styles/ds/components/input.css"
 import "@/styles/ds/components/status-text.css"
 import "./heroChallenge.css"
+import { STORAGE_WARMUP_SOLVED } from "@/lib/storageKeys"
 
 // Hero content (both columns). Left: headline, subhead, «Спробувати розминку» + «Лабораторії».
 // The card is an overlay anchored to the window: opening/closing never shifts the layout.
@@ -26,7 +27,6 @@ import "./heroChallenge.css"
 // opens as a bottom sheet (native modal <dialog>) kept above the keyboard via visualViewport.
 
 export const WARMUP_COMMENT = `<!-- ${t("landing.warmup.trail")} -->`
-const SOLVED_KEY = "ib_warmup"
 const SOLVED_EVENT = "ib:warmup-solved"
 const MODAL_DELAY_MS = 1200
 /* where a +100 team lands in the demo ranking, and its result */
@@ -89,7 +89,7 @@ export function HeroChallenge() {
   useEffect(() => {
     setUrl(eventHost(new Date().getFullYear(), window.location.hostname || DOMAIN))
     try {
-      if (sessionStorage.getItem(SOLVED_KEY) === "1") setDone(true)
+      if (sessionStorage.getItem(STORAGE_WARMUP_SOLVED) === "1") setDone(true)
     } catch {
       // storage blocked — start fresh
     }
@@ -167,7 +167,7 @@ export function HeroChallenge() {
     setError("")
     setDone(true)
     try {
-      sessionStorage.setItem(SOLVED_KEY, "1")
+      sessionStorage.setItem(STORAGE_WARMUP_SOLVED, "1")
     } catch {
       // storage blocked — the solved state just won't survive a reload
     }
