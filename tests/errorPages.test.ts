@@ -60,10 +60,16 @@ test("error and global-error use the error screen, retry the segment and log onl
   assert.deepEqual(tKeys("src/app/global-error.tsx"), ["error.page.title"])
 })
 
-test("404 renders the not-found texts and a home link", () => {
-  const keys = tKeys("src/app/not-found.tsx")
-  assert.deepEqual(keys, ["error.notFound", "error.notFoundDescription", "error.goHome"])
+test("404 renders the not-found screen: texts, home link and back", () => {
+  const keys = tKeys("src/components/site/NotFoundScreen.tsx")
+  assert.deepEqual(keys, ["error.notFound", "error.notFoundDescription", "error.goHome", "error.page.back"])
   assertTranslated(keys)
   assert.equal(uk["error.notFound"], "Сторінку не знайдено")
-  assert.match(source("src/app/not-found.tsx"), /href="\/"/)
+  assert.equal(uk["error.notFoundDescription"], "Сторінка, яку ви шукаєте, не існує або її перенесли.")
+  const screen = source("src/components/site/NotFoundScreen.tsx")
+  assert.match(screen, /href="\/"/)
+  assert.match(screen, /onClick=\{goBack\}/)
+  assert.match(screen, /<Icon name="search-x"/)
+  assert.match(screen, /site-404--block/)
+  assert.match(source("src/app/not-found.tsx"), /<NotFoundScreen \/>/)
 })
