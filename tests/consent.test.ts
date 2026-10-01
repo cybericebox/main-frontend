@@ -3,7 +3,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
-process.env.NEXT_PUBLIC_MAIN_HOST = "cybericebox.com"
+process.env.NEXT_PUBLIC_COOKIE_DOMAIN = "cookies.example.test"
 
 // Dynamic path: node runs the .ts source directly, tsc doesn't resolve it.
 const source = "../src/lib/consent.ts"
@@ -97,7 +97,7 @@ test("the choice is written per category to one cookie on the parent domain", ()
   assert.equal(consent.consentCookie({ analytics: false }, { secure: false }), "cib_consent=analytics:denied; path=/; max-age=31536000; SameSite=Lax")
   const { writes } = fakeBrowser()
   consent.saveConsent(consent.ACCEPT_ALL)
-  assert.match(writes[0], /^cib_consent=analytics:granted; .*domain=\.cybericebox\.com; Secure$/)
+  assert.match(writes[0], /^cib_consent=analytics:granted; .*domain=\.cookies\.example\.test; Secure$/)
 })
 
 test("the stored choice is read back from the cookie string", () => {
@@ -156,4 +156,15 @@ test("the settings link and the consent panel do not depend on GA being configur
   assert.doesNotMatch(read("../src/components/site/SiteFooter.tsx"), /GOOGLE_ANALYTICS/)
   assert.match(read("../src/components/site/CookieSettingsLink.tsx"), /<a href=\{href\}[^>]*onClick=\{interceptSettingsLink\}/)
   assert.doesNotMatch(read("../src/app/layout.tsx"), /GOOGLE_ANALYTICS_ID &&/)
+})
+
+test("saveConsent fails without NEXT_PUBLIC_COOKIE_DOMAIN", () => {
+  fakeBrowser()
+  const saved = process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+  delete process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+  try {
+    assert.throws(() => consent.saveConsent(consent.ACCEPT_ALL), /NEXT_PUBLIC_COOKIE_DOMAIN is required/)
+  } finally {
+    process.env.NEXT_PUBLIC_COOKIE_DOMAIN = saved
+  }
 })

@@ -8,7 +8,7 @@ set -e
 ROOT=/usr/share/nginx/html
 
 # Every operator value is required: no defaults, no derivation. Only analytics is optional (empty = off).
-for key in NEXT_PUBLIC_MAIN_HOST NEXT_PUBLIC_API_HOST NEXT_PUBLIC_ID_HOST NEXT_PUBLIC_ADMIN_HOST NEXT_PUBLIC_EXERCISES_HOST NEXT_PUBLIC_EVENT_DOMAIN NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_URL NEXT_PUBLIC_PARTNER_SITE_URL ; do
+for key in NEXT_PUBLIC_MAIN_HOST NEXT_PUBLIC_API_HOST NEXT_PUBLIC_ID_HOST NEXT_PUBLIC_ADMIN_HOST NEXT_PUBLIC_EXERCISES_HOST NEXT_PUBLIC_EVENT_DOMAIN NEXT_PUBLIC_COOKIE_DOMAIN NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_URL NEXT_PUBLIC_PARTNER_SITE_URL ; do
   eval "val=\${$key:-}"
   if [ -z "$val" ]; then
     echo "$key is required." >&2
@@ -21,7 +21,7 @@ export NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 replace() {
   # Escape sed-special chars in the replacement (| delimiter, & match-ref, \).
   esc=$(printf '%s' "$2" | sed -e 's/[\\&|]/\\&/g')
-  find "$ROOT" -type f \( -name '*.js' -o -name '*.html' -o -name '*.css' -o -name '*.txt' \) \
+  find "$ROOT" -type f \( -name '*.js' -o -name '*.html' -o -name '*.css' -o -name '*.txt' -o -name '*.xml' \) \
     -exec sed -i "s|$1|${esc}|g" {} +
 }
 

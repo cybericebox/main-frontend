@@ -4,12 +4,14 @@
  * COPY-TO-RP-APPS: app-agnostic, static-export-safe.
  *
  * The choice (light | dark | system) lives in the `cib_theme` cookie on the
- * parent domain (.NEXT_PUBLIC_MAIN_HOST), so landing, ID, admin and event open in
+ * parent domain (.NEXT_PUBLIC_COOKIE_DOMAIN), so landing, ID, admin and event open in
  * the same theme. `system` follows the OS setting. The resolved theme is put on
  * <html data-theme="…"> — ds-v2 tokens switch on that attribute.
  *
  * THEME_BOOT_SCRIPT runs inline in <head> before first paint (no light flash).
  */
+
+import { requiredEnv } from "@/lib/env"
 
 export type ThemeChoice = "light" | "dark" | "system"
 
@@ -24,11 +26,9 @@ function matchChoice(name: string): ThemeChoice | undefined {
   return document.cookie.match(new RegExp(`(?:^|; )${name}=(light|dark|system)`))?.[1] as ThemeChoice | undefined
 }
 
-// Parent domain shared by all frontends; required, no host-only fallback.
+// Cookie Domain attribute shared by all frontends; required, never derived from a host.
 function cookieDomain(): string {
-  const host = process.env.NEXT_PUBLIC_MAIN_HOST
-  if (!host) throw new Error("NEXT_PUBLIC_MAIN_HOST is required")
-  return host
+  return requiredEnv(process.env.NEXT_PUBLIC_COOKIE_DOMAIN, "NEXT_PUBLIC_COOKIE_DOMAIN")
 }
 
 function writeCookie(value: string, maxAge: number): void {

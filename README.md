@@ -33,12 +33,13 @@ Production builds are a **static export** (`output: "export"`, written to `out/`
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `NEXT_PUBLIC_MAIN_HOST` | yes | Landing host (bare host, no scheme): canonical origin, sitemap/robots/security.txt, parent domain of shared cookies. |
+| `NEXT_PUBLIC_MAIN_HOST` | yes | Landing host (bare host, no scheme): canonical origin, sitemap/robots/security.txt. |
 | `NEXT_PUBLIC_API_HOST` | yes | API host. |
 | `NEXT_PUBLIC_ID_HOST` | yes | ID app host. |
 | `NEXT_PUBLIC_ADMIN_HOST` | yes | Admin app host. |
 | `NEXT_PUBLIC_EXERCISES_HOST` | yes | Exercises app host. |
 | `NEXT_PUBLIC_EVENT_DOMAIN` | yes | Event sites are `<tag>.<domain>`. |
+| `NEXT_PUBLIC_COOKIE_DOMAIN` | yes | `Domain` attribute of the shared theme and consent cookies (e.g. the apex `example.com`); never derived from a host. |
 | `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
 | `NEXT_PUBLIC_SOURCE_URL` | yes | Public source link in the footer. |
 | `NEXT_PUBLIC_PARTNER_URL`, `NEXT_PUBLIC_PARTNER_SITE_URL` | yes | Partner department and university links in the footer credit. |

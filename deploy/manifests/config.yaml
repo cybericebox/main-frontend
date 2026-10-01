@@ -12,6 +12,8 @@ data:
   ADMIN_HOST: ""
   EXERCISES_HOST: ""
   EVENT_DOMAIN: ""
+  # Cookie Domain attribute for the shared theme/consent cookies (e.g. the apex), never derived from a host.
+  COOKIE_DOMAIN: ""
   CONTACT_EMAIL: ""
   PRIVACY_EMAIL: ""
   SECURITY_EMAIL: ""
