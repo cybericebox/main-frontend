@@ -4,11 +4,19 @@ metadata:
   name: main-frontend-config
   namespace: cybericebox
 data:
-  DOMAIN: "cybericebox.com"
-  # Optional host overrides (bare host, no scheme). Empty → <service>.<DOMAIN>.
-  API_DOMAIN: ""
-  ID_DOMAIN: ""
-  ADMIN_DOMAIN: ""
-  EXERCISES_DOMAIN: ""
+  # Every value is required and comes from the deployment env files (platform.env); no defaults.
+  # Hosts are bare hosts without a scheme. Fill these before applying.
+  MAIN_HOST: ""
+  API_HOST: ""
+  ID_HOST: ""
+  ADMIN_HOST: ""
+  EXERCISES_HOST: ""
+  EVENT_DOMAIN: ""
+  CONTACT_EMAIL: ""
+  PRIVACY_EMAIL: ""
+  SECURITY_EMAIL: ""
+  SOURCE_URL: ""
+  PARTNER_URL: ""
+  PARTNER_SITE_URL: ""
   # Optional Google Analytics 4 measurement id (G-…). Empty → analytics off.
   GOOGLE_ANALYTICS_ID: ""

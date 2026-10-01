@@ -33,16 +33,40 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Check required variables
+        run: |
+          for key in NEXT_PUBLIC_MAIN_HOST NEXT_PUBLIC_API_HOST NEXT_PUBLIC_ID_HOST NEXT_PUBLIC_ADMIN_HOST NEXT_PUBLIC_EXERCISES_HOST NEXT_PUBLIC_EVENT_DOMAIN NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_URL NEXT_PUBLIC_PARTNER_SITE_URL ; do
+            if [ -z "${!key}" ]; then echo "::error::$key is required (repository variable)"; exit 1; fi
+          done
+        env:
+          NEXT_PUBLIC_MAIN_HOST: ${{ vars.NEXT_PUBLIC_MAIN_HOST }}
+          NEXT_PUBLIC_API_HOST: ${{ vars.NEXT_PUBLIC_API_HOST }}
+          NEXT_PUBLIC_ID_HOST: ${{ vars.NEXT_PUBLIC_ID_HOST }}
+          NEXT_PUBLIC_ADMIN_HOST: ${{ vars.NEXT_PUBLIC_ADMIN_HOST }}
+          NEXT_PUBLIC_EXERCISES_HOST: ${{ vars.NEXT_PUBLIC_EXERCISES_HOST }}
+          NEXT_PUBLIC_EVENT_DOMAIN: ${{ vars.NEXT_PUBLIC_EVENT_DOMAIN }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_PRIVACY_EMAIL: ${{ vars.NEXT_PUBLIC_PRIVACY_EMAIL }}
+          NEXT_PUBLIC_SECURITY_EMAIL: ${{ vars.NEXT_PUBLIC_SECURITY_EMAIL }}
+          NEXT_PUBLIC_SOURCE_URL: ${{ vars.NEXT_PUBLIC_SOURCE_URL }}
+          NEXT_PUBLIC_PARTNER_URL: ${{ vars.NEXT_PUBLIC_PARTNER_URL }}
+          NEXT_PUBLIC_PARTNER_SITE_URL: ${{ vars.NEXT_PUBLIC_PARTNER_SITE_URL }}
       - name: Build static export
         run: npm run build
         env:
-          # repository variables; domain defaults to the production apex
-          NEXT_PUBLIC_DOMAIN: ${{ vars.NEXT_PUBLIC_DOMAIN || 'cybericebox.com' }}
-          # optional host overrides (bare host, no scheme); empty → <service>.<domain>
-          NEXT_PUBLIC_API_DOMAIN: ${{ vars.NEXT_PUBLIC_API_DOMAIN }}
-          NEXT_PUBLIC_ID_DOMAIN: ${{ vars.NEXT_PUBLIC_ID_DOMAIN }}
-          NEXT_PUBLIC_ADMIN_DOMAIN: ${{ vars.NEXT_PUBLIC_ADMIN_DOMAIN }}
-          NEXT_PUBLIC_EXERCISES_DOMAIN: ${{ vars.NEXT_PUBLIC_EXERCISES_DOMAIN }}
+          # repository / environment variables, all required (the build fails when one is empty)
+          NEXT_PUBLIC_MAIN_HOST: ${{ vars.NEXT_PUBLIC_MAIN_HOST }}
+          NEXT_PUBLIC_API_HOST: ${{ vars.NEXT_PUBLIC_API_HOST }}
+          NEXT_PUBLIC_ID_HOST: ${{ vars.NEXT_PUBLIC_ID_HOST }}
+          NEXT_PUBLIC_ADMIN_HOST: ${{ vars.NEXT_PUBLIC_ADMIN_HOST }}
+          NEXT_PUBLIC_EXERCISES_HOST: ${{ vars.NEXT_PUBLIC_EXERCISES_HOST }}
+          NEXT_PUBLIC_EVENT_DOMAIN: ${{ vars.NEXT_PUBLIC_EVENT_DOMAIN }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_PRIVACY_EMAIL: ${{ vars.NEXT_PUBLIC_PRIVACY_EMAIL }}
+          NEXT_PUBLIC_SECURITY_EMAIL: ${{ vars.NEXT_PUBLIC_SECURITY_EMAIL }}
+          NEXT_PUBLIC_SOURCE_URL: ${{ vars.NEXT_PUBLIC_SOURCE_URL }}
+          NEXT_PUBLIC_PARTNER_URL: ${{ vars.NEXT_PUBLIC_PARTNER_URL }}
+          NEXT_PUBLIC_PARTNER_SITE_URL: ${{ vars.NEXT_PUBLIC_PARTNER_SITE_URL }}
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
           # warm-up flag (secret NEXT_PUBLIC_WARMUP_FLAG, format ICE{…})
           NEXT_PUBLIC_WARMUP_FLAG: ${{ secrets.NEXT_PUBLIC_WARMUP_FLAG }}

@@ -4,7 +4,7 @@
  * COPY-TO-RP-APPS: app-agnostic, static-export-safe.
  *
  * The choice (light | dark | system) lives in the `cib_theme` cookie on the
- * parent domain (.NEXT_PUBLIC_DOMAIN), so landing, ID, admin and event open in
+ * parent domain (.NEXT_PUBLIC_MAIN_HOST), so landing, ID, admin and event open in
  * the same theme. `system` follows the OS setting. The resolved theme is put on
  * <html data-theme="…"> — ds-v2 tokens switch on that attribute.
  *
@@ -16,8 +16,6 @@ export type ThemeChoice = "light" | "dark" | "system"
 export const THEME_COOKIE = "cib_theme"
 const MAX_AGE = 60 * 60 * 24 * 365
 const DARK_QUERY = "(prefers-color-scheme: dark)"
-// Dev without a domain falls back to a host-only cookie.
-const DOMAIN_ATTR = process.env.NEXT_PUBLIC_DOMAIN ? `; domain=.${process.env.NEXT_PUBLIC_DOMAIN}` : ""
 
 // Keep in sync with readThemeChoice/resolveTheme/applyTheme below.
 export const THEME_BOOT_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=(light|dark|system)/);var c=m?m[1]:"system";var d=c==="dark"||(c==="system"&&window.matchMedia("${DARK_QUERY}").matches);document.documentElement.setAttribute("data-theme",d?"dark":"light")}catch(e){}})()`
@@ -26,9 +24,16 @@ function matchChoice(name: string): ThemeChoice | undefined {
   return document.cookie.match(new RegExp(`(?:^|; )${name}=(light|dark|system)`))?.[1] as ThemeChoice | undefined
 }
 
+// Parent domain shared by all frontends; required, no host-only fallback.
+function cookieDomain(): string {
+  const host = process.env.NEXT_PUBLIC_MAIN_HOST
+  if (!host) throw new Error("NEXT_PUBLIC_MAIN_HOST is required")
+  return host
+}
+
 function writeCookie(value: string, maxAge: number): void {
   const secure = location.protocol === "https:" ? "; Secure" : ""
-  document.cookie = `${THEME_COOKIE}=${value}; path=/${DOMAIN_ATTR}; SameSite=Lax${secure}; max-age=${maxAge}`
+  document.cookie = `${THEME_COOKIE}=${value}; path=/; domain=.${cookieDomain()}; SameSite=Lax${secure}; max-age=${maxAge}`
 }
 
 export function readThemeChoice(): ThemeChoice {

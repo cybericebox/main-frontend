@@ -2,6 +2,8 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
+process.env.NEXT_PUBLIC_MAIN_HOST = "cybericebox.com"
+
 // Dynamic path: node runs the .ts source directly, tsc doesn't resolve it.
 const source = "../src/lib/theme.ts"
 const theme = await import(source) as typeof import("../src/lib/theme")

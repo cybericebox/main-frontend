@@ -26,31 +26,66 @@ spec:
         - name: main-frontend
           image: cybericebox/main-frontend:latest
           env:
-            - name: NEXT_PUBLIC_DOMAIN
+            - name: NEXT_PUBLIC_MAIN_HOST
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: DOMAIN
-            - name: NEXT_PUBLIC_API_DOMAIN
+                  key: MAIN_HOST
+            - name: NEXT_PUBLIC_API_HOST
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: API_DOMAIN
-            - name: NEXT_PUBLIC_ID_DOMAIN
+                  key: API_HOST
+            - name: NEXT_PUBLIC_ID_HOST
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: ID_DOMAIN
-            - name: NEXT_PUBLIC_ADMIN_DOMAIN
+                  key: ID_HOST
+            - name: NEXT_PUBLIC_ADMIN_HOST
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: ADMIN_DOMAIN
-            - name: NEXT_PUBLIC_EXERCISES_DOMAIN
+                  key: ADMIN_HOST
+            - name: NEXT_PUBLIC_EXERCISES_HOST
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: EXERCISES_DOMAIN
+                  key: EXERCISES_HOST
+            - name: NEXT_PUBLIC_EVENT_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: EVENT_DOMAIN
+            - name: NEXT_PUBLIC_CONTACT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: CONTACT_EMAIL
+            - name: NEXT_PUBLIC_PRIVACY_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: PRIVACY_EMAIL
+            - name: NEXT_PUBLIC_SECURITY_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: SECURITY_EMAIL
+            - name: NEXT_PUBLIC_SOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: SOURCE_URL
+            - name: NEXT_PUBLIC_PARTNER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: PARTNER_URL
+            - name: NEXT_PUBLIC_PARTNER_SITE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: main-frontend-config
+                  key: PARTNER_SITE_URL
             - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
               valueFrom:
                 configMapKeyRef:

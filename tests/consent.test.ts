@@ -3,6 +3,8 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
+process.env.NEXT_PUBLIC_MAIN_HOST = "cybericebox.com"
+
 // Dynamic path: node runs the .ts source directly, tsc doesn't resolve it.
 const source = "../src/lib/consent.ts"
 const consent = await import(source) as typeof import("../src/lib/consent")
@@ -93,11 +95,9 @@ test("the choice is written per category to one cookie on the parent domain", ()
     "cib_consent=analytics:granted; path=/; max-age=31536000; SameSite=Lax; domain=.cybericebox.com; Secure",
   )
   assert.equal(consent.consentCookie({ analytics: false }, { secure: false }), "cib_consent=analytics:denied; path=/; max-age=31536000; SameSite=Lax")
-  process.env.NEXT_PUBLIC_DOMAIN = "cybericebox.com"
   const { writes } = fakeBrowser()
   consent.saveConsent(consent.ACCEPT_ALL)
   assert.match(writes[0], /^cib_consent=analytics:granted; .*domain=\.cybericebox\.com; Secure$/)
-  delete process.env.NEXT_PUBLIC_DOMAIN
 })
 
 test("the stored choice is read back from the cookie string", () => {

@@ -6,12 +6,35 @@ import type { NextConfig } from "next"
 // - images.unoptimized: true is required when using static export (no server-side image optimization).
 // - no trailingSlash: pages export as /<path>.html and URLs carry no trailing slash,
 //   same as id-frontend (nginx resolves $uri.html); 404.html is still emitted.
-// Dev-only: the app is served through the nginx edge on the real domain (not
-// localhost), so Next's own dev resources (fonts, HMR) are cross-origin and
-// blocked by default. Allow NEXT_PUBLIC_DOMAIN plus the known platform domains
-// (so dev works even without the env) and their subdomains.
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-const PLATFORM_DOMAINS = ["cybericebox.com", "cybericebox-dev.pp.ua", "cybericebox.pp.ua"];
+
+// Every operator value comes from the env; a missing one fails the build / dev start.
+const REQUIRED = [
+  "NEXT_PUBLIC_MAIN_HOST",
+  "NEXT_PUBLIC_API_HOST",
+  "NEXT_PUBLIC_ID_HOST",
+  "NEXT_PUBLIC_ADMIN_HOST",
+  "NEXT_PUBLIC_EXERCISES_HOST",
+  "NEXT_PUBLIC_EVENT_DOMAIN",
+  "NEXT_PUBLIC_CONTACT_EMAIL",
+  "NEXT_PUBLIC_PRIVACY_EMAIL",
+  "NEXT_PUBLIC_SECURITY_EMAIL",
+  "NEXT_PUBLIC_SOURCE_URL",
+  "NEXT_PUBLIC_PARTNER_URL",
+  "NEXT_PUBLIC_PARTNER_SITE_URL",
+];
+const missing = REQUIRED.filter((k) => !process.env[k]);
+if (missing.length) throw new Error(`Missing required env: ${missing.join(", ")}`);
+
+// Dev-only: the app is served through the edge on the real hosts (not localhost), so Next's own
+// dev resources (fonts, HMR) are cross-origin and blocked by default. Allow every configured
+// host plus the event domain and its subdomains; DEV_ALLOWED_ORIGINS (comma list) adds more.
+const env = process.env;
+const allowedDevOrigins = [
+  ...[env.NEXT_PUBLIC_MAIN_HOST, env.NEXT_PUBLIC_API_HOST, env.NEXT_PUBLIC_ID_HOST, env.NEXT_PUBLIC_ADMIN_HOST, env.NEXT_PUBLIC_EXERCISES_HOST],
+  env.NEXT_PUBLIC_EVENT_DOMAIN,
+  `*.${env.NEXT_PUBLIC_EVENT_DOMAIN}`,
+  ...(env.DEV_ALLOWED_ORIGINS ?? "").split(",").map((s) => s.trim()),
+].filter((s): s is string => !!s);
 
 const nextConfig: NextConfig = {
   output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
@@ -21,7 +44,7 @@ const nextConfig: NextConfig = {
   // No 308 slash-normalising redirects in dev/start: they are permanent and get cached
   // by browsers, which can turn into redirect loops if the slash policy ever changes.
   skipTrailingSlashRedirect: true,
-  allowedDevOrigins: [...new Set([...(DOMAIN ? [DOMAIN] : []), ...PLATFORM_DOMAINS])].flatMap((d) => [d, `*.${d}`]),
+  allowedDevOrigins: [...new Set(allowedDevOrigins)],
 };
 
 export default nextConfig;

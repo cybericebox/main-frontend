@@ -8,7 +8,7 @@ import { t, tRich } from "@/i18n/t"
 import { WARMUP_SHA256 } from "@/lib/warmup.generated"
 import { useApi } from "@/lib/useApi"
 import { idUrl } from "@/lib/auth"
-import { SIGN_IN_URI } from "@/lib/links"
+import { EVENT_DOMAIN, SIGN_IN_URI } from "@/lib/links"
 import "@/styles/ds/components/icon-button.css"
 import "@/styles/ds/components/input.css"
 import "@/styles/ds/components/status-text.css"
@@ -36,10 +36,9 @@ const SOLVED_BEFORE = 3
 
 const COMPACT_QUERY = "(max-width: 640px), (pointer: coarse)"
 
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || "cybericebox.app"
-/* display text of the window address: this year's event on the current host (not a link) */
-const eventHost = (year: number, host: string) => "ctf" + year + "." + host.replace(/^www\./, "") + "/challenges"
-const SSR_URL = eventHost(new Date().getFullYear(), DOMAIN)
+/* display text of the window address: this year's event on the event domain (not a link) */
+const eventHost = (year: number, host: string) => "ctf" + year + "." + host + "/challenges"
+const SSR_URL = eventHost(new Date().getFullYear(), EVENT_DOMAIN)
 
 /* category and tile texts: landing.ch.cats.<cat>, landing.ch.tiles.<name> */
 const CATS = ["web", "pwn", "crypto", "forensics"]
@@ -87,7 +86,7 @@ export function HeroChallenge() {
 
   /* the window shows this year's event on the visitor's host; solved state survives a reload */
   useEffect(() => {
-    setUrl(eventHost(new Date().getFullYear(), window.location.hostname || DOMAIN))
+    setUrl(eventHost(new Date().getFullYear(), EVENT_DOMAIN))
     try {
       if (sessionStorage.getItem(STORAGE_WARMUP_SOLVED) === "1") setDone(true)
     } catch {

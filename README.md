@@ -29,15 +29,19 @@ Production builds are a **static export** (`output: "export"`, written to `out/`
 
 ## Configuration
 
-`NEXT_PUBLIC_*` values are inlined at build time; the container image substitutes them at start-up, so one image serves any environment.
+`NEXT_PUBLIC_*` values are inlined at build time; the container image substitutes them at start-up, so one image serves any environment. There are no defaults: a missing required value fails the build (`next.config.ts`) or the container start. Dev-only: `DEV_ALLOWED_ORIGINS` (comma list) adds extra allowed dev origins. Values come from the deployment env files; `.env.example` is the template.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `NEXT_PUBLIC_DOMAIN` | yes | Platform apex domain; the other hosts derive from it. |
-| `NEXT_PUBLIC_API_DOMAIN` | no | API host (bare host, no scheme). Defaults to `api.<domain>`. |
-| `NEXT_PUBLIC_ID_DOMAIN` | no | ID app host. Defaults to `id.<domain>`. |
-| `NEXT_PUBLIC_ADMIN_DOMAIN` | no | Admin app host. Defaults to `admin.<domain>`. |
-| `NEXT_PUBLIC_EXERCISES_DOMAIN` | no | Exercises app host. Defaults to `exercises.<domain>`. |
+| `NEXT_PUBLIC_MAIN_HOST` | yes | Landing host (bare host, no scheme): canonical origin, sitemap/robots/security.txt, parent domain of shared cookies. |
+| `NEXT_PUBLIC_API_HOST` | yes | API host. |
+| `NEXT_PUBLIC_ID_HOST` | yes | ID app host. |
+| `NEXT_PUBLIC_ADMIN_HOST` | yes | Admin app host. |
+| `NEXT_PUBLIC_EXERCISES_HOST` | yes | Exercises app host. |
+| `NEXT_PUBLIC_EVENT_DOMAIN` | yes | Event sites are `<tag>.<domain>`. |
+| `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
+| `NEXT_PUBLIC_SOURCE_URL` | yes | Public source link in the footer. |
+| `NEXT_PUBLIC_PARTNER_URL`, `NEXT_PUBLIC_PARTNER_SITE_URL` | yes | Partner department and university links in the footer credit. |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 measurement id. Analytics is off when unset. |
 | `NEXT_PUBLIC_WARMUP_FLAG` | static builds | Flag of the warm-up challenge, read at build time by `scripts/warmup.mjs` (a dev fallback is used in `npm run dev`). |
 
