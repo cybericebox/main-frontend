@@ -46,7 +46,7 @@ test("dismiss persists under ID:Version and an edited banner reappears", () => {
   const storage = memoryStorage()
   assert.equal(model.isDismissed(banner(), storage), false)
   model.rememberDismissed(banner(), storage)
-  assert.ok([...storage.map.keys()].some((key) => key.endsWith("b1:1")))
+  assert.ok([...storage.map.keys()].some((key) => key.endsWith("_b1_1")))
   assert.equal(model.isDismissed(banner(), storage), true)
   assert.equal(model.isDismissed(banner({ Version: 2 }), storage), false)
 })

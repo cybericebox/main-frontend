@@ -1,4 +1,4 @@
-// Theme cookie: `cib_theme` on the parent domain; a pre-rename `ib_theme` is migrated on first read.
+// Theme cookie: `cib_theme` on the parent domain.
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
@@ -30,29 +30,17 @@ function fakeBrowser(initial: Record<string, string>) {
   return { writes, jar, attrs }
 }
 
-test("readThemeChoice moves the old ib_theme cookie to cib_theme", () => {
-  const { writes, jar } = fakeBrowser({ ib_theme: "dark" })
-  assert.equal(theme.readThemeChoice(), "dark")
-  assert.equal(jar.get("cib_theme"), "dark")
-  assert.equal(jar.has("ib_theme"), false)
-  assert.match(writes[0], /^cib_theme=dark; path=\/; SameSite=Lax; Secure; max-age=31536000$/)
-  assert.match(writes[1], /^ib_theme=; path=\/; SameSite=Lax; Secure; max-age=0$/)
-})
-
-test("the boot script migrates before first paint", () => {
-  const { jar, attrs } = fakeBrowser({ ib_theme: "dark" })
-  new Function(theme.THEME_BOOT_SCRIPT)()
-  assert.equal(attrs["data-theme"], "dark")
-  assert.equal(jar.get("cib_theme"), "dark")
-  assert.equal(jar.has("ib_theme"), false)
-})
-
-test("cib_theme wins over a leftover ib_theme and nothing is rewritten", () => {
-  const { writes, attrs } = fakeBrowser({ ib_theme: "dark", cib_theme: "light" })
+test("readThemeChoice reads cib_theme and ignores the retired ib_theme", () => {
+  const { writes } = fakeBrowser({ ib_theme: "dark", cib_theme: "light" })
   assert.equal(theme.readThemeChoice(), "light")
+  assert.equal(fakeBrowser({ ib_theme: "dark" }) && theme.readThemeChoice(), "system")
+  assert.deepEqual(writes, [])
+})
+
+test("the boot script reads cib_theme only", () => {
+  const { attrs } = fakeBrowser({ cib_theme: "light" })
   new Function(theme.THEME_BOOT_SCRIPT)()
   assert.equal(attrs["data-theme"], "light")
-  assert.deepEqual(writes, [])
 })
 
 test("setThemeChoice writes cib_theme", () => {
