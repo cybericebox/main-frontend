@@ -6,6 +6,7 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
 import { Analytics } from "@/components/site/Analytics"
+import { FeedbackLink } from "@/components/FeedbackLink"
 import { TooltipClamp } from "@/components/ib/TooltipClamp"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 import { pageMetadata } from "@/lib/metadata"
@@ -27,6 +28,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
                 <ApiProvider>{children}</ApiProvider>
+                {/* plain mailto link in the static HTML of every page (also sign-in/404) */}
+                <FeedbackLink />
                 {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
                 <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
                 {/* keeps ds tooltips inside the viewport on narrow screens */}

@@ -532,5 +532,8 @@
   "consent.settings": "Cookie settings",
   "siteBanner.label": "Announcements",
   "siteBanner.dismiss": "Dismiss announcement",
-  "siteBanner.more": "Learn more"
+  "siteBanner.more": "Learn more",
+  "feedback.link": "Send feedback",
+  "feedback.subject": "Feedback: {app} {page}",
+  "feedback.app": "Cyber ICE Box"
 }

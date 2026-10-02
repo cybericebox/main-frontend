@@ -532,5 +532,8 @@
   "consent.settings": "Налаштування файлів cookie",
   "siteBanner.label": "Оголошення",
   "siteBanner.dismiss": "Закрити оголошення",
-  "siteBanner.more": "Докладніше"
+  "siteBanner.more": "Докладніше",
+  "feedback.link": "Надіслати відгук",
+  "feedback.subject": "Відгук: {app} {page}",
+  "feedback.app": "Cyber ICE Box"
 }
