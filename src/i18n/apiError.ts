@@ -15,6 +15,12 @@ const uk = errorsUk as Record<string, string>
 const en = errorsEn as Record<string, string>
 
 export function localizedError(err: unknown): string {
+  // 429 (the request limiter or an auth lockout): no per-code text, tell how long to wait.
+  if (err instanceof ApiError && err.status === 429) {
+    return err.retryAfterSeconds
+      ? t("error.tooManyRequests.wait", { seconds: err.retryAfterSeconds })
+      : t("error.tooManyRequests")
+  }
   if (err instanceof ApiError && err.code != null) {
     const key = String(err.code)
     const msg = uk[key] ?? en[key]
