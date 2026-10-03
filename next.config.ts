@@ -47,15 +47,9 @@ function devContentSecurityPolicy(): string {
   const api = `https://${process.env.NEXT_PUBLIC_API_HOST!.trim()}`
   const script = ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
   const connect = ["'self'", api, "ws:", "wss:"]
-  let frame = "'none'"
   if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim()) {
     script.push("https://www.googletagmanager.com")
     connect.push("https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://www.google.com/ccm/", "https://*.doubleclick.net")
-  }
-  if (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim()) {
-    script.push("https://www.google.com/recaptcha/", "https://www.gstatic.com/recaptcha/")
-    connect.push("https://www.google.com/recaptcha/")
-    frame = "https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
   }
   return [
     "default-src 'self'",
@@ -64,7 +58,7 @@ function devContentSecurityPolicy(): string {
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     `connect-src ${connect.join(" ")}`,
-    `frame-src ${frame}`,
+    "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -15,8 +15,8 @@
 # its own add_header (add_header is not inherited once a location defines one).
 #
 # Operator values come from env: NEXT_PUBLIC_API_HOST (connect-src). Vendor sources are added only
-# when the app is configured to use them: Google Analytics (NEXT_PUBLIC_GOOGLE_ANALYTICS_ID) and
-# reCAPTCHA (NEXT_PUBLIC_RECAPTCHA_SITE_KEY). Google sign-in is a top-level navigation through the
+# when the app is configured to use them: Google Analytics (NEXT_PUBLIC_GOOGLE_ANALYTICS_ID).
+# Google sign-in is a top-level navigation through the
 # API, so it needs no source here.
 set -e
 
@@ -107,11 +107,6 @@ frame_src="'none'"
 if [ -n "${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID:-}" ]; then
   script_src="$script_src https://www.googletagmanager.com"
   connect_src="$connect_src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.google.com/ccm/ https://*.doubleclick.net"
-fi
-if [ -n "${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}" ]; then
-  script_src="$script_src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/"
-  connect_src="$connect_src https://www.google.com/recaptcha/"
-  frame_src="https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
 fi
 
 # style-src keeps 'unsafe-inline': React inline style attributes and Next's <style> tags cannot be
