@@ -27,20 +27,6 @@ const REQUIRED = [
 const missing = REQUIRED.filter((k) => !process.env[k]);
 if (missing.length) throw new Error(`Missing required env: ${missing.join(", ")}`);
 
-// Bot check / anti-DoS (optional, default none / off). The container image builds with the variable names as
-// placeholders and the entrypoint validates the real values at start, so a placeholder is skipped here.
-function optionalChoice(key: string, allowed: string[]): string {
-  const value = process.env[key]?.trim() ?? "";
-  if (value && value !== key && !allowed.includes(value)) throw new Error(`${key} must be one of: ${allowed.join(", ")}`);
-  return value;
-}
-const captchaProvider = optionalChoice("NEXT_PUBLIC_CAPTCHA_PROVIDER", ["turnstile", "recaptcha", "none"]);
-optionalChoice("NEXT_PUBLIC_DOS_PROTECTION", ["on", "off"]);
-optionalChoice("NEXT_PUBLIC_RECAPTCHA_ENTERPRISE", ["true", "false"]);
-if (["turnstile", "recaptcha"].includes(captchaProvider) && !process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY?.trim()) {
-  throw new Error("NEXT_PUBLIC_CAPTCHA_SITE_KEY is required when NEXT_PUBLIC_CAPTCHA_PROVIDER is turnstile or recaptcha");
-}
-
 // Dev-only: the app is served through the edge on the real hosts (not localhost), so Next's own
 // dev resources (fonts, HMR) are cross-origin and blocked by default. Allow every configured
 // host plus the event domain and its subdomains; DEV_ALLOWED_ORIGINS (comma list) adds more.
@@ -66,16 +52,10 @@ function devContentSecurityPolicy(): string {
     script.push("https://www.googletagmanager.com")
     connect.push("https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com", "https://www.google.com/ccm/", "https://*.doubleclick.net")
   }
-  if (process.env.NEXT_PUBLIC_DOS_PROTECTION?.trim() === "on") {
-    if (process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER?.trim() === "turnstile") {
-      script.push("https://challenges.cloudflare.com")
-      connect.push("https://challenges.cloudflare.com")
-      frame = "https://challenges.cloudflare.com"
-    } else if (process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER?.trim() === "recaptcha") {
-      script.push("https://www.google.com/recaptcha/", "https://www.gstatic.com/recaptcha/")
-      connect.push("https://www.google.com/recaptcha/")
-      frame = "https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
-    }
+  if (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim()) {
+    script.push("https://www.google.com/recaptcha/", "https://www.gstatic.com/recaptcha/")
+    connect.push("https://www.google.com/recaptcha/")
+    frame = "https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/"
   }
   return [
     "default-src 'self'",

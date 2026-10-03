@@ -77,11 +77,6 @@ jobs:
           NEXT_PUBLIC_PARTNER_URL: ${{ vars.NEXT_PUBLIC_PARTNER_URL }}
           NEXT_PUBLIC_PARTNER_SITE_URL: ${{ vars.NEXT_PUBLIC_PARTNER_SITE_URL }}
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
-          # bot check / anti-DoS client token (optional; provider none and protection off when unset)
-          NEXT_PUBLIC_CAPTCHA_PROVIDER: ${{ vars.NEXT_PUBLIC_CAPTCHA_PROVIDER }}
-          NEXT_PUBLIC_CAPTCHA_SITE_KEY: ${{ vars.NEXT_PUBLIC_CAPTCHA_SITE_KEY }}
-          NEXT_PUBLIC_RECAPTCHA_ENTERPRISE: ${{ vars.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE }}
-          NEXT_PUBLIC_DOS_PROTECTION: ${{ vars.NEXT_PUBLIC_DOS_PROTECTION }}
           # warm-up flag (secret NEXT_PUBLIC_WARMUP_FLAG, format ICE{…})
           NEXT_PUBLIC_WARMUP_FLAG: ${{ secrets.NEXT_PUBLIC_WARMUP_FLAG }}
       - name: Configure Pages

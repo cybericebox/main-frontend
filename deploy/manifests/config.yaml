@@ -24,9 +24,3 @@ data:
   PARTNER_SITE_URL: ""
   # Optional Google Analytics 4 measurement id (G-…). Empty → analytics off.
   GOOGLE_ANALYTICS_ID: ""
-  # Optional bot check behind the anti-DoS client token: provider turnstile | recaptcha | none (empty = none).
-  # CAPTCHA_SITE_KEY is required for turnstile / recaptcha. DOS_PROTECTION on | off (empty = off) must match the backend.
-  CAPTCHA_PROVIDER: ""
-  CAPTCHA_SITE_KEY: ""
-  RECAPTCHA_ENTERPRISE: ""
-  DOS_PROTECTION: ""
