@@ -4,7 +4,6 @@
 // and the browser stores/sends the host-scoped session cookie. No silent-auth
 // bootstrap — a plain credentialed fetch is authoritative.
 
-import { sendWithClientToken } from "@/lib/clientToken"
 import { API_ORIGIN } from "@/lib/links"
 import { COOKIE_RETURN_TO } from "@/lib/storageKeys"
 
@@ -85,18 +84,14 @@ async function request<T>(
 ): Promise<T> {
   const url = `${API_ORIGIN}${path}`
 
-  const send = () =>
-    fetch(url, {
-      ...init,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(init.headers ?? {}),
-      },
-    })
-
-  // Anti-DoS client token (only when NEXT_PUBLIC_DOS_PROTECTION is on): see lib/clientToken.
-  const res = await sendWithClientToken(send)
+  const res = await fetch(url, {
+    ...init,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers ?? {}),
+    },
+  })
 
   // Centralized auth handling: required (default true) → write cib_return_to cookie
   // and redirect to sign-in. Returning a never-resolving promise stops the

@@ -102,30 +102,6 @@ spec:
                 configMapKeyRef:
                   name: main-frontend-config
                   key: GOOGLE_ANALYTICS_ID
-            - name: NEXT_PUBLIC_CAPTCHA_PROVIDER
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: CAPTCHA_PROVIDER
-                  optional: true
-            - name: NEXT_PUBLIC_CAPTCHA_SITE_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: CAPTCHA_SITE_KEY
-                  optional: true
-            - name: NEXT_PUBLIC_RECAPTCHA_ENTERPRISE
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: RECAPTCHA_ENTERPRISE
-                  optional: true
-            - name: NEXT_PUBLIC_DOS_PROTECTION
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: DOS_PROTECTION
-                  optional: true
             - name: WARMUP_FLAG
               valueFrom:
                 secretKeyRef:

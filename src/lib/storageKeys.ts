@@ -9,5 +9,3 @@ export function siteBannerDismissedKey(id: string | number, version: string | nu
   return `${SITE_BANNER_DISMISSED}_${id}_${version}`
 }
 export const COOKIE_RETURN_TO = "cib_return_to"
-// ExpiresAt (RFC3339) of the HttpOnly client-token cookie the API set for this browser (per-origin convenience only).
-export const STORAGE_CLIENT_TOKEN_EXPIRES = "cib_client_token_expires"
