@@ -3,7 +3,7 @@
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
 # Build with: docker build -f deploy/Dockerfile .
 # Run with:   -e NEXT_PUBLIC_{MAIN_HOST,API_HOST,ID_HOST,ADMIN_HOST,EXERCISES_HOST,EVENT_DOMAIN,COOKIE_DOMAIN,SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL,SOURCE_URL,PARTNER_URL,PARTNER_SITE_URL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] -e WARMUP_FLAG='ICE{…}'
-FROM node:26-alpine AS build
+FROM node:26.10.0-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -29,7 +29,7 @@ ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="NEXT_PUBLIC_GOOGLE_ANALYTICS_ID"
 ENV WARMUP_PLACEHOLDER=1
 RUN npm run build && node scripts/csp-inline.mjs
 
-FROM nginx:1.30.5-alpine AS runner
+FROM nginx:1.30.5-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94 AS runner
 COPY --from=build /app/out /usr/share/nginx/html
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/docker-entrypoint.sh /docker-entrypoint.d/40-next-public-env.sh

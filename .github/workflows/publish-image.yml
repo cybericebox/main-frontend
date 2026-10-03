@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Image tag (in addition to latest)
+        description: Image tag (a version, vX.Y.Z)
         required: true
 jobs:
   push_to_registry:
@@ -31,5 +31,4 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ${{ github.repository }}:latest
             ${{ github.repository }}:${{ github.event.release.tag_name || inputs.tag }}
