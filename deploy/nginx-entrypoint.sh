@@ -6,12 +6,14 @@
 # runs `nginx -t`, so a bad combination stops the container at start, and starts the certificate reload loop.
 #
 #   HTTP_PORT            3000   plain HTTP listener; set but empty = off
-#   HTTPS_PORT           8443   TLS listener, on only when TLS_CERT_FILE and TLS_KEY_FILE are set
-#   TLS_CERT_FILE, TLS_KEY_FILE   PEM server certificate chain and key; both = TLS on, exactly one = error
+#   HTTPS_PORT           8443   TLS listener, on only when the certificate and key are in use
+#   TLS_CERT_FILE, TLS_KEY_FILE   PEM server certificate chain and key, default /tls/tls.crt and /tls/tls.key. Unset: TLS is on when both
+#                               default files exist. Set explicitly: both = TLS on, exactly one = error, unreadable = error
 #   TLS_MIN_VERSION      1.2    1.2 or 1.3
-#   TLS_CLIENT_CA_FILE          PEM bundle of the CA(s) that signed the client certificates
-#   TLS_CLIENT_AUTH      off    off | optional (verify when presented) | require; optional/require need the CA file and TLS
-#   HEALTH_PORT                 when set: an extra plain listener on HEALTH_BIND (default 0.0.0.0) serving only /healthz
+#   TLS_CLIENT_CA_FILE   /aop/ca.crt   PEM bundle of the CA(s) that signed the client certificates
+#   TLS_CLIENT_AUTH             off | optional (verify when presented) | require; optional/require need the CA file and TLS.
+#                               Unset: require when TLS is on and the CA file exists, else off
+#   HEALTH_PORT          8081   an extra plain listener on HEALTH_BIND (default 0.0.0.0) serving only /healthz; set but empty = off
 #   TLS_RELOAD_INTERVAL  60     seconds between checks of the certificate files; a change runs nginx -t and a reload
 set -e
 
@@ -29,9 +31,17 @@ HTTPS_PORT=${HTTPS_PORT:-8443}
 TLS_CERT_FILE=${TLS_CERT_FILE:-}
 TLS_KEY_FILE=${TLS_KEY_FILE:-}
 TLS_MIN_VERSION=${TLS_MIN_VERSION:-1.2}
-TLS_CLIENT_CA_FILE=${TLS_CLIENT_CA_FILE:-}
-TLS_CLIENT_AUTH=${TLS_CLIENT_AUTH:-off}
-HEALTH_PORT=${HEALTH_PORT:-}
+TLS_CLIENT_CA_FILE=${TLS_CLIENT_CA_FILE:-/aop/ca.crt}
+TLS_CLIENT_AUTH=${TLS_CLIENT_AUTH:-}
+HEALTH_PORT=${HEALTH_PORT-8081}
+# Defaults of the deploy: the server pair at /tls and the client CA at /aop, used when the files are there.
+if [ -z "$TLS_CERT_FILE" ] && [ -z "$TLS_KEY_FILE" ] && [ -r /tls/tls.crt ] && [ -r /tls/tls.key ]; then
+  TLS_CERT_FILE=/tls/tls.crt
+  TLS_KEY_FILE=/tls/tls.key
+fi
+if [ -z "$TLS_CLIENT_AUTH" ]; then
+  if [ -n "$TLS_CERT_FILE" ] && [ -r "$TLS_CLIENT_CA_FILE" ]; then TLS_CLIENT_AUTH=require; else TLS_CLIENT_AUTH=off; fi
+fi
 HEALTH_BIND=${HEALTH_BIND:-0.0.0.0}
 TLS_RELOAD_INTERVAL=${TLS_RELOAD_INTERVAL:-60}
 
@@ -63,7 +73,7 @@ if [ -n "$TLS_CERT_FILE" ] || [ -n "$TLS_KEY_FILE" ]; then
 fi
 if [ "$TLS_CLIENT_AUTH" != off ]; then
   [ "$tls" = true ] || die "TLS_CLIENT_AUTH=$TLS_CLIENT_AUTH needs TLS (TLS_CERT_FILE and TLS_KEY_FILE)."
-  [ -n "$TLS_CLIENT_CA_FILE" ] || die "TLS_CLIENT_AUTH=$TLS_CLIENT_AUTH needs TLS_CLIENT_CA_FILE."
+  [ -r "$TLS_CLIENT_CA_FILE" ] || die "TLS_CLIENT_AUTH=$TLS_CLIENT_AUTH needs TLS_CLIENT_CA_FILE."
   is_path "$TLS_CLIENT_CA_FILE" || die "'$TLS_CLIENT_CA_FILE' is not a usable file path."
   [ -r "$TLS_CLIENT_CA_FILE" ] || die "$TLS_CLIENT_CA_FILE is not readable."
 else

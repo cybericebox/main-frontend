@@ -4,17 +4,11 @@ metadata:
   name: main-frontend-config
   namespace: cybericebox
 data:
-  # Every value is required and comes from the deployment env files (platform.env); no defaults.
+  # Required: DOMAIN and SUPPORT_EMAIL. Everything else is derived or has a default in the image.
   # REQUIRED: the one base domain, a bare lowercase host name. Every host derives from it: DOMAIN, api./id./admin./exercises.DOMAIN,
   # event sites <tag>.DOMAIN, the cookie domain DOMAIN. There are no per-host settings.
   DOMAIN: ""
   # REQUIRED: support mailbox of the «Надіслати відгук» (send feedback) link on every page.
   SUPPORT_EMAIL: ""
-  CONTACT_EMAIL: ""
-  PRIVACY_EMAIL: ""
-  SECURITY_EMAIL: ""
-  SOURCE_URL: ""
-  PARTNER_ICE_NURE_URL: ""
-  PARTNER_NURE_URL: ""
   # Optional Google Analytics 4 measurement id (G-…). Empty → analytics off.
   GOOGLE_ANALYTICS_ID: ""

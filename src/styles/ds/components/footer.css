@@ -21,6 +21,7 @@
 .ib-footer__top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--ib-4) var(--ib-8);padding:var(--ib-10) 0 var(--ib-8)}
 /* the credit reads like the links beside it (size, weight, line-height): only colour tells the org names apart */
 .ib-footer__credit{margin:0;color:var(--ib-on-brand-2)}
+.ib-footer__credit[data-show-partners="false"]{display:none}
 .ib-footer__credit .ib-tip{display:inline}
 .ib-footer__credit a,.ib-footer__copy{color:var(--ib-on-brand)}
 .ib-footer__credit a{font-weight:var(--ib-w-regular);text-decoration:none}
