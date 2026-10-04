@@ -21,8 +21,8 @@ const REQUIRED = [
   "NEXT_PUBLIC_PRIVACY_EMAIL",
   "NEXT_PUBLIC_SECURITY_EMAIL",
   "NEXT_PUBLIC_SOURCE_URL",
-  "NEXT_PUBLIC_PARTNER_URL",
-  "NEXT_PUBLIC_PARTNER_SITE_URL",
+  "NEXT_PUBLIC_PARTNER_ICE_NURE_URL",
+  "NEXT_PUBLIC_PARTNER_NURE_URL",
 ];
 const missing = REQUIRED.filter((k) => !process.env[k]);
 if (missing.length) throw new Error(`Missing required env: ${missing.join(", ")}`);
