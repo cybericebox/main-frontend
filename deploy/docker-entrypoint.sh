@@ -7,8 +7,11 @@ set -e
 
 ROOT=/usr/share/nginx/html
 
-# Every operator value is required: no defaults, no derivation. Only analytics is optional (empty = off).
-for key in NEXT_PUBLIC_MAIN_HOST NEXT_PUBLIC_API_HOST NEXT_PUBLIC_ID_HOST NEXT_PUBLIC_ADMIN_HOST NEXT_PUBLIC_EXERCISES_HOST NEXT_PUBLIC_EVENT_DOMAIN NEXT_PUBLIC_COOKIE_DOMAIN NEXT_PUBLIC_SUPPORT_EMAIL NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_ICE_NURE_URL NEXT_PUBLIC_PARTNER_NURE_URL ; do
+# The hosts are derived from NEXT_PUBLIC_DOMAIN when they are not set (deploy/base-domain.sh, the same file in every frontend);
+# the derived values are exported, so the substitution below treats them like the others. The other operator values are required.
+. /usr/local/lib/base-domain.sh
+base_domain_derive || exit 1
+for key in NEXT_PUBLIC_SUPPORT_EMAIL NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_ICE_NURE_URL NEXT_PUBLIC_PARTNER_NURE_URL ; do
   eval "val=\${$key:-}"
   if [ -z "$val" ]; then
     echo "$key is required." >&2
