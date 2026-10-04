@@ -14,6 +14,9 @@ const vectors = JSON.parse(readFileSync(resolve(root, "tests/base-domain-vectors
 // The per-site values the next config requires besides the domain (any extra one is harmless).
 const SITE = {
   NEXT_PUBLIC_SUPPORT_EMAIL: "support@example.test",
+  NEXT_PUBLIC_CONTACT_EMAIL: "contact@example.test",
+  NEXT_PUBLIC_PRIVACY_EMAIL: "privacy@example.test",
+  NEXT_PUBLIC_SECURITY_EMAIL: "security@example.test",
 }
 
 // Only NODE_ENV, PATH and the given values: nothing of the developer environment leaks into the cases.
