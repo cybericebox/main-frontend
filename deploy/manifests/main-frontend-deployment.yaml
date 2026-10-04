@@ -37,36 +37,6 @@ spec:
                 configMapKeyRef:
                   name: main-frontend-config
                   key: SUPPORT_EMAIL
-            - name: NEXT_PUBLIC_CONTACT_EMAIL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: CONTACT_EMAIL
-            - name: NEXT_PUBLIC_PRIVACY_EMAIL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: PRIVACY_EMAIL
-            - name: NEXT_PUBLIC_SECURITY_EMAIL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: SECURITY_EMAIL
-            - name: NEXT_PUBLIC_SOURCE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: SOURCE_URL
-            - name: NEXT_PUBLIC_PARTNER_ICE_NURE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: PARTNER_ICE_NURE_URL
-            - name: NEXT_PUBLIC_PARTNER_NURE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: main-frontend-config
-                  key: PARTNER_NURE_URL
             - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
               valueFrom:
                 configMapKeyRef:

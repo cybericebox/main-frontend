@@ -16,16 +16,8 @@ if (DOMAIN !== "__NEXT_PUBLIC_DOMAIN__" && (DOMAIN.length > 253 || !/^[a-z0-9]([
 }
 const PLATFORM_HOSTS = [DOMAIN, `api.${DOMAIN}`, `id.${DOMAIN}`, `admin.${DOMAIN}`, `exercises.${DOMAIN}`]
 
-// Every operator value comes from the env; a missing one fails the build / dev start.
-const REQUIRED = [
-  "NEXT_PUBLIC_CONTACT_EMAIL",
-  "NEXT_PUBLIC_SUPPORT_EMAIL",
-  "NEXT_PUBLIC_PRIVACY_EMAIL",
-  "NEXT_PUBLIC_SECURITY_EMAIL",
-  "NEXT_PUBLIC_SOURCE_URL",
-  "NEXT_PUBLIC_PARTNER_ICE_NURE_URL",
-  "NEXT_PUBLIC_PARTNER_NURE_URL",
-];
+// The support mailbox is the only per-site value besides the domain; a missing one fails the build / dev start.
+const REQUIRED = ["NEXT_PUBLIC_SUPPORT_EMAIL"];
 const missing = REQUIRED.filter((k) => !process.env[k]);
 if (missing.length) throw new Error(`Missing required env: ${missing.join(", ")}`);
 

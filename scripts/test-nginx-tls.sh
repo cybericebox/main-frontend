@@ -2,12 +2,13 @@
 # Docker test of the listener contract (HTTP_PORT, HTTPS_PORT, TLS_*, HEALTH_PORT) for the nginx image, the same file in
 # every nginx-based frontend repo. Builds deploy/Dockerfile (or uses IMAGE=<ref>) and runs it hardened (user 101, read-only
 # root, all caps dropped, scratch dirs on tmpfs, the html root on a seeded volume as the deploy's emptyDir):
-#   A plain only (no TLS env, the default)     B TLS only            C TLS + HTTP_PORT empty (TLS only listener)
+#   A plain + health (no TLS env, the defaults) B TLS only            C TLS + HTTP_PORT empty (TLS only listener)
 #   D TLS_CLIENT_AUTH=require                  E TLS_CLIENT_AUTH=optional
 #   F TLS_MIN_VERSION=1.3                      G HEALTH_PORT serves only /healthz
 #   H start errors (one of cert/key, auth without CA / without TLS, no listener, cert/key mismatch, bad values)
 #   I live replacement of the server certificate, of the client CA, and of a broken pair, without a restart
 #   J hardening: uid 101, read-only root, no capabilities
+#   K image defaults: /tls and /aop mounted with no env -> TLS on, client auth require; explicit values override
 set -uo pipefail
 
 cd "$(dirname "$0")/.."
@@ -65,12 +66,8 @@ chmod -R a+rX tls ca
 # a mismatched pair: the certificate of server with the key of server2
 mkdir bad; cp server.crt bad/tls.crt; cp server2.key bad/tls.key; chmod -R a+rX bad
 
-# The runtime values the entrypoint requires: the NEXT_PUBLIC_* names in its "for ... in" list.
-ENVS=()
-for name in $(grep -E '^for [a-z]+ in NEXT_PUBLIC_' "$SRC/deploy/docker-entrypoint.sh" | grep -Eo 'NEXT_PUBLIC_[A-Z0-9_]+'); do
-  ENVS+=(-e "$name=test.example.com")
-done
-ENVS+=(-e "NEXT_PUBLIC_CAPTCHA_PROVIDER=none") # id-frontend validates it; ignored elsewhere
+# The only runtime values the image requires (the listener env is defaulted in the image).
+ENVS=(-e "NEXT_PUBLIC_DOMAIN=test.example.com" -e "NEXT_PUBLIC_SUPPORT_EMAIL=support@test.example.com")
 ENVS+=(-e "WARMUP_FLAG=ICE{test}")
 cd "$SRC"
 
@@ -124,7 +121,10 @@ check "A1 /healthz on 3000 -> 200" 200 "$(code "http://127.0.0.1:$(port "$C" 300
 hdr=$(curl -s -D - -o /dev/null --max-time 10 "http://127.0.0.1:$(port "$C" 3000)/")
 grep -qi '^content-security-policy:' <<<"$hdr" && ok "A2 CSP header present" || bad "A2 CSP header missing"
 refused "A3 nothing on 8443" -k "https://localhost:$(port "$C" 8443)/"
-refused "A4 nothing on 8081" "http://127.0.0.1:$(port "$C" 8081)/healthz"
+check "A4 default health port 8081 -> /healthz 200" 200 "$(code "http://127.0.0.1:$(port "$C" 8081)/healthz")"
+stop "$C"
+C=$(start health-off -e HEALTH_PORT=) || bad "A6 empty HEALTH_PORT did not start"
+refused "A6 HEALTH_PORT empty: nothing on 8081" "http://127.0.0.1:$(port "$C" 8081)/healthz"
 stop "$C"
 C=$(start plain-port -e HTTP_PORT=3000) || bad "A5 explicit HTTP_PORT=3000 did not start"
 check "A5 HTTP_PORT=3000 -> 200" 200 "$(code "http://127.0.0.1:$(port "$C" 3000)/healthz")"
@@ -241,6 +241,26 @@ check "I9 pid of the master unchanged" "$pid1" "$(docker exec "$C" cat /run/ngin
 swap tls v1
 fixed=$(wait_serial_change "$good")
 [[ -n "$fixed" && "$fixed" != "$good" ]] && ok "I10 a good pair after the broken one is loaded" || bad "I10 not recovered"
+stop "$C"
+
+echo "== K image defaults (no TLS_* env)"
+KTLS=(-v "$WORK/tls:/tls:ro")
+KCA=(-v "$WORK/ca:/aop:ro")
+swap tls v1; swap ca v1
+C=$(start dflt-tls "${KTLS[@]}") || { bad "K1 container did not start"; exit 1; }
+check "K1 /tls present: TLS on, no client auth without /aop" 200 "$(code "${SERVER[@]}" "https://localhost:$(port "$C" 8443)/healthz")"
+stop "$C"
+C=$(start dflt-aop "${KTLS[@]}" "${KCA[@]}" -e HTTP_PORT=) || { bad "K2 container did not start"; exit 1; }
+P=$(port "$C" 8443)
+refused "K2 /aop/ca.crt present: client cert required" "${SERVER[@]}" "https://localhost:$P/healthz"
+check "K3 valid client cert -> 200" 200 "$(code "${SERVER[@]}" "${CLIENT[@]}" "https://localhost:$P/healthz")"
+check "K4 health port open without a cert" 200 "$(code "http://127.0.0.1:$(port "$C" 8081)/healthz")"
+stop "$C"
+C=$(start dflt-aop-off "${KTLS[@]}" "${KCA[@]}" -e TLS_CLIENT_AUTH=off -e HTTP_PORT=) || { bad "K5 container did not start"; exit 1; }
+check "K5 explicit TLS_CLIENT_AUTH=off wins over /aop" 200 "$(code "${SERVER[@]}" "https://localhost:$(port "$C" 8443)/healthz")"
+stop "$C"
+C=$(start dflt-aop-notls "${KCA[@]}") || { bad "K6 container did not start"; exit 1; }
+check "K6 /aop without TLS files: plain only" 200 "$(code "http://127.0.0.1:$(port "$C" 3000)/healthz")"
 stop "$C"
 
 echo "== J hardening"

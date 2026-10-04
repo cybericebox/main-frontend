@@ -8,18 +8,18 @@ set -e
 ROOT=/usr/share/nginx/html
 
 # NEXT_PUBLIC_DOMAIN is the only host input (deploy/base-domain.sh, the same file in every frontend): every host derives from it in the code.
-# The other operator values are required.
+# NEXT_PUBLIC_SUPPORT_EMAIL is the only other required value; the contact, privacy and security mailboxes derive from the domain in the code.
 . /usr/local/lib/base-domain.sh
 base_domain_check || exit 1
-for key in NEXT_PUBLIC_SUPPORT_EMAIL NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL NEXT_PUBLIC_SOURCE_URL NEXT_PUBLIC_PARTNER_ICE_NURE_URL NEXT_PUBLIC_PARTNER_NURE_URL ; do
-  eval "val=\${$key:-}"
-  if [ -z "$val" ]; then
-    echo "$key is required." >&2
-    exit 1
-  fi
-done
+if [ -z "${NEXT_PUBLIC_SUPPORT_EMAIL:-}" ]; then
+  echo "NEXT_PUBLIC_SUPPORT_EMAIL is required." >&2
+  exit 1
+fi
+# Optional values and their defaults (an empty value counts as unset).
 : "${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID:=}"
-export NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+: "${NEXT_PUBLIC_SHOW_PARTNERS:=true}"
+: "${NEXT_PUBLIC_SOURCE_URL:=https://github.com/cybericebox}"
+export NEXT_PUBLIC_GOOGLE_ANALYTICS_ID NEXT_PUBLIC_SHOW_PARTNERS NEXT_PUBLIC_SOURCE_URL
 
 # One pass: a single sed script with an expression per NEXT_PUBLIC_* variable, run once over each
 # file that holds a placeholder (in parallel: busybox sed is slow on the minified bundles). Only the
