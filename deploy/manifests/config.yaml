@@ -5,15 +5,9 @@ metadata:
   namespace: cybericebox
 data:
   # Every value is required and comes from the deployment env files (platform.env); no defaults.
-  # Hosts are bare hosts without a scheme. Fill these before applying.
-  MAIN_HOST: ""
-  API_HOST: ""
-  ID_HOST: ""
-  ADMIN_HOST: ""
-  EXERCISES_HOST: ""
-  EVENT_DOMAIN: ""
-  # Cookie Domain attribute for the shared theme/consent cookies (e.g. the apex), never derived from a host.
-  COOKIE_DOMAIN: ""
+  # REQUIRED: the one base domain, a bare lowercase host name. Every host derives from it: DOMAIN, api./id./admin./exercises.DOMAIN,
+  # event sites <tag>.DOMAIN, the cookie domain DOMAIN. There are no per-host settings.
+  DOMAIN: ""
   # REQUIRED: support mailbox of the «Надіслати відгук» (send feedback) link on every page.
   SUPPORT_EMAIL: ""
   CONTACT_EMAIL: ""

@@ -3,21 +3,14 @@
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
 # Build with: docker build -f deploy/Dockerfile .
 # Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_{SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL,SOURCE_URL,PARTNER_ICE_NURE_URL,PARTNER_NURE_URL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] -e WARMUP_FLAG='ICE{…}'
-# Hosts: -e NEXT_PUBLIC_DOMAIN=… derives every host that is not set (MAIN_HOST=DOMAIN, API_HOST=api.DOMAIN, ID_HOST=id.DOMAIN, ADMIN_HOST=admin.DOMAIN,
-#   EXERCISES_HOST=exercises.DOMAIN, EVENT_DOMAIN=DOMAIN, COOKIE_DOMAIN=DOMAIN); a NEXT_PUBLIC_<HOST> that is set wins.
+# The only host input is NEXT_PUBLIC_DOMAIN: every host derives from it (main = DOMAIN, api./id./admin./exercises.DOMAIN, events <tag>.DOMAIN, cookies DOMAIN).
 FROM node:26.10.0-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 
-ENV NEXT_PUBLIC_MAIN_HOST="__NEXT_PUBLIC_MAIN_HOST__"
-ENV NEXT_PUBLIC_API_HOST="__NEXT_PUBLIC_API_HOST__"
-ENV NEXT_PUBLIC_ID_HOST="__NEXT_PUBLIC_ID_HOST__"
-ENV NEXT_PUBLIC_ADMIN_HOST="__NEXT_PUBLIC_ADMIN_HOST__"
-ENV NEXT_PUBLIC_EXERCISES_HOST="__NEXT_PUBLIC_EXERCISES_HOST__"
-ENV NEXT_PUBLIC_EVENT_DOMAIN="__NEXT_PUBLIC_EVENT_DOMAIN__"
-ENV NEXT_PUBLIC_COOKIE_DOMAIN="__NEXT_PUBLIC_COOKIE_DOMAIN__"
+ENV NEXT_PUBLIC_DOMAIN="__NEXT_PUBLIC_DOMAIN__"
 ENV NEXT_PUBLIC_SUPPORT_EMAIL="__NEXT_PUBLIC_SUPPORT_EMAIL__"
 ENV NEXT_PUBLIC_CONTACT_EMAIL="__NEXT_PUBLIC_CONTACT_EMAIL__"
 ENV NEXT_PUBLIC_PRIVACY_EMAIL="__NEXT_PUBLIC_PRIVACY_EMAIL__"
@@ -36,7 +29,7 @@ COPY --from=build /app/out /usr/share/nginx/html
 COPY deploy/nginx/nginx.conf deploy/nginx/server.conf /etc/nginx/
 COPY deploy/nginx/listen-http.conf deploy/nginx/listen-https.conf deploy/nginx/client-auth.conf deploy/nginx/health.conf /etc/nginx/snippets/
 COPY deploy/docker-entrypoint.sh /docker-entrypoint.d/40-next-public-env.sh
-# The base-domain derivation (NEXT_PUBLIC_DOMAIN -> the hosts that are not set), sourced by 40-next-public-env.sh and 50-csp.sh.
+# The base-domain derivation (NEXT_PUBLIC_DOMAIN check, the API host for the CSP), sourced by 40-next-public-env.sh and 50-csp.sh.
 COPY deploy/base-domain.sh /usr/local/lib/base-domain.sh
 # 50-csp.sh runs after the env substitution: it hashes the inline scripts and writes the CSP header
 # snippet that server.conf includes (see the header comment in deploy/csp.sh).

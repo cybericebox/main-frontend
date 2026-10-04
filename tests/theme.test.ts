@@ -2,7 +2,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
-process.env.NEXT_PUBLIC_COOKIE_DOMAIN = "cookies.example.test"
+process.env.NEXT_PUBLIC_DOMAIN = "cookies.example.test"
 
 // Dynamic path: node runs the .ts source directly, tsc doesn't resolve it.
 const source = "../src/lib/theme.ts"
@@ -50,15 +50,15 @@ test("setThemeChoice writes cib_theme", () => {
   assert.equal(attrs["data-theme"], "dark")
 })
 
-test("the cookie carries the Domain from NEXT_PUBLIC_COOKIE_DOMAIN and fails without it", () => {
+test("the cookie carries the Domain from NEXT_PUBLIC_DOMAIN and fails without it", () => {
   const { writes } = fakeBrowser({})
   theme.setThemeChoice("dark")
   assert.match(writes[0], /; domain=\.cookies\.example\.test;/)
-  const saved = process.env.NEXT_PUBLIC_COOKIE_DOMAIN
-  delete process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+  const saved = process.env.NEXT_PUBLIC_DOMAIN
+  delete process.env.NEXT_PUBLIC_DOMAIN
   try {
-    assert.throws(() => theme.setThemeChoice("light"), /NEXT_PUBLIC_COOKIE_DOMAIN is required/)
+    assert.throws(() => theme.setThemeChoice("light"), /NEXT_PUBLIC_DOMAIN is required/)
   } finally {
-    process.env.NEXT_PUBLIC_COOKIE_DOMAIN = saved
+    process.env.NEXT_PUBLIC_DOMAIN = saved
   }
 })
