@@ -29,12 +29,13 @@ Production builds are a **static export** (`output: "export"`, written to `out/`
 
 ## Configuration
 
-`NEXT_PUBLIC_*` values are inlined at build time; the container image substitutes them at start-up, so one image serves any environment. Hosts and the contact, privacy and security mailboxes (`contact@`, `privacy@`, `security@<DOMAIN>`) derive from `NEXT_PUBLIC_DOMAIN`; a missing required value fails the build (`next.config.ts`) or the container start. Dev-only: `DEV_ALLOWED_ORIGINS` (comma list) adds extra allowed dev origins. `.env.example` is the template.
+`NEXT_PUBLIC_*` values are inlined at build time; the container image substitutes them at start-up, so one image serves any environment. Hosts derive from `NEXT_PUBLIC_DOMAIN`; the mailboxes are explicit values; a missing required value fails the build (`next.config.ts`) or the container start. Dev-only: `DEV_ALLOWED_ORIGINS` (comma list) adds extra allowed dev origins. `.env.example` is the template.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_DOMAIN` | yes | The one base domain, a bare lowercase host name (no scheme, port or path). Every host derives from it: `<DOMAIN>` (landing), `api.`, `id.`, `admin.`, `exercises.<DOMAIN>`, event sites `<tag>.<DOMAIN>`, the shared theme and consent cookies on `.<DOMAIN>`. There are no per-host settings. |
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | yes | Support mailbox of the «Send feedback» `mailto:` link shown on every page (the subject carries the app and page path only). |
+| `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 measurement id. Analytics is off when unset. |
 | `NEXT_PUBLIC_SHOW_PARTNERS` | no | `false` hides the partner credit in the footer; shown by default. |
 | `NEXT_PUBLIC_SOURCE_URL` | no | Public source link in the footer. Default `https://github.com/cybericebox`. |
@@ -48,16 +49,16 @@ All user-facing text lives in `messages/uk.json` and `messages/en.json` and is r
 
 ## Listeners and TLS (container)
 
-The nginx image needs no listener env: with nothing set it serves plain HTTP on `3000`, the health listener on `8081`, and switches TLS and client certificate validation on when the files are mounted. Everything is overridable by env, read at container start by `deploy/nginx-entrypoint.sh`. The nginx config is in files under `deploy/nginx/` (`nginx.conf`, `server.conf`, and the snippets `listen-http.conf`, `listen-https.conf`, `client-auth.conf`, `health.conf`); the entrypoint only validates the env, renders the active snippets with `envsubst` into `/tmp/nginx-gen` (an empty file for each inactive one), and runs `nginx -t`, so a bad combination stops the container at start.
+The nginx image needs no listener env: with nothing set it serves plain HTTP on `8080`, the health listener on `8081`, and switches TLS and client certificate validation on when the files are mounted. Everything is overridable by env, read at container start by `deploy/nginx-entrypoint.sh`. The nginx config is in files under `deploy/nginx/` (`nginx.conf`, `server.conf`, and the snippets `listen-http.conf`, `listen-https.conf`, `client-auth.conf`, `health.conf`); the entrypoint only validates the env, renders the active snippets with `envsubst` into `/tmp/nginx-gen` (an empty file for each inactive one), and runs `nginx -t`, so a bad combination stops the container at start.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `HTTP_PORT` | `3000` | Plain HTTP listener. Set but empty turns it off. |
+| `HTTP_PORT` | `8080` | Plain HTTP listener. Set but empty turns it off. |
 | `HTTPS_PORT` | `8443` | TLS listener (HTTP/2); on only when TLS is in use. |
-| `TLS_CERT_FILE`, `TLS_KEY_FILE` | `/tls/tls.crt`, `/tls/tls.key` | PEM server certificate chain and key. Unset: TLS is on when both default files exist. Set explicitly: both = TLS on, exactly one or an unreadable file = start error. |
+| `TLS_CERT_FILE`, `TLS_KEY_FILE` | `/tls/tls.crt`, `/tls/tls.key` | PEM server certificate chain and key. TLS is on when both files exist at the configured paths (default or given); with no files the service runs plain HTTP only. A path set explicitly (non-empty) whose file is missing or unreadable = start error. |
 | `TLS_MIN_VERSION` | `1.2` | `1.2` or `1.3`. |
-| `TLS_CLIENT_CA_FILE` | `/aop/ca.crt` | PEM bundle of the root (and intermediate) CAs that signed the client certificates. |
-| `TLS_CLIENT_AUTH` | `require` when TLS is on and the CA file exists, else `off` | `off`, `optional` (verify when presented, the result is `$ssl_client_verify`) or `require`. `optional` and `require` need the CA file and TLS, else start error. A missing or invalid certificate gets the connection dropped (nginx 444). |
+| `TLS_CLIENT_CA_FILE` | `/aop/ca.crt` | PEM bundle of the root (and intermediate) CAs that signed the client certificates. Needed by `optional` and `require`; missing = start error. An explicit path that does not exist is a start error. |
+| `TLS_CLIENT_AUTH` | `require` when TLS is on and the default CA file exists, else `off` | `off`, `optional` (verify when presented, the result is `$ssl_client_verify`) or `require`. `optional` and `require` need the CA file and TLS, else start error. A missing or invalid certificate gets the connection dropped (nginx 444). |
 | `HEALTH_PORT` | `8081` | An extra plain-HTTP listener on `HEALTH_BIND` (default `0.0.0.0`) that serves only `/healthz` (everything else 404), for kubelet probes that cannot present a client certificate. Set but empty turns it off. |
 | `TLS_RELOAD_INTERVAL` | `60` | Seconds between checksum checks of the certificate, key and CA files. A change runs `nginx -t` and `nginx -s reload`, no restart; a config that fails the test keeps the running one and logs it. It polls (no inotify) because Kubernetes swaps a Secret mount through the `..data` symlink. |
 

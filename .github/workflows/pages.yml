@@ -45,7 +45,7 @@ jobs:
           . ./deploy/base-domain.sh
           base_domain_check || { echo "::error::Set the repository variable NEXT_PUBLIC_DOMAIN"; exit 1; }
           missing=""
-          for name in NEXT_PUBLIC_SUPPORT_EMAIL; do
+          for name in NEXT_PUBLIC_SUPPORT_EMAIL NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVACY_EMAIL NEXT_PUBLIC_SECURITY_EMAIL; do
             eval "value=\"\${$name:-}\""
             [ -n "$value" ] || missing="$missing $name"
           done
@@ -53,12 +53,18 @@ jobs:
         env:
           NEXT_PUBLIC_DOMAIN: ${{ vars.NEXT_PUBLIC_DOMAIN }}
           NEXT_PUBLIC_SUPPORT_EMAIL: ${{ vars.NEXT_PUBLIC_SUPPORT_EMAIL }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_PRIVACY_EMAIL: ${{ vars.NEXT_PUBLIC_PRIVACY_EMAIL }}
+          NEXT_PUBLIC_SECURITY_EMAIL: ${{ vars.NEXT_PUBLIC_SECURITY_EMAIL }}
       - name: Build static export
         run: npm run build
         env:
           # repository / environment variables: the base domain and the per-site values
           NEXT_PUBLIC_DOMAIN: ${{ vars.NEXT_PUBLIC_DOMAIN }}
           NEXT_PUBLIC_SUPPORT_EMAIL: ${{ vars.NEXT_PUBLIC_SUPPORT_EMAIL }}
+          NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_PRIVACY_EMAIL: ${{ vars.NEXT_PUBLIC_PRIVACY_EMAIL }}
+          NEXT_PUBLIC_SECURITY_EMAIL: ${{ vars.NEXT_PUBLIC_SECURITY_EMAIL }}
           NEXT_PUBLIC_SOURCE_URL: ${{ vars.NEXT_PUBLIC_SOURCE_URL }}
           NEXT_PUBLIC_SHOW_PARTNERS: ${{ vars.NEXT_PUBLIC_SHOW_PARTNERS }}
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}

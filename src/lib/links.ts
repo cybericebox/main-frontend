@@ -1,5 +1,6 @@
-// Cross-origin + external links for the landing. The hosts and the contact mailboxes derive from NEXT_PUBLIC_DOMAIN (src/lib/hosts.ts);
+// Cross-origin + external links for the landing. The hosts derive from NEXT_PUBLIC_DOMAIN (src/lib/hosts.ts), the mailboxes come from the env;
 // the source link has a default and the partner links are fixed.
+import { requiredEnv } from "@/lib/env"
 import { hosts } from "@/lib/hosts"
 
 // Landing host (canonical origin for metadata, sitemap, robots, security.txt; parent domain of shared cookies).
@@ -9,13 +10,13 @@ export const MAIN_HOST = hosts().main
 export const EVENT_DOMAIN = hosts().eventDomain
 
 // Public contact mailbox (footer on every page).
-export const CONTACT_EMAIL = `contact@${hosts().main}`
+export const CONTACT_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_CONTACT_EMAIL, "NEXT_PUBLIC_CONTACT_EMAIL")
 
 // Privacy / legal questions mailbox (legal pages).
-export const PRIVACY_EMAIL = `privacy@${hosts().main}`
+export const PRIVACY_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_PRIVACY_EMAIL, "NEXT_PUBLIC_PRIVACY_EMAIL")
 
 // Vulnerability reports (Terms responsible-disclosure clause, /.well-known/security.txt).
-export const SECURITY_EMAIL = `security@${hosts().main}`
+export const SECURITY_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_SECURITY_EMAIL, "NEXT_PUBLIC_SECURITY_EMAIL")
 
 export const API_ORIGIN = `https://${hosts().api}`
 

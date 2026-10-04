@@ -2,7 +2,7 @@
 # placeholders (= variable names) and substituted at container start by the
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
 # Build with: docker build -f deploy/Dockerfile .
-# Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_SUPPORT_EMAIL=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] [-e NEXT_PUBLIC_SHOW_PARTNERS=false] [-e NEXT_PUBLIC_SOURCE_URL=…] -e WARMUP_FLAG='ICE{…}'
+# Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_{SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] [-e NEXT_PUBLIC_SHOW_PARTNERS=false] [-e NEXT_PUBLIC_SOURCE_URL=…] -e WARMUP_FLAG='ICE{…}'
 # The only host input is NEXT_PUBLIC_DOMAIN: every host derives from it (main = DOMAIN, api./id./admin./exercises.DOMAIN, events <tag>.DOMAIN, cookies DOMAIN).
 FROM node:26.10.0-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS build
 WORKDIR /app
@@ -12,6 +12,9 @@ COPY . .
 
 ENV NEXT_PUBLIC_DOMAIN="__NEXT_PUBLIC_DOMAIN__"
 ENV NEXT_PUBLIC_SUPPORT_EMAIL="__NEXT_PUBLIC_SUPPORT_EMAIL__"
+ENV NEXT_PUBLIC_CONTACT_EMAIL="__NEXT_PUBLIC_CONTACT_EMAIL__"
+ENV NEXT_PUBLIC_PRIVACY_EMAIL="__NEXT_PUBLIC_PRIVACY_EMAIL__"
+ENV NEXT_PUBLIC_SECURITY_EMAIL="__NEXT_PUBLIC_SECURITY_EMAIL__"
 ENV NEXT_PUBLIC_SOURCE_URL="__NEXT_PUBLIC_SOURCE_URL__"
 ENV NEXT_PUBLIC_SHOW_PARTNERS="__NEXT_PUBLIC_SHOW_PARTNERS__"
 ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="__NEXT_PUBLIC_GOOGLE_ANALYTICS_ID__"
@@ -30,8 +33,8 @@ COPY deploy/base-domain.sh /usr/local/lib/base-domain.sh
 # 50-csp.sh runs after the env substitution: it hashes the inline scripts and writes the CSP header
 # snippet that server.conf includes (see the header comment in deploy/csp.sh).
 COPY deploy/csp.sh /docker-entrypoint.d/50-csp.sh
-# 60-nginx-config.sh renders the listener snippets and runs nginx -t. Defaults (all overridable by env): HTTP 3000, HTTPS 8443 with /tls/tls.crt and
+# 60-nginx-config.sh renders the listener snippets and runs nginx -t. Defaults (all overridable by env): HTTP 8080, HTTPS 8443 with /tls/tls.crt and
 # /tls/tls.key when both exist, client auth "require" when /aop/ca.crt exists, health listener 8081.
 COPY deploy/nginx-entrypoint.sh /docker-entrypoint.d/60-nginx-config.sh
 RUN chmod +x /docker-entrypoint.d/40-next-public-env.sh /docker-entrypoint.d/50-csp.sh /docker-entrypoint.d/60-nginx-config.sh
-EXPOSE 3000 8443
+EXPOSE 8080 8443 8081
