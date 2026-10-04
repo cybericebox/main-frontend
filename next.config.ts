@@ -7,15 +7,29 @@ import type { NextConfig } from "next"
 // - no trailingSlash: pages export as /<path>.html and URLs carry no trailing slash,
 //   same as id-frontend (nginx resolves $uri.html); 404.html is still emitted.
 
+// One base domain: every host that is not set is derived from NEXT_PUBLIC_DOMAIN (the rule of deploy/base-domain.sh, the same file in every
+// frontend). The Docker build bakes placeholders for the hosts and has no DOMAIN, so nothing is derived there.
+const HOSTS = [
+  ["NEXT_PUBLIC_MAIN_HOST", ""],
+  ["NEXT_PUBLIC_API_HOST", "api."],
+  ["NEXT_PUBLIC_ID_HOST", "id."],
+  ["NEXT_PUBLIC_ADMIN_HOST", "admin."],
+  ["NEXT_PUBLIC_EXERCISES_HOST", "exercises."],
+  ["NEXT_PUBLIC_EVENT_DOMAIN", ""],
+  ["NEXT_PUBLIC_COOKIE_DOMAIN", ""],
+] as const
+const domain = process.env.NEXT_PUBLIC_DOMAIN ?? ""
+if (domain && (domain.length > 253 || !/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/.test(domain))) {
+  throw new Error(`NEXT_PUBLIC_DOMAIN must be a bare lower case host name (no scheme, port or path), got: ${domain}`)
+}
+for (const [name, prefix] of HOSTS) {
+  if (process.env[name]?.trim()) continue
+  if (!domain) throw new Error(`${name} is required (set it, or set NEXT_PUBLIC_DOMAIN and it is derived)`)
+  process.env[name] = prefix + domain
+}
+
 // Every operator value comes from the env; a missing one fails the build / dev start.
 const REQUIRED = [
-  "NEXT_PUBLIC_MAIN_HOST",
-  "NEXT_PUBLIC_API_HOST",
-  "NEXT_PUBLIC_ID_HOST",
-  "NEXT_PUBLIC_ADMIN_HOST",
-  "NEXT_PUBLIC_EXERCISES_HOST",
-  "NEXT_PUBLIC_EVENT_DOMAIN",
-  "NEXT_PUBLIC_COOKIE_DOMAIN",
   "NEXT_PUBLIC_CONTACT_EMAIL",
   "NEXT_PUBLIC_SUPPORT_EMAIL",
   "NEXT_PUBLIC_PRIVACY_EMAIL",
