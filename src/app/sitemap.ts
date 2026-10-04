@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next"
+import { MAIN_HOST } from "@/lib/links"
 
 // Static sitemap.xml for the public pages of the landing app.
 export const dynamic = "force-static"
 
-const origin = `https://${process.env.NEXT_PUBLIC_DOMAIN}`
+const origin = `https://${MAIN_HOST}`
 const PATHS = ["/", "/privacy", "/terms", "/cookies", "/security"]
 
 export default function sitemap(): MetadataRoute.Sitemap {

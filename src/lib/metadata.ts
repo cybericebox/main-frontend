@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { t } from "@/i18n/t"
+import { MAIN_HOST } from "@/lib/links"
 
-const origin = `https://${process.env.NEXT_PUBLIC_DOMAIN}`
+const origin = `https://${MAIN_HOST}`
 
 // Page metadata «<page> · Cyber ICE Box» (the home page passes its full title);
 // Open Graph repeats the same title and description.

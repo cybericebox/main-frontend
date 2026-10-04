@@ -2,27 +2,39 @@
 # placeholders (= variable names) and substituted at container start by the
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
 # Build with: docker build -f deploy/Dockerfile .
-# Run with:   -e NEXT_PUBLIC_DOMAIN=… [-e NEXT_PUBLIC_{API,ID,ADMIN,EXERCISES}_DOMAIN=…] [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] -e WARMUP_FLAG='ICE{…}'
-FROM node:26-alpine AS build
+# Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_{SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] [-e NEXT_PUBLIC_SHOW_PARTNERS=false] [-e NEXT_PUBLIC_SOURCE_URL=…] -e WARMUP_FLAG='ICE{…}'
+# The only host input is NEXT_PUBLIC_DOMAIN: every host derives from it (main = DOMAIN, api./id./admin./exercises.DOMAIN, events <tag>.DOMAIN, cookies DOMAIN).
+FROM node:26.10.0-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 
-ENV NEXT_PUBLIC_DOMAIN="NEXT_PUBLIC_DOMAIN"
-ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="NEXT_PUBLIC_GOOGLE_ANALYTICS_ID"
-ENV NEXT_PUBLIC_API_DOMAIN="NEXT_PUBLIC_API_DOMAIN"
-ENV NEXT_PUBLIC_ID_DOMAIN="NEXT_PUBLIC_ID_DOMAIN"
-ENV NEXT_PUBLIC_ADMIN_DOMAIN="NEXT_PUBLIC_ADMIN_DOMAIN"
-ENV NEXT_PUBLIC_EXERCISES_DOMAIN="NEXT_PUBLIC_EXERCISES_DOMAIN"
+ENV NEXT_PUBLIC_DOMAIN="__NEXT_PUBLIC_DOMAIN__"
+ENV NEXT_PUBLIC_SUPPORT_EMAIL="__NEXT_PUBLIC_SUPPORT_EMAIL__"
+ENV NEXT_PUBLIC_CONTACT_EMAIL="__NEXT_PUBLIC_CONTACT_EMAIL__"
+ENV NEXT_PUBLIC_PRIVACY_EMAIL="__NEXT_PUBLIC_PRIVACY_EMAIL__"
+ENV NEXT_PUBLIC_SECURITY_EMAIL="__NEXT_PUBLIC_SECURITY_EMAIL__"
+ENV NEXT_PUBLIC_SOURCE_URL="__NEXT_PUBLIC_SOURCE_URL__"
+ENV NEXT_PUBLIC_SHOW_PARTNERS="__NEXT_PUBLIC_SHOW_PARTNERS__"
+ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="__NEXT_PUBLIC_GOOGLE_ANALYTICS_ID__"
 # Warm-up flag is NOT a build input here: the build bakes a hash placeholder and the entrypoint
 # derives the hash + hint file from WARMUP_FLAG at container start (see scripts/warmup.mjs).
 ENV WARMUP_PLACEHOLDER=1
-RUN npm run build
+RUN npm run build && node scripts/csp-inline.mjs
 
-FROM nginx:1.30.5-alpine AS runner
+FROM nginx:1.30.5-alpine-slim@sha256:32463212baf0e7d91aded2e9b843a4f2b9e017804b8c9d5bae7b51dcef64389c AS runner
 COPY --from=build /app/out /usr/share/nginx/html
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+COPY deploy/nginx/nginx.conf deploy/nginx/server.conf /etc/nginx/
+COPY deploy/nginx/listen-http.conf deploy/nginx/listen-https.conf deploy/nginx/client-auth.conf deploy/nginx/health.conf /etc/nginx/snippets/
 COPY deploy/docker-entrypoint.sh /docker-entrypoint.d/40-next-public-env.sh
-RUN chmod +x /docker-entrypoint.d/40-next-public-env.sh
-EXPOSE 3000
+# The base-domain derivation (NEXT_PUBLIC_DOMAIN check, the API host for the CSP), sourced by 40-next-public-env.sh and 50-csp.sh.
+COPY deploy/base-domain.sh /usr/local/lib/base-domain.sh
+# 50-csp.sh runs after the env substitution: it hashes the inline scripts and writes the CSP header
+# snippet that server.conf includes (see the header comment in deploy/csp.sh).
+COPY deploy/csp.sh /docker-entrypoint.d/50-csp.sh
+# 60-nginx-config.sh renders the listener snippets and runs nginx -t. Defaults (all overridable by env): HTTP 8080, HTTPS 8443 with /tls/tls.crt and
+# /tls/tls.key when both exist, client auth "require" when /aop/ca.crt exists, health listener 8081.
+COPY deploy/nginx-entrypoint.sh /docker-entrypoint.d/60-nginx-config.sh
+RUN chmod +x /docker-entrypoint.d/40-next-public-env.sh /docker-entrypoint.d/50-csp.sh /docker-entrypoint.d/60-nginx-config.sh
+EXPOSE 8080 8443 8081

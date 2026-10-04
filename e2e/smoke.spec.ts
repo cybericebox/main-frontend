@@ -49,7 +49,7 @@ test.describe("static landing — API down", () => {
     expect(html).toContain("<!-- розминка: robots.txt -->")
     expect(html).not.toMatch(/ICE\{(?!…)[^}]+\}/)
     const robots = await (await request.get("/robots.txt")).text()
-    const hintPath = robots.match(/(\/\.well-known\/ice\/\S+)/)?.[1] // hint line: "# Розминка: /.well-known/ice/…"
+    const hintPath = robots.match(/(\/\.well-known\/ice\/\S+)/)?.[1] // hint line: "# Warm-up: /.well-known/ice/…"
     expect(hintPath).toBeTruthy()
     const FLAG = Buffer.from((await (await request.get(hintPath!)).text()).trim(), "base64").toString("utf8")
     expect(FLAG).toMatch(/^ICE\{[^}]+\}$/)

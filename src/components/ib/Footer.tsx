@@ -4,6 +4,7 @@ import { ThemeSwitch } from "./ThemeSwitch"
 import { Tooltip } from "./Tooltip"
 import type { NavLink } from "./Navbar"
 import { t, tSegments } from "@/i18n/t"
+import { PARTNER_ICE_NURE_URL, PARTNER_NURE_URL, SHOW_PARTNERS } from "@/lib/links"
 import "@/styles/ds/components/footer.css"
 
 // ds-v2 platform footer on the brand mass (both themes) over a faint ice-cube lattice:
@@ -17,14 +18,14 @@ export function Footer({ email, sourceUrl, legal, extra }: { email: string; sour
     <footer className="ib-footer ib-footer--mass ib-mass">
       <div className="ib-footer__inner">
         <div className="ib-footer__top">
-          <p className="ib-footer__credit">
+          <p className="ib-footer__credit" data-show-partners={SHOW_PARTNERS}>
             {tSegments(
               "landing.footer.credit",
               {
                 department: (
                   <Tooltip content={t("landing.footer.departmentFull")}>
                     {(tipId) => (
-                      <a href="https://ice.nure.ua/ua/" target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
+                      <a href={PARTNER_ICE_NURE_URL} target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
                         {t("landing.footer.supportLink")}
                       </a>
                     )}
@@ -33,7 +34,7 @@ export function Footer({ email, sourceUrl, legal, extra }: { email: string; sour
                 nure: (
                   <Tooltip content={t("landing.footer.nureFull")}>
                     {(tipId) => (
-                      <a href="https://nure.ua" target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
+                      <a href={PARTNER_NURE_URL} target="_blank" rel="noopener noreferrer" aria-describedby={tipId}>
                         {t("landing.footer.nure")}
                       </a>
                     )}

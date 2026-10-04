@@ -14,6 +14,7 @@ import { useCatalogAccess } from "@/lib/useCatalogAccess"
 import { openConsentSettings } from "@/lib/consent"
 import { mediaUrl } from "@/api/client"
 import { landingLinks } from "./sections"
+import { SiteBanners } from "./SiteBanners"
 
 // Platform navbar. Actions depend on the API probe (lib/useApi): absent while
 // pending/down (their slot keeps its width), «Увійти» for anonymous visitors,
@@ -62,10 +63,14 @@ export function SiteHeader({ home }: { home: boolean }) {
   )
 
   return (
-    <Navbar
-      brandHref={home ? "#top" : "/"}
-      links={landingLinks(home ? "" : "/")}
-      actions={actions}
-    />
+    <>
+      <Navbar
+        brandHref={home ? "#top" : "/"}
+        links={landingLinks(home ? "" : "/")}
+        actions={actions}
+      />
+      {/* client-only, renders nothing until /api/banners answers: no landing SSR/LCP cost */}
+      <SiteBanners />
+    </>
   )
 }

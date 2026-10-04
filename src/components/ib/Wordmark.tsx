@@ -4,7 +4,7 @@ import "@/styles/wordmark.css"
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={"ib-wordmark" + (className ? " " + className : "")}>
-      Cyber <span className="ib-wordmark__ice">ICE</span> Box
+      Cyber&nbsp;<span className="ib-wordmark__ice">ICE</span>&nbsp;Box
     </span>
   )
 }

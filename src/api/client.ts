@@ -1,10 +1,11 @@
 // Minimal fetch-based API client.
-// The API origin is api.<NEXT_PUBLIC_DOMAIN> or NEXT_PUBLIC_API_DOMAIN: every
+// The API origin is https://api.<NEXT_PUBLIC_DOMAIN>: every
 // frontend calls the single api host cross-origin with credentials included,
 // and the browser stores/sends the host-scoped session cookie. No silent-auth
 // bootstrap — a plain credentialed fetch is authoritative.
 
 import { API_ORIGIN } from "@/lib/links"
+import { COOKIE_RETURN_TO } from "@/lib/storageKeys"
 
 export class ApiError extends Error {
   constructor(
@@ -16,15 +17,24 @@ export class ApiError extends Error {
     public readonly signInUrl?: string,
     // Stable numeric FullCode from the envelope (Status.Code). This — not the
     // English message — is the i18n key callers localize against (see i18n/apiError).
-    public readonly code?: number
+    public readonly code?: number,
+    // Seconds from the Retry-After header of a 429 (rate limit / lockout), when sent.
+    public readonly retryAfterSeconds?: number
   ) {
     super(message ?? `API error ${status}`)
     this.name = "ApiError"
   }
 }
 
+// Retry-After of a 429, in whole seconds (the backend sends delta-seconds, >= 1).
+export function parseRetryAfter(header: string | null): number | undefined {
+  if (!header) return undefined
+  const seconds = Number(header)
+  return Number.isFinite(seconds) && seconds > 0 ? Math.ceil(seconds) : undefined
+}
+
 // ApiOptions controls cross-cutting request behavior.
-//   required (default true) — a 401 writes the return_to cookie and redirects
+//   required (default true) — a 401 writes the cib_return_to cookie and redirects
 //       the browser to the backend-advertised sign-in page (X-Sign-In-URL).
 //       The promise never resolves (navigation is underway), so no catch/finally
 //       runs on the caller.
@@ -49,11 +59,11 @@ function portless(href: string): string {
 }
 
 // writeReturnToCookie writes the current page URL (portless, https) as the
-// return_to cookie the backend consumes at session creation. The backend rejects
+// cib_return_to cookie the backend consumes at session creation. The backend rejects
 // URLs with a port and requires https, so the value must be portless https.
 function writeReturnToCookie(): void {
   if (typeof window === "undefined") return
-  document.cookie = `return_to=${encodeURIComponent(portless(window.location.href))}; path=/; SameSite=Lax; Secure`
+  document.cookie = `${COOKIE_RETURN_TO}=${encodeURIComponent(portless(window.location.href))}; path=/; SameSite=Lax; Secure`
 }
 
 // redirectToSignInPage is inlined here (no import of lib/auth) to avoid a
@@ -83,7 +93,7 @@ async function request<T>(
     },
   })
 
-  // Centralized auth handling: required (default true) → write return_to cookie
+  // Centralized auth handling: required (default true) → write cib_return_to cookie
   // and redirect to sign-in. Returning a never-resolving promise stops the
   // caller's success/catch paths from running while the browser navigates away.
   // required:false → fall through to throw ApiError so callers treat it as anon.
@@ -119,7 +129,8 @@ async function request<T>(
       parsed,
       envelope?.Status?.Message,
       res.headers.get("X-Sign-In-URL") ?? undefined,
-      envelope?.Status?.Code
+      envelope?.Status?.Code,
+      parseRetryAfter(res.headers.get("Retry-After"))
     )
   }
 

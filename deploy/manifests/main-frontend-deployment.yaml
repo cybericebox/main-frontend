@@ -24,33 +24,34 @@ spec:
     spec:
       containers:
         - name: main-frontend
-          image: cybericebox/main-frontend:latest
+          image: cybericebox/main-frontend:v0.1.0 # the release tag: an exact version, never latest
+          imagePullPolicy: IfNotPresent
           env:
             - name: NEXT_PUBLIC_DOMAIN
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
                   key: DOMAIN
-            - name: NEXT_PUBLIC_API_DOMAIN
+            - name: NEXT_PUBLIC_SUPPORT_EMAIL
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: API_DOMAIN
-            - name: NEXT_PUBLIC_ID_DOMAIN
+                  key: SUPPORT_EMAIL
+            - name: NEXT_PUBLIC_CONTACT_EMAIL
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: ID_DOMAIN
-            - name: NEXT_PUBLIC_ADMIN_DOMAIN
+                  key: CONTACT_EMAIL
+            - name: NEXT_PUBLIC_PRIVACY_EMAIL
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: ADMIN_DOMAIN
-            - name: NEXT_PUBLIC_EXERCISES_DOMAIN
+                  key: PRIVACY_EMAIL
+            - name: NEXT_PUBLIC_SECURITY_EMAIL
               valueFrom:
                 configMapKeyRef:
                   name: main-frontend-config
-                  key: EXERCISES_DOMAIN
+                  key: SECURITY_EMAIL
             - name: NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
               valueFrom:
                 configMapKeyRef:
@@ -63,7 +64,7 @@ spec:
                   key: WARMUP_FLAG
                   optional: true
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
               protocol: TCP
           resources:
             requests:
@@ -74,12 +75,12 @@ spec:
               cpu: "200m"
           readinessProbe:
             httpGet:
-              port: 3000
+              port: 8080
               path: /healthz
             initialDelaySeconds: 20
           livenessProbe:
             httpGet:
-              port: 3000
+              port: 8080
               path: /healthz
             initialDelaySeconds: 20
             periodSeconds: 30

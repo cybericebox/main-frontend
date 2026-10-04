@@ -4,11 +4,15 @@ metadata:
   name: main-frontend-config
   namespace: cybericebox
 data:
-  DOMAIN: "cybericebox.com"
-  # Optional host overrides (bare host, no scheme). Empty → <service>.<DOMAIN>.
-  API_DOMAIN: ""
-  ID_DOMAIN: ""
-  ADMIN_DOMAIN: ""
-  EXERCISES_DOMAIN: ""
+  # Required: DOMAIN and the four mailboxes. Everything else has a default in the image.
+  # REQUIRED: the one base domain, a bare lowercase host name. Every host derives from it: DOMAIN, api./id./admin./exercises.DOMAIN,
+  # event sites <tag>.DOMAIN, the cookie domain DOMAIN. There are no per-host settings.
+  DOMAIN: ""
+  # REQUIRED: support mailbox of the «Надіслати відгук» (send feedback) link on every page.
+  SUPPORT_EMAIL: ""
+  # REQUIRED: footer, legal pages and security.txt mailboxes.
+  CONTACT_EMAIL: ""
+  PRIVACY_EMAIL: ""
+  SECURITY_EMAIL: ""
   # Optional Google Analytics 4 measurement id (G-…). Empty → analytics off.
   GOOGLE_ANALYTICS_ID: ""

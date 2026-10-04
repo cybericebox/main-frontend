@@ -9,6 +9,7 @@
 import en from "../../messages/en.json"
 import uk from "../../messages/uk.json"
 import { createElement, Fragment, type ReactNode } from "react"
+import { keepBrand } from "./brand"
 import { nbsp } from "./typo"
 
 // `en` defines the canonical key set; `uk` is what users see.
@@ -21,9 +22,9 @@ type Vars = Record<string, string | number>
 
 function lookup(key: string): string {
   const a = (active as Record<string, string>)[key]
-  if (a !== undefined) return nbsp(a)
+  if (a !== undefined) return keepBrand(nbsp(a))
   const f = (fallback as Record<string, string>)[key]
-  return f ?? key
+  return keepBrand(f ?? key)
 }
 
 /** Whether a key exists in the canonical catalog (structured texts: legal.<doc>.sN.items.M). */

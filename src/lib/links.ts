@@ -1,28 +1,26 @@
-// Cross-origin + external links for the landing. Service hosts default to
-// <service>.<NEXT_PUBLIC_DOMAIN>; NEXT_PUBLIC_{API,ID,ADMIN,EXERCISES}_DOMAIN override one
-// host (bare host, no scheme) — e.g. point the landing at another backend.
-// SOURCE_URL — public GitHub organization (org-level link by product decision).
-const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
+// Cross-origin + external links for the landing. The hosts derive from NEXT_PUBLIC_DOMAIN (src/lib/hosts.ts), the mailboxes come from the env;
+// the source link has a default and the partner links are fixed.
+import { requiredEnv } from "@/lib/env"
+import { hosts } from "@/lib/hosts"
 
-// Current platform domain (for illustrative in-product URLs on the landing).
-export const PLATFORM_DOMAIN = DOMAIN || "cybericebox.app"
-          
-// The project team's mailboxes live on cybericebox.com whatever domain this build is deployed to
-// (dev/staging domains have no mailboxes).
-const MAIL_DOMAIN = "cybericebox.com"
+// Landing host (canonical origin for metadata, sitemap, robots, security.txt; parent domain of shared cookies).
+export const MAIN_HOST = hosts().main
+
+// Domain of event sites (<tag>.<domain>): shown in the landing's illustrative event URL.
+export const EVENT_DOMAIN = hosts().eventDomain
 
 // Public contact mailbox (footer on every page).
-export const CONTACT_EMAIL = `contact@${MAIL_DOMAIN}`
+export const CONTACT_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_CONTACT_EMAIL, "NEXT_PUBLIC_CONTACT_EMAIL")
 
 // Privacy / legal questions mailbox (legal pages).
-export const PRIVACY_EMAIL = `privacy@${MAIL_DOMAIN}`
+export const PRIVACY_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_PRIVACY_EMAIL, "NEXT_PUBLIC_PRIVACY_EMAIL")
 
 // Vulnerability reports (Terms responsible-disclosure clause, /.well-known/security.txt).
-export const SECURITY_EMAIL = `security@${MAIL_DOMAIN}`
+export const SECURITY_EMAIL = requiredEnv(process.env.NEXT_PUBLIC_SECURITY_EMAIL, "NEXT_PUBLIC_SECURITY_EMAIL")
 
-export const API_ORIGIN = `https://${process.env.NEXT_PUBLIC_API_DOMAIN || `api.${DOMAIN}`}`
+export const API_ORIGIN = `https://${hosts().api}`
 
-export const ID_ORIGIN = `https://${process.env.NEXT_PUBLIC_ID_DOMAIN || `id.${DOMAIN}`}`
+export const ID_ORIGIN = `https://${hosts().id}`
 
 // Sign-in page on the identity app (landing primary CTA targets this).
 export const SIGN_IN_URI = "/sign-in"
@@ -35,11 +33,19 @@ export const SIGN_OUT_URI = "/sign-out"
 
 export const PROFILE_URI = "/profile"
 
-// Admin app (admin.<domain>) — landing CTA target for admin-tier users.
-export const ADMIN_ORIGIN = `https://${process.env.NEXT_PUBLIC_ADMIN_DOMAIN || `admin.${DOMAIN}`}`
+// Admin app — landing CTA target for admin-tier users.
+export const ADMIN_ORIGIN = `https://${hosts().admin}`
 
-// Exercise catalog app (exercises.<domain>) — account menu target for admins and event staff.
-export const EXERCISES_ORIGIN = `https://${process.env.NEXT_PUBLIC_EXERCISES_DOMAIN || `exercises.${DOMAIN}`}`
+// Exercise catalog app — account menu target for admins and event staff.
+export const EXERCISES_ORIGIN = `https://${hosts().exercises}`
 
-// Org-level link only (no specific repo).
-export const SOURCE_URL = "https://github.com/cybericebox"
+// Public source link (org-level, no specific repo). Overridable by NEXT_PUBLIC_SOURCE_URL.
+export const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL || "https://github.com/cybericebox"
+
+// Partner (department / university) links in the footer credit.
+export const PARTNER_ICE_NURE_URL = "https://ice.nure.ua/ua/"
+export const PARTNER_NURE_URL = "https://nure.ua"
+
+// The partner block is shown unless NEXT_PUBLIC_SHOW_PARTNERS is "false". The value stays a runtime value of the static export (the
+// container substitutes it in the HTML), so the footer carries it as an attribute and the stylesheet hides the block.
+export const SHOW_PARTNERS = process.env.NEXT_PUBLIC_SHOW_PARTNERS || "true"
