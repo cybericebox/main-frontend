@@ -35,6 +35,8 @@ printenv | grep '^NEXT_PUBLIC_' | while IFS='=' read -r key value; do
   esc=$(printf '%s' "$value" | sed -e 's/[\\&|]/\\&/g')
   printf 's|__%s__|%s|g\n' "$key" "$esc"
 done > "$script"
+# Next lowercases the host of the Open Graph image URLs (new URL), so that placeholder reaches the files in lower case.
+printf 's|__next_public_domain__|%s|g\n' "$(printf '%s' "$NEXT_PUBLIC_DOMAIN" | sed -e 's/[\\&|]/\\&/g')" >> "$script"
 
 # Warm-up flag: same artifacts scripts/warmup.mjs writes at build time for static hosting —
 # SHA-256 in place of the baked placeholder (one more expression in the script above), base64 hint
@@ -50,7 +52,7 @@ else
   printf '%s' "$WARMUP_FLAG" | base64 > "$ROOT/.well-known/ice/warmup.txt"
 fi
 
-grep -rlIE '__NEXT_PUBLIC_[A-Z0-9_]+__|__WARMUP_SHA256__' "$ROOT" | xargs -r -n 1 -P "$(nproc)" sed -i -f "$script"
+grep -rlIE '__NEXT_PUBLIC_[A-Z0-9_]+__|__next_public_domain__|__WARMUP_SHA256__' "$ROOT" | xargs -r -n 1 -P "$(nproc)" sed -i -f "$script"
 
 # A placeholder that is still there means its variable is missing: fail the start, not the page.
 left=
