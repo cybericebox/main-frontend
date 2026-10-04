@@ -43,7 +43,7 @@ Production builds are a **static export** (`output: "export"`, written to `out/`
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | yes | Support mailbox of the «Send feedback» `mailto:` link shown on every page (the subject carries the app and page path only). |
 | `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
 | `NEXT_PUBLIC_SOURCE_URL` | yes | Public source link in the footer. |
-| `NEXT_PUBLIC_PARTNER_URL`, `NEXT_PUBLIC_PARTNER_SITE_URL` | yes | Partner department and university links in the footer credit. |
+| `NEXT_PUBLIC_PARTNER_ICE_NURE_URL`, `NEXT_PUBLIC_PARTNER_NURE_URL` | yes | Partner department and university links in the footer credit. |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 measurement id. Analytics is off when unset. |
 | `NEXT_PUBLIC_WARMUP_FLAG` | static builds | Flag of the warm-up challenge, read at build time by `scripts/warmup.mjs` (a dev fallback is used in `npm run dev`). |
 

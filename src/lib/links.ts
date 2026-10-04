@@ -42,5 +42,5 @@ export const EXERCISES_ORIGIN = `https://${requiredEnv(process.env.NEXT_PUBLIC_E
 export const SOURCE_URL = requiredEnv(process.env.NEXT_PUBLIC_SOURCE_URL, "NEXT_PUBLIC_SOURCE_URL")
 
 // Partner (department / university) links in the footer credit.
-export const PARTNER_URL = requiredEnv(process.env.NEXT_PUBLIC_PARTNER_URL, "NEXT_PUBLIC_PARTNER_URL")
-export const PARTNER_SITE_URL = requiredEnv(process.env.NEXT_PUBLIC_PARTNER_SITE_URL, "NEXT_PUBLIC_PARTNER_SITE_URL")
+export const PARTNER_ICE_NURE_URL = requiredEnv(process.env.NEXT_PUBLIC_PARTNER_ICE_NURE_URL, "NEXT_PUBLIC_PARTNER_ICE_NURE_URL")
+export const PARTNER_NURE_URL = requiredEnv(process.env.NEXT_PUBLIC_PARTNER_NURE_URL, "NEXT_PUBLIC_PARTNER_NURE_URL")
