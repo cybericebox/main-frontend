@@ -7,26 +7,14 @@ import type { NextConfig } from "next"
 // - no trailingSlash: pages export as /<path>.html and URLs carry no trailing slash,
 //   same as id-frontend (nginx resolves $uri.html); 404.html is still emitted.
 
-// One base domain: every host that is not set is derived from NEXT_PUBLIC_DOMAIN (the rule of deploy/base-domain.sh, the same file in every
-// frontend). The Docker build bakes placeholders for the hosts and has no DOMAIN, so nothing is derived there.
-const HOSTS = [
-  ["NEXT_PUBLIC_MAIN_HOST", ""],
-  ["NEXT_PUBLIC_API_HOST", "api."],
-  ["NEXT_PUBLIC_ID_HOST", "id."],
-  ["NEXT_PUBLIC_ADMIN_HOST", "admin."],
-  ["NEXT_PUBLIC_EXERCISES_HOST", "exercises."],
-  ["NEXT_PUBLIC_EVENT_DOMAIN", ""],
-  ["NEXT_PUBLIC_COOKIE_DOMAIN", ""],
-] as const
-const domain = process.env.NEXT_PUBLIC_DOMAIN ?? ""
-if (domain && (domain.length > 253 || !/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/.test(domain))) {
-  throw new Error(`NEXT_PUBLIC_DOMAIN must be a bare lower case host name (no scheme, port or path), got: ${domain}`)
+// One base domain: NEXT_PUBLIC_DOMAIN is the only host input and every host derives from it (src/**/hosts.ts, deploy/base-domain.sh; the daemon and
+// the infrastructure renderer share the rule and tests/base-domain-vectors.json). The Docker build bakes a placeholder for it.
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN ?? ""
+if (!DOMAIN) throw new Error("NEXT_PUBLIC_DOMAIN is required")
+if (DOMAIN !== "__NEXT_PUBLIC_DOMAIN__" && (DOMAIN.length > 253 || !/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/.test(DOMAIN))) {
+  throw new Error(`NEXT_PUBLIC_DOMAIN must be a bare lowercase host name (no scheme, port or path), got: ${DOMAIN}`)
 }
-for (const [name, prefix] of HOSTS) {
-  if (process.env[name]?.trim()) continue
-  if (!domain) throw new Error(`${name} is required (set it, or set NEXT_PUBLIC_DOMAIN and it is derived)`)
-  process.env[name] = prefix + domain
-}
+const PLATFORM_HOSTS = [DOMAIN, `api.${DOMAIN}`, `id.${DOMAIN}`, `admin.${DOMAIN}`, `exercises.${DOMAIN}`]
 
 // Every operator value comes from the env; a missing one fails the build / dev start.
 const REQUIRED = [
@@ -46,9 +34,8 @@ if (missing.length) throw new Error(`Missing required env: ${missing.join(", ")}
 // host plus the event domain and its subdomains; DEV_ALLOWED_ORIGINS (comma list) adds more.
 const env = process.env;
 const allowedDevOrigins = [
-  ...[env.NEXT_PUBLIC_MAIN_HOST, env.NEXT_PUBLIC_API_HOST, env.NEXT_PUBLIC_ID_HOST, env.NEXT_PUBLIC_ADMIN_HOST, env.NEXT_PUBLIC_EXERCISES_HOST],
-  env.NEXT_PUBLIC_EVENT_DOMAIN,
-  `*.${env.NEXT_PUBLIC_EVENT_DOMAIN}`,
+  ...PLATFORM_HOSTS,
+  `*.${DOMAIN}`,
   ...(env.DEV_ALLOWED_ORIGINS ?? "").split(",").map((s) => s.trim()),
 ].filter((s): s is string => !!s);
 
@@ -58,7 +45,7 @@ const allowedDevOrigins = [
 // stack, HMR) and cannot use hashes, and connect-src also allows the HMR websocket.
 // Hosts and vendor toggles come from the same env as production.
 function devContentSecurityPolicy(): string {
-  const api = `https://${process.env.NEXT_PUBLIC_API_HOST!.trim()}`
+  const api = `https://api.${DOMAIN}`
   const script = ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
   const connect = ["'self'", api, "ws:", "wss:"]
   if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim()) {

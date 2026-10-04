@@ -3,7 +3,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 
-process.env.NEXT_PUBLIC_COOKIE_DOMAIN = "cookies.example.test"
+process.env.NEXT_PUBLIC_DOMAIN = "cookies.example.test"
 
 // Dynamic path: node runs the .ts source directly, tsc doesn't resolve it.
 const source = "../src/lib/consent.ts"
@@ -158,13 +158,13 @@ test("the settings link and the consent panel do not depend on GA being configur
   assert.doesNotMatch(read("../src/app/layout.tsx"), /GOOGLE_ANALYTICS_ID &&/)
 })
 
-test("saveConsent fails without NEXT_PUBLIC_COOKIE_DOMAIN", () => {
+test("saveConsent fails without NEXT_PUBLIC_DOMAIN", () => {
   fakeBrowser()
-  const saved = process.env.NEXT_PUBLIC_COOKIE_DOMAIN
-  delete process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+  const saved = process.env.NEXT_PUBLIC_DOMAIN
+  delete process.env.NEXT_PUBLIC_DOMAIN
   try {
-    assert.throws(() => consent.saveConsent(consent.ACCEPT_ALL), /NEXT_PUBLIC_COOKIE_DOMAIN is required/)
+    assert.throws(() => consent.saveConsent(consent.ACCEPT_ALL), /NEXT_PUBLIC_DOMAIN is required/)
   } finally {
-    process.env.NEXT_PUBLIC_COOKIE_DOMAIN = saved
+    process.env.NEXT_PUBLIC_DOMAIN = saved
   }
 })
