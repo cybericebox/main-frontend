@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, type CSSProperties } from "react"
 import { t } from "@/i18n/t"
 import "@/styles/ds/components/topology.css"
 
 // ds-v2 lab diagram (patterns/topology). Port of IB.Topology: the highlighted route
-// draws in once when the figure enters the viewport; skipped with reduced motion.
+// draws in once when the figure enters the viewport; after that a slow dash drifts along
+// the links (.is-flow) while the figure is in view. Both skipped with reduced motion.
 export function Topology() {
   const ref = useRef<HTMLElement>(null)
 
@@ -13,11 +14,14 @@ export function Topology() {
     const el = ref.current
     if (!el || !("IntersectionObserver" in window)) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    let drawn = false
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
+        const e = entries[entries.length - 1]
+        el.classList.toggle("is-flow", e.isIntersecting)
+        if (e.isIntersecting && !drawn) {
+          drawn = true
           el.classList.add("is-draw")
-          io.disconnect()
         }
       },
       { threshold: 0.4 }
@@ -54,6 +58,15 @@ export function Topology() {
           </g>
           <g className="ib-topo__route">
             <path className="ib-topo__draw" d="M144 90H192M316 90H400V200M448 224H460V112H496" />
+          </g>
+          <g className="ib-topo__flow ib-topo__flow--link" aria-hidden="true">
+            <path d="M144 360H192" style={{ "--ib-flow-delay": "-1.5s" } as CSSProperties} />
+            <path d="M316 360H400V248" style={{ "--ib-flow-delay": "-2.5s" } as CSSProperties} />
+            <path d="M448 224H460V294H496" style={{ "--ib-flow-delay": "-3.5s" } as CSSProperties} />
+            <path d="M460 294V370H496" style={{ "--ib-flow-delay": "-3.5s" } as CSSProperties} />
+          </g>
+          <g className="ib-topo__flow ib-topo__flow--route" aria-hidden="true">
+            <path d="M144 90H192M316 90H400V200M448 224H460V112H496" />
           </g>
           <g className="ib-topo__joint">
             <rect x="457" y="221" width="6" height="6" />
