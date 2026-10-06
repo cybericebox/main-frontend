@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import type { NextConfig } from "next"
 
 // Static export for main-frontend (apex landing app).
@@ -59,6 +60,8 @@ function devContentSecurityPolicy(): string {
 }
 
 const nextConfig: NextConfig = {
+  // build version shown in the error report mail
+  env: { NEXT_PUBLIC_APP_VERSION: JSON.parse(readFileSync("package.json", "utf8")).version },
   ...(process.env.NODE_ENV === "development"
     ? { headers: async () => [{ source: "/:path*", headers: [{ key: "Content-Security-Policy", value: devContentSecurityPolicy() }] }] }
     : {}),

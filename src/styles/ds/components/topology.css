@@ -1,7 +1,7 @@
 /* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Topology — lab network diagram (landing «Лабораторії», lab page). Inline SVG styled with tokens only.
    Source: prototypes/platform.html (.pl-topo). Behaviour: topology.js — [data-ib-topo] draws the route once
-   when it scrolls into view (skipped with reduced motion). Stroke roles:
+   when it scrolls into view and keeps the traffic dashes moving while in view (both skipped with reduced motion); landing host also assembles the figure part by part (see «Assembly»). Stroke roles:
      zone    — dashed perimeter/subnet outlines: --ib-control (perimeter), --ib-diagram-zone (subnets)
      link    — idle links: --ib-control 1.25px
      route   — the highlighted path (your PC → target): --ib-action 2.25px
@@ -36,6 +36,24 @@
 .ib-topo .ib-topo__draw{stroke-dasharray:640;stroke-dashoffset:0}
 .ib-topo.is-draw .ib-topo__draw{animation:ib-topo-route 1.6s var(--ib-ease) both}
 @keyframes ib-topo-route{from{stroke-dashoffset:640}to{stroke-dashoffset:0}}
+/* Traffic: short «packets» drift along each link in the direction of travel (client → hosts); the path geometry is
+   duplicated in .ib-topo__flow. Runs only while .is-flow is set (set by the host while the figure is in view, never with
+   reduced motion). Packet colour contrasts with the line under it: --ib-action on idle links, --ib-surface on the route.
+   Dash period 44 = packet 8 + gap 36, so the offset loops without a jump. */
+.ib-topo .ib-topo__flow path{fill:none;stroke-linejoin:round;stroke-dasharray:8 36;opacity:.9}
+.ib-topo .ib-topo__flow--link path{stroke:var(--ib-action);stroke-width:1.75}
+.ib-topo .ib-topo__flow--route path{stroke:var(--ib-surface);stroke-width:1.5}
+.ib-topo.is-flow .ib-topo__flow path{animation:ib-topo-flow 4.5s linear infinite;animation-delay:var(--ib-flow-delay,0s)}
+@keyframes ib-topo-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-44}}
+@media (prefers-reduced-motion:reduce){.ib-topo .ib-topo__flow{display:none}}
+/* Assembly: the host adds .is-build on mount (everything [data-ib-b] hidden), then .is-built when the figure enters the
+   viewport. Each part fades in (opacity only) in order of its step --ib-b (set inline): perimeter 0, nodes 1..n, links n+1,
+   350ms apart. The host then adds .is-draw (route) and .is-flow (packets, hidden until then), and may repeat the cycle by removing .is-built,
+   reflowing and adding it again. Without .is-build (reduced motion, no JS) everything is simply visible. */
+.ib-topo.is-build [data-ib-b]{opacity:0}
+.ib-topo.is-build.is-built [data-ib-b]{opacity:1;transition:opacity .5s var(--ib-ease) calc(var(--ib-b,0) * 350ms)}
+.ib-topo.is-build .ib-topo__flow{opacity:0}
+.ib-topo.is-build.is-flow .ib-topo__flow{opacity:1;transition:opacity .5s var(--ib-ease)}
 .ib-topo__term{margin:0;border-top:1px solid var(--ib-line);background:var(--ib-paper);padding:14px var(--ib-5);font:var(--ib-fs-13)/1.7 var(--ib-mono);color:var(--ib-dim);overflow-x:auto;white-space:pre}
 .ib-topo__term b{color:var(--ib-ink);font-weight:var(--ib-w-medium)}
 @media (max-width:640px){.ib-topo__canvas{padding:var(--ib-2) 0 0}}

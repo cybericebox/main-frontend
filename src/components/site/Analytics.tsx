@@ -1,3 +1,6 @@
+"use client"
+
+import { useSyncExternalStore } from "react"
 import Script from "next/script"
 import { gtagBootScript } from "@/lib/consent"
 import { ConsentBanner } from "./ConsentBanner"
@@ -5,16 +8,24 @@ import { ConsentBanner } from "./ConsentBanner"
 // Google Analytics (gtag) under Consent Mode v2, loaded in browser idle time after the page's own
 // resources (lazyOnload), so it never competes with the landing's critical path. The inline boot
 // sets the denied defaults and the stored choice before gtag.js runs (see lib/consent).
+// The gtag scripts are rendered only in the browser: the static export is built with the NEXT_PUBLIC_GOOGLE_ANALYTICS_ID placeholder
+// (always non-empty), so a build-time check would put gtag.js into the HTML even when the runtime id is empty.
 // Without a GA id only the consent panel is mounted, so «Налаштування файлів cookie» still works.
+const subscribe = () => () => {}
+
 export function Analytics({ gaId }: { gaId?: string }) {
-  if (!gaId) return <ConsentBanner policyHref="/cookies/" />
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false)
   return (
     <>
-      <Script id="ga-init" strategy="lazyOnload">
-        {gtagBootScript(gaId)}
-      </Script>
-      <Script id="ga" strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`} />
-      <ConsentBanner gaId={gaId} policyHref="/cookies/" />
+      {mounted && gaId && (
+        <>
+          <Script id="ga-init" strategy="lazyOnload">
+            {gtagBootScript(gaId)}
+          </Script>
+          <Script id="ga" strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`} />
+        </>
+      )}
+      <ConsentBanner gaId={gaId || undefined} policyHref="/cookies/" />
     </>
   )
 }

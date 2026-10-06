@@ -8,14 +8,14 @@
 
 /* window: 80px into the column, 820px wide (bleeds off the right edge on narrower screens, never stretches);
    FIXED height: bar + board head + chips + exactly 2 rows of tiles. --hc-rows-top = where the first tile row starts. */
-.hc{--hc-rows-top:136px;--hc-tile-h:92px;--hc-rows:2}
+.hc{--hc-rows-top:136px;--hc-tile-h:92px;--hc-rows:2;--hc-feed-h:44px}
 .hc-win{display:grid;grid-template-rows:34px 1fr;width:820px;margin-left:80px;overflow:hidden;
-  height:calc(var(--hc-rows-top) + var(--hc-rows) * var(--hc-tile-h) + (var(--hc-rows) - 1) * 10px + 20px);
+  height:calc(var(--hc-rows-top) + var(--hc-rows) * var(--hc-tile-h) + (var(--hc-rows) - 1) * 10px + 20px + 14px + var(--hc-feed-h));
   border:1px solid var(--ib-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink)}
 .hc-win__bar{display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--ib-paper);border-bottom:1px solid var(--ib-line)}
 .hc-win__bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:12px var(--ib-mono);color:var(--ib-faint)}
 
-.hc-board{display:grid;grid-template-rows:28px 26px auto;align-content:start;gap:14px;padding:20px 22px}   /* 34 + 20 + 28 + 14 + 26 + 14 = --hc-rows-top */
+.hc-board{display:grid;grid-template-rows:28px 26px auto var(--hc-feed-h);align-content:start;gap:14px;padding:20px 22px}   /* 34 + 20 + 28 + 14 + 26 + 14 = --hc-rows-top */
 .hc-board__head{display:flex;align-items:baseline;gap:16px;height:28px}   /* counter next to the title: the window bleeds off the right edge */
 .hc-board__head h3{margin:0;font-size:20px;font-weight:650;letter-spacing:-.02em}
 .hc-board__head>span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
@@ -33,6 +33,17 @@
 .hc-tile svg{width:13px;height:13px;flex:none;fill:none;stroke:var(--ib-ok);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .hc-tile.is-solved{background:var(--ib-solved);color:var(--ib-dim)}
 .hc-tile.is-warm{border:2px solid var(--ib-action);padding:11px}
+
+/* another team solved a task (the demo feed below): the tile lights up softly for a moment */
+.hc-tile{transition:background-color .3s var(--ib-ease),border-color .3s var(--ib-ease)}
+.hc-tile.is-hit{background:var(--ib-soft);border-color:var(--ib-brand)}
+
+/* the demo feed: two lines, fixed height (nothing shifts); the newest slides in (opacity + 14px) */
+.hc-feed{height:var(--hc-feed-h);overflow:hidden;border-top:1px solid var(--ib-line);padding-top:6px;font-size:var(--ib-fs-12);color:var(--ib-dim)}
+.hc-feed p{margin:0;height:18px;line-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-feed p.is-new{animation:hc-feed-in .6s var(--ib-ease)}
+@keyframes hc-feed-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hc-feed p.is-new{animation:none}.hc-tile{transition:none}}
 
 /* the «Розминка» tile is a real button: it opens the card */
 button.hc-tile{font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color var(--ib-dur-fast) var(--ib-ease)}

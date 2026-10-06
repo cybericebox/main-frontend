@@ -39,24 +39,5 @@ main:focus{outline:none}
 .ib-navbar.ib-navbar--platform .ib-navbar__link:hover{color:var(--ib-ink)}
 [data-theme="dark"] .ib-navbar.ib-navbar--platform .ib-navbar__link{color:var(--ib-body)}   /* dim (~6:1) reads too faint on dark surface */
 
-/* 404 */
-.site-404{flex:1;display:grid;place-items:center;padding:var(--ib-16) var(--ib-4);text-align:center}
-.site-404__box{display:flex;flex-direction:column;align-items:center;gap:var(--ib-4);max-width:360px}
-.site-404__brand{font-weight:var(--ib-w-semibold);color:var(--ib-ink);letter-spacing:-.015em;margin-top:calc(var(--ib-2) * -1)}
-.site-404 h1{font-size:var(--ib-fs-24);letter-spacing:-.02em}
-.site-404 p{color:var(--ib-dim)}
-.site-404 .ib-btn{margin-top:var(--ib-2)}
-
-/* page not found (NotFoundScreen): the same layout; `block` sits inside its own block instead of the page */
-.site-404--block{min-height:16rem;padding-block:var(--ib-8)}
-
-/* error boundary (app/error.tsx, app/global-error.tsx): the 404 layout, full height, warning mark, two actions */
-.site-error{min-height:100dvh;background:var(--ib-paper)}
-.site-error .site-404__box{max-width:480px}
-.site-error__mark{width:32px;height:32px;color:var(--ib-danger)}
-.site-error__mark--muted{color:var(--ib-dim)}
-.site-error__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--ib-2);margin-top:var(--ib-2)}
-.site-404 .site-error__actions .ib-btn{margin-top:0}
-
 /* navbar avatar trigger: avatar only (no chevron) — round, symmetric hit area */
 .ib-navbar .ib-avatar-btn{padding:4px;border-radius:50%}

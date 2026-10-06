@@ -14,6 +14,7 @@ import "@/styles/ds/components/icon-button.css"
 import "@/styles/ds/components/input.css"
 import "@/styles/ds/components/status-text.css"
 import "./heroChallenge.css"
+import { useDemoFeed } from "./heroFeed"
 import { STORAGE_WARMUP_SOLVED } from "@/lib/storageKeys"
 
 // Hero content (both columns). Left: headline, subhead, «Спробувати розминку» + «Лабораторії».
@@ -81,6 +82,8 @@ export function HeroChallenge() {
   const cardRef = useRef<HTMLElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const doneRef = useRef(false)
+  const winRef = useRef<HTMLDivElement>(null)
+  const feed = useDemoFeed(winRef)
   useEffect(() => {
     doneRef.current = done
   }, [done])
@@ -281,6 +284,7 @@ export function HeroChallenge() {
         <div className={"hc" + (done ? " is-solved" : "") + (card ? " is-open" : "")}>
           {/* the event app: an illustration, except the «Розминка» tile, which opens the card */}
           <div
+            ref={winRef}
             className="hc-win"
             onClick={(e) => {
               if (card && !(e.target as Element).closest(".hc-tile.is-warm")) closeCard()
@@ -307,7 +311,7 @@ export function HeroChallenge() {
               <div className="hc-tiles">
                 {TILES.map((x) => {
                   const solved = x.solved || (x.warm && done)
-                  const cls = "hc-tile" + (solved ? " is-solved" : "") + (x.warm ? " is-warm" : "")
+                  const cls = "hc-tile" + (solved ? " is-solved" : "") + (x.warm ? " is-warm" : "") + (!x.warm && feed.hit === x.name ? " is-hit" : "")
                   const inner = (
                     <>
                       <small>{x.warm ? t("landing.ch.cat") : t(`landing.ch.cats.${x.cat}`)}</small>
@@ -333,6 +337,21 @@ export function HeroChallenge() {
                     <div key={x.name} className={cls} aria-hidden="true">
                       {inner}
                     </div>
+                  )
+                })}
+              </div>
+              {/* other teams: a decorative demo feed, never touches the warm-up state or the counter */}
+              <div className="hc-feed" aria-hidden="true">
+                {feed.lines.map(({ n, event }) => {
+                  const tile = TILES.find((x) => x.name === event.tile)
+                  return (
+                    <p key={n} className={feed.animate && n === feed.lines[0].n ? "is-new" : undefined}>
+                      {t("landing.ch.feed.line", {
+                        team: t(`landing.ch.feed.team.${event.team}`),
+                        task: t(`landing.ch.tiles.${event.tile}`),
+                        points: tile?.points ?? 0,
+                      })}
+                    </p>
                   )
                 })}
               </div>
