@@ -4,8 +4,7 @@ import type { NextConfig } from "next"
 // - output: 'export' (production builds only) produces the `out/` directory for static hosting;
 //   `next dev` runs as a normal Next app.
 // - images.unoptimized: true is required when using static export (no server-side image optimization).
-// - no trailingSlash: pages export as /<path>.html and URLs carry no trailing slash,
-//   same as id-frontend (nginx resolves $uri.html); 404.html is still emitted.
+// - trailingSlash: true, see the option below; 404.html is still emitted.
 
 // One base domain: NEXT_PUBLIC_DOMAIN is the only host input and every host derives from it (src/**/hosts.ts, deploy/base-domain.sh; the daemon and
 // the infrastructure renderer share the rule and tests/base-domain-vectors.json). The Docker build bakes a placeholder for it.
@@ -67,9 +66,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // No 308 slash-normalising redirects in dev/start: they are permanent and get cached
-  // by browsers, which can turn into redirect loops if the slash policy ever changes.
-  skipTrailingSlashRedirect: true,
+  // trailingSlash: every page exports as /<path>/index.html and the canonical URL ends with a slash. Without it a nested
+  // route (profile, profile/sessions) exported both profile.html and a profile/ directory, which nginx answered with 403.
+  // nginx redirects a slashless page path once to the slashed one (deploy/nginx/server.conf).
+  trailingSlash: true,
   allowedDevOrigins: [...new Set(allowedDevOrigins)],
 };
 

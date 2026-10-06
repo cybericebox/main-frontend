@@ -10,9 +10,9 @@ export function SiteFooter() {
       email={CONTACT_EMAIL}
       sourceUrl={SOURCE_URL}
       legal={[
-        { href: "/privacy", label: t("landing.footer.privacy") },
-        { href: "/terms", label: t("landing.footer.terms") },
-        { href: "/security", label: t("landing.footer.security") },
+        { href: "/privacy/", label: t("landing.footer.privacy") },
+        { href: "/terms/", label: t("landing.footer.terms") },
+        { href: "/security/", label: t("landing.footer.security") },
       ]}
       extra={<CookieSettingsLink />}
     />
