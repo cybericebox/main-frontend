@@ -34,6 +34,7 @@
 }
 
 /* «Налаштування файлів cookie»: reads as a footer link */
-.cb-consent-link{padding:0;border:0;background:none;color:var(--ib-dim);font:inherit;font-size:var(--ib-fs-14);cursor:pointer}
+.cb-consent-link{display:inline-flex;align-items:center;min-height:24px;padding:0;border:0;background:none;color:var(--ib-dim);font:inherit;font-size:var(--ib-fs-14);cursor:pointer}
+@media (pointer:coarse){.cb-consent-link{min-height:44px}}
 .cb-consent-link:hover{color:var(--ib-ink)}
 .cb-consent-link:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
