@@ -41,7 +41,7 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 
 /* the opened challenge: a non-blocking card OVER the window (never in the flow), centred over the tiles,
    its top on the first tile row; it may extend below the window */
-.hc-card{position:absolute;top:var(--hc-rows-top);left:max(0px,min(230px,calc(100% - 544px)));z-index:1;width:520px;overflow:hidden;
+.hc-card{position:absolute;top:var(--hc-rows-top);left:max(0px,min(230px,calc(100% - 568px)));z-index:1;width:520px;overflow:hidden;
   border:1px solid var(--hc-card-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink);
   animation:hc-in 150ms var(--ib-ease)}
 @keyframes hc-in{from{opacity:0;scale:.98}to{opacity:1;scale:1}}   /* `scale`, not transform: the stacked layout centres with translate */
@@ -72,6 +72,10 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 .hc-card__msg.is-error{color:var(--ib-danger)}
 
 /* stacked: the window sits in the page gutter (no bleed); the card is centred over it */
+/* the window bleeds off the right edge: fade it out instead of clipping mid-word (the card keeps 48px clear of the fade) */
+@media (min-width:981px) and (max-width:1359px){
+  .hc{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent)}
+}
 @media (max-width:980px){
   .hc-win{width:100%;margin:0}
   .hc-card{left:50%;width:min(520px,calc(100% - 24px));transform:translateX(-50%)}
