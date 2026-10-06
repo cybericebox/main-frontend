@@ -2,19 +2,12 @@
 
 import { Button } from "@/components/ib/Button"
 import { Icon } from "@/components/ib/Icon"
+import { errorCode } from "@/components/site/ErrorPage"
 import { t } from "@/i18n/t"
 
-// Error code carried by an API error: the numeric Status.Code first, then the HTTP status.
-function errorCode(error: unknown): number | undefined {
-  if (!error || typeof error !== "object") return undefined
-  const { code, status } = error as { code?: unknown; status?: unknown }
-  if (typeof code === "number") return code
-  return typeof status === "number" && status > 0 ? status : undefined
-}
-
-// The only load-error state inside a page or block: the ErrorScreen warning mark at block
+// The only load-error state inside a page or block: the warning mark at block
 // scale, a title (the context message), one line of help and «Спробувати ще раз». Same size
-// and centering as EmptyState, so loading → error never jumps. A dead route uses ErrorScreen.
+// and centering as EmptyState, so loading → error never jumps. A dead route uses ErrorPage.
 export function LoadError({ message = t("error.load.title"), onRetry, error, compact = false, className }: {
   message?: string
   onRetry?: () => void
