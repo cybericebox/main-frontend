@@ -12,8 +12,8 @@ import "@/styles/ds/components/footer.css"
 // «© year Cyber ICE Box», the legal links and the theme switch.
 const YEAR = new Date().getFullYear()
 
-// `extra` ends the legal list (e.g. «Налаштування файлів cookie», which opens the consent panel).
-export function Footer({ email, sourceUrl, legal, extra }: { email: string; sourceUrl: string; legal: NavLink[]; extra?: ReactNode }) {
+// `extra` ends the legal list, one item each («Налаштування файлів cookie» opens the consent panel; «Надіслати відгук»).
+export function Footer({ email, sourceUrl, legal, extra }: { email: string; sourceUrl: string; legal: NavLink[]; extra?: ReactNode[] }) {
   return (
     <footer className="ib-footer ib-footer--mass ib-mass">
       <div className="ib-footer__inner">
@@ -72,7 +72,9 @@ export function Footer({ email, sourceUrl, legal, extra }: { email: string; sour
                   <a href={l.href}>{l.label}</a>
                 </li>
               ))}
-              {extra && <li>{extra}</li>}
+              {extra?.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
           </div>
           <ThemeSwitch />
