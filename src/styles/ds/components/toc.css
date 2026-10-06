@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* TOC — table of contents for long custom pages (event rules, FAQ, lab guide). Sticky, left of the text.
    The current section is marked by a soft FILL + ink semibold text (aria-current="true"), never by a left bar.
    JS: toc.js — [data-ib-toc] watches the targets of its links and updates aria-current while scrolling;

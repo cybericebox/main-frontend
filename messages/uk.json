@@ -66,7 +66,7 @@
   "landing.ch.solved": "Розвʼязано",
   "landing.ch.solvedPlace": "Розвʼязано · {place} місце в демо-рейтингу",
   "landing.ch.cats.web": "Веб",
-  "landing.ch.cats.pwn": "Бінарка",
+  "landing.ch.cats.pwn": "Бінарна експлуатація",
   "landing.ch.cats.crypto": "Криптографія",
   "landing.ch.cats.forensics": "Форензика",
   "landing.ch.tiles.jwt": "JWT alg-confusion",

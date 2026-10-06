@@ -35,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
                 {/* first in the tab order: jumps over the navbar to <main id="main"> */}
-                <a className="site-skip" href="#main">{t("a11y.skip")}</a>
+                <a className="ib-skip" href="#main">{t("a11y.skip")}</a>
                 <ApiProvider>{children}</ApiProvider>
                 {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
                 <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />

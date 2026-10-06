@@ -20,7 +20,7 @@
 .hc-board__head h3{margin:0;font-size:20px;font-weight:650;letter-spacing:-.02em}
 .hc-board__head>span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
 .hc-board__cats{display:flex;gap:6px;height:26px;overflow:hidden}
-.hc-board__cats b{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--ib-r);background:var(--hc-chip);font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
+.hc-board__cats b{min-width:0;white-space:nowrap;display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--ib-r);background:var(--hc-chip);font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
 .hc-board__cats b.is-on{background:var(--ib-action);color:var(--ib-on-action)}
 
 .hc-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -65,7 +65,7 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 .hc-card__kv dd{margin:0}
 .hc-card__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px}
 .hc-card__label{grid-column:1/-1;font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-dim)}
-.hc-card__form .ib-input{min-width:0;height:44px;font-size:15px}
+.hc-card__form .ib-input{min-width:0;height:44px;font-size:var(--ib-fs-15)}
 .hc-card__form .ib-btn{height:44px;padding:0 18px}
 .hc-card__msg{min-height:20px;margin:-6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
 .hc-card__msg.is-error{color:var(--ib-danger)}
