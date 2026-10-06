@@ -1,8 +1,10 @@
 /* Legal documents (/privacy, /terms, /cookies): one reading column on the ds type scale;
-   ≥1024 px a sticky section list on the left (.ib-toc). Tokens only. */
+   ≥1024 px a sticky section list on the left (.ib-toc), below it a collapsed list above the text. Tokens only. */
 .lg-doc{padding:var(--ib-16) var(--pl-gut) 96px}
 .lg-doc__grid{display:block}
-.lg-doc .ib-toc{display:none}
+.lg-doc .ib-toc{position:static;margin-bottom:var(--ib-8);padding:var(--ib-3);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg)}
+.lg-doc .ib-toc summary{margin:0;cursor:pointer}
+.lg-doc .ib-toc details[open] summary{margin-bottom:var(--ib-2)}
 .lg-doc__body{max-width:68ch}
 .lg-doc h1{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
 .lg-doc__updated{margin-top:var(--ib-3);font-size:var(--ib-fs-14);color:var(--ib-faint)}
@@ -26,7 +28,9 @@
 .lg-doc__contact{margin-top:var(--ib-12);padding-top:var(--ib-6);border-top:1px solid var(--ib-line);color:var(--ib-dim);font-size:var(--ib-fs-14)}
 @media (min-width:1024px){
   .lg-doc__grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start}
-  .lg-doc .ib-toc{display:block;--ib-toc-top:calc(var(--ib-16) + var(--ib-6))}
+  .lg-doc .ib-toc{position:sticky;margin:0;padding:0;border:0;--ib-toc-top:calc(var(--ib-16) + var(--ib-6))}
+  .lg-doc .ib-toc summary{pointer-events:none;list-style:none}
+  .lg-doc .ib-toc summary::-webkit-details-marker{display:none}
 }
 @media (max-width:640px){
   .lg-doc{padding:var(--ib-10) var(--pl-gut) 72px}

@@ -19,7 +19,9 @@ code{font-size:.92em;background:var(--ib-soft);padding:1px 5px;border-radius:var
 :focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 [hidden]{display:none!important}
 ::selection{background:var(--ib-soft);color:var(--ib-ink)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Local change vs source: reduced motion shortens motion to an instant end state instead of killing it, so state
+   changes still land on their final frame (an `animation:none` would also drop fill-mode end states). */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;transition-delay:0s!important;animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}}
 
 /* brand mass — deepest surface in both themes */
 .ib-mass{background:var(--ib-brand);color:var(--ib-on-brand);position:relative;isolation:isolate}

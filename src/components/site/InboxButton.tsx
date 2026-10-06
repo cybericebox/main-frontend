@@ -357,11 +357,19 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
         </div>
         {/* The segmented control of the catalog's «Область» switch (exercises-frontend). */}
         {tabs.length > 0 && <div className="shrink-0 border-b border-line px-3 pb-3">
-          <div role="tablist" aria-label={t("inbox.tabs")} className="flex h-10 w-full items-center rounded-md bg-muted p-1">
+          <div role="tablist" aria-label={t("inbox.tabs")} onKeyDown={(keyEvent) => {
+            // WAI-ARIA tabs: arrows / Home / End move between the tabs (roving tabindex)
+            const i = tabs.indexOf(tab)
+            const next = keyEvent.key === "ArrowRight" ? tabs[(i + 1) % tabs.length] : keyEvent.key === "ArrowLeft" ? tabs[(i - 1 + tabs.length) % tabs.length] : keyEvent.key === "Home" ? tabs[0] : keyEvent.key === "End" ? tabs[tabs.length - 1] : undefined
+            if (next === undefined) return
+            keyEvent.preventDefault()
+            if (next !== tab) selectTab(next)
+            document.getElementById(`inbox-tab-${next}`)?.focus()
+          }} className="flex h-10 w-full items-center rounded-md bg-muted p-1">
             {tabs.map((value) => {
               const count = counts?.[value] ?? 0
               const selected = tab === value
-              return <button key={value} type="button" role="tab" id={`inbox-tab-${value}`} aria-controls="inbox-tabpanel" aria-selected={selected}
+              return <button key={value} type="button" role="tab" id={`inbox-tab-${value}`} tabIndex={selected ? 0 : -1} aria-controls="inbox-tabpanel" aria-selected={selected}
                 aria-label={count > 0 ? t("inbox.tabCount", { name: t(`inbox.tab.${value}`), count }) : undefined}
                 onClick={() => { if (!selected) selectTab(value) }}
                 className={`inline-flex h-8 min-w-0 flex-auto items-center justify-center gap-1 rounded px-2 text-sm focus-visible:outline-2 focus-visible:outline-action ${selected ? "bg-card font-medium text-foreground" : "text-muted-foreground hover:text-foreground"}`}>

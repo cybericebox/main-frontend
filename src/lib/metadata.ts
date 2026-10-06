@@ -10,6 +10,7 @@ export function pageMetadata({ title, description, path = "/" }: { title: string
   return {
     title: { absolute: title },
     description,
+    alternates: { canonical: `${origin}${path}` },
     openGraph: {
       title,
       description,

@@ -39,7 +39,7 @@ export function NotificationMessageCard({ icon = "bell", tone = "neutral", accen
     <div className="min-w-0 flex-1">
       {title && <div className="flex min-w-0 items-start gap-2">
         <p className={`min-w-0 flex-1 break-words text-sm leading-snug text-ink ${unread ? "font-semibold" : "font-medium"}`}>{keepBrand(title)}</p>
-        {unread && <span aria-label={t("inbox.unreadItem")} className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-action" />}
+        {unread && <span className="mt-px shrink-0 text-xs font-medium text-action">{t("inbox.unreadItem")}</span>}
       </div>}
       {body && <div className={`${title ? "mt-1" : ""} break-words text-sm leading-relaxed text-dim ${compact ? "line-clamp-2" : ""}`}>{body}</div>}
       {timestamp && <div className="mt-1.5 text-xs text-dim">{timestamp}</div>}

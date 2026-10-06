@@ -7,6 +7,9 @@ import { Wordmark } from "./Wordmark"
 import { t } from "@/i18n/t"
 import "@/styles/ds/components/navbar.css"
 
+// a section is current once its top has passed this line (below the sticky bar)
+const SPY_LINE = 120
+
 export type NavLink = { href: string; label: string }
 
 // Port of IB.Navbar (ds-v2 patterns/navbar/navbar.js), platform variant.
@@ -149,8 +152,33 @@ export function Navbar({
     document.fonts?.ready.then(() => alive && update())
     update()
 
+    // Landing: the section being read marks its link (tabs and mobile panel) with aria-current="location".
+    const spied = Array.from(root.querySelectorAll<HTMLAnchorElement>('.ib-navbar__tabs a[href^="#"], .ib-navbar__panel a[href^="#"]'))
+    let frame = 0
+    const spy = () => {
+      frame = 0
+      let current = ""
+      for (const a of spied) {
+        const href = a.getAttribute("href") ?? ""
+        if (href.length > 1 && (document.getElementById(href.slice(1))?.getBoundingClientRect().top ?? 1) <= SPY_LINE) current = href
+      }
+      for (const a of spied) {
+        if (a.getAttribute("href") === current) a.setAttribute("aria-current", "location")
+        else a.removeAttribute("aria-current")
+      }
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(spy)
+    }
+    if (spied.length) {
+      spy()
+      window.addEventListener("scroll", onScroll, { passive: true })
+    }
+
     return () => {
       alive = false
+      window.removeEventListener("scroll", onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
       ro.disconnect()
       moreBtn.removeEventListener("click", onMoreClick)
       moreBtn.removeEventListener("keydown", onMoreKey)
