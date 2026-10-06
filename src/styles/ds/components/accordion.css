@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Accordion — questions & answers on native <details>/<summary> (keyboard: Tab to a question, Enter/Space toggles).
    Source: prototypes/platform.html (FAQ). No JS. For «one open at a time» give every <details> the same name="…".
    <div class="ib-accordion">
@@ -8,7 +8,7 @@
      </details>
    </div>
    Hairlines between items, no boxes, no chevrons in circles. The plus turns into × when open.
-   --lg = landing size (17px questions, 20px padding); default = in-app size (14px). */
+   --lg = landing size (16px questions, 20px padding); default = in-app size (14px). */
 
 .ib-accordion{border-top:1px solid var(--ib-line)}
 .ib-accordion__item{border-bottom:1px solid var(--ib-line)}
@@ -25,7 +25,7 @@
 .ib-accordion__a p+p{margin-top:var(--ib-2)}
 .ib-accordion__item[aria-disabled="true"]>.ib-accordion__q{color:var(--ib-faint);cursor:not-allowed}
 
-.ib-accordion--lg .ib-accordion__q{padding:var(--ib-5) 0;font-size:17px}
+.ib-accordion--lg .ib-accordion__q{padding:var(--ib-5) 0;font-size:var(--ib-fs-16)}
 .ib-accordion--lg .ib-accordion__a{padding-bottom:22px;font-size:var(--ib-fs-16)}
 
 @media (max-width:640px){

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react"
 import { Button, buttonClass } from "@/components/ib/Button"
 import { Icon } from "@/components/ib/Icon"
 import { Modal } from "@/components/ib/Modal"
+import { BrandLoading } from "@/components/site/BrandLoading"
 import { t, tRich } from "@/i18n/t"
 import { WARMUP_SHA256 } from "@/lib/warmup.generated"
 import { useApi } from "@/lib/useApi"
@@ -220,7 +221,7 @@ export function HeroChallenge() {
           <dd>{t("landing.ch.rewardValue")}</dd>
         </dl>
         <form className="hc-card__form" autoComplete="off" noValidate onSubmit={submit}>
-          <label className="ib-sr" htmlFor="warmup-flag">
+          <label className="hc-card__label" htmlFor="warmup-flag">
             {t("landing.ch.flag")}
           </label>
           <input
@@ -228,7 +229,9 @@ export function HeroChallenge() {
             className="ib-input ib-input--mono"
             id="warmup-flag"
             name="flag"
-            placeholder={t(done ? "landing.ch.flagPlaceholderDone" : "landing.ch.flagPlaceholder")}
+            placeholder={t("landing.ch.flagPlaceholder")}
+            autoCapitalize="none"
+            autoCorrect="off"
             spellCheck={false}
             aria-describedby="warmup-msg"
             // sheet: keep the field in view inside the (keyboard-shortened) sheet
@@ -242,10 +245,11 @@ export function HeroChallenge() {
             }}
           />
           <Button type="submit" variant="primary" disabled={done || checking} aria-busy={checking || undefined}>
+            {checking ? <BrandLoading inline label={t("common.loading")} /> : null}
             {t("landing.warmup.submit")}
           </Button>
         </form>
-        <p id="warmup-msg" className={"hc-card__msg" + (error ? " is-error" : done ? " ib-status ib-status--ok" : "")} role="status">
+        <p id="warmup-msg" className={"hc-card__msg" + (error ? " is-error" : done ? " ib-status ib-status--ok" : "")} role={error ? "alert" : "status"}>
           {error || (done ? t("landing.ch.solvedPlace", { place: RANK.place }) : "")}
         </p>
       </div>
@@ -255,7 +259,7 @@ export function HeroChallenge() {
   return (
     <>
       <div className="pl-main">
-        <h1 id="hero-h">{t("landing.hero.headline")}</h1>
+        <h1 id="hero-h">{tRich("landing.hero.headline", { contests: <span className="pl-nowrap">{t("landing.hero.contests")}</span> })}</h1>
         <p className="pl-sub">{t("landing.hero.subhead")}</p>
         <div className="pl-actions">
           <button
@@ -263,7 +267,7 @@ export function HeroChallenge() {
             type="button"
             className={buttonClass({ variant: "primary", className: done ? "is-done" : undefined })}
             aria-expanded={card}
-            aria-controls="warmup-card"
+            aria-controls={card ? "warmup-card" : undefined}
             onClick={(e) => (card ? closeCard(false) : openCard(e.currentTarget))}
           >
             {done ? t("landing.ch.tryDone") : t("landing.ch.try")}
@@ -283,9 +287,6 @@ export function HeroChallenge() {
             }}
           >
             <div className="hc-win__bar" aria-hidden="true">
-              <i />
-              <i />
-              <i />
               <span>{url}</span>
             </div>
             <div className="hc-board">
@@ -323,7 +324,7 @@ export function HeroChallenge() {
                       type="button"
                       className={cls}
                       aria-expanded={card}
-                      aria-controls="warmup-card"
+                      aria-controls={card ? "warmup-card" : undefined}
                       onClick={(e) => (card ? undefined : openCard(e.currentTarget))}
                     >
                       {inner}

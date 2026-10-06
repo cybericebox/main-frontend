@@ -7,14 +7,14 @@ import { ConsentBanner } from "./ConsentBanner"
 // sets the denied defaults and the stored choice before gtag.js runs (see lib/consent).
 // Without a GA id only the consent panel is mounted, so «Налаштування файлів cookie» still works.
 export function Analytics({ gaId }: { gaId?: string }) {
-  if (!gaId) return <ConsentBanner policyHref="/cookies" />
+  if (!gaId) return <ConsentBanner policyHref="/cookies/" />
   return (
     <>
       <Script id="ga-init" strategy="lazyOnload">
         {gtagBootScript(gaId)}
       </Script>
       <Script id="ga" strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`} />
-      <ConsentBanner gaId={gaId} policyHref="/cookies" />
+      <ConsentBanner gaId={gaId} policyHref="/cookies/" />
     </>
   )
 }

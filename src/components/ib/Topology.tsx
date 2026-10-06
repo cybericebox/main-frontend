@@ -32,7 +32,7 @@ export function Topology() {
         <b>lab-07</b>
         <span className="ib-num">10.10.0.0/16</span>
       </figcaption>
-      <div className="ib-topo__canvas">
+      <div className="ib-topo__canvas" role="region" tabIndex={0} aria-label={t("landing.labs.topoRegion")}>
         <svg viewBox="0 0 720 440" role="img" aria-label={t("landing.labs.topoAria")}>
           <rect className="ib-topo__zone" x="168.5" y="16.5" width="535" height="407" rx="8" strokeDasharray="5 4" />
           <text className="ib-topo__note" x="184" y="38">
@@ -133,7 +133,7 @@ export function Topology() {
           </text>
         </svg>
       </div>
-      <pre className="ib-topo__term">
+      <pre className="ib-topo__term" role="region" tabIndex={0} aria-label={t("landing.labs.termRegion")}>
         <b>$ sudo wg-quick up ./lab-07.conf</b>
         {"\ninterface: wg0   address: 10.66.0.7/32\npeer: vpn-gw     allowed ips: 10.10.0.0/16"}
       </pre>

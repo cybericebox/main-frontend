@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Status text — a state written as a word, in a tone colour. For table cells, lists, meta lines.
    Source: prototypes/admin.html (.t-warn / .t-bad / .t-ok / .t-faint / .t-ink). No pills, no dots.
    The WORD carries the meaning («Помилка», «Запрошено», «Наживо»); colour and the optional icon only repeat it,

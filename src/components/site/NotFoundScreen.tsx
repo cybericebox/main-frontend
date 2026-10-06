@@ -12,7 +12,7 @@ import { t } from "@/i18n/t"
 // export: 404.html); an in-page «item not found» state passes a context `title` and `block`.
 export function NotFoundScreen({ title = t("error.notFound"), body = t("error.notFoundDescription"), block = false }: { title?: string; body?: string; block?: boolean }) {
   return (
-    <main className={"site-404" + (block ? " site-404--block" : "")}>
+    <main id="main" tabIndex={-1} className={"site-404" + (block ? " site-404--block" : "")}>
       <div className="site-404__box">
         <Image src="/assets/crest-128.webp" alt="" width={64} height={64} priority />
         <Wordmark className="site-404__brand" />

@@ -82,7 +82,7 @@
 		--accent: var(--ib-hover);
 		--accent-foreground: var(--ib-ink);
 		--destructive: var(--ib-danger);
-		--destructive-foreground: #FFFFFF;
+		--destructive-foreground: var(--ib-btn-on-danger, #FFFFFF);
 		--border: var(--ib-line);
 		--input: var(--ib-control);
 		--ring: var(--ib-action);
@@ -115,4 +115,9 @@
 
 @keyframes notification-countdown {
   to { transform: scaleX(0); }
+}
+
+/* reduced motion: the pop-in countdown bar stays a static full bar (the pop-in still closes on its timer) */
+@media (prefers-reduced-motion: reduce) {
+  .notification-countdown { animation: none !important; }
 }

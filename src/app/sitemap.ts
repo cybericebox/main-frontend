@@ -5,7 +5,7 @@ import { MAIN_HOST } from "@/lib/links"
 export const dynamic = "force-static"
 
 const origin = `https://${MAIN_HOST}`
-const PATHS = ["/", "/privacy", "/terms", "/cookies", "/security"]
+const PATHS = ["/", "/privacy/", "/terms/", "/cookies/", "/security/"]
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return PATHS.map((path) => ({ url: `${origin}${path === "/" ? "" : path}` }))

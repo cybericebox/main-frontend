@@ -52,7 +52,7 @@ export function NotificationPopIn({ message, onClose, onAction }: {
     }
   }, [paused, message.ID])
 
-  return <div role="status" aria-label={t("inbox.new")} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false) }} className="relative w-[min(22.5rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-line bg-surface px-4 pb-5 pt-4 text-ink">
+  return <div role="group" aria-label={t("inbox.new")} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false) }} className="relative w-[min(22.5rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-line bg-surface px-4 pb-5 pt-4 text-ink">
     <button type="button" onClick={onClose} aria-label={t("inbox.dismiss")} className="absolute right-2 top-2 rounded-md p-1 text-dim hover:bg-hover hover:text-ink"><X size={16} /></button>
     <div className="pr-5">
       <NotificationMessageCard
@@ -62,7 +62,7 @@ export function NotificationPopIn({ message, onClose, onAction }: {
       />
     </div>
     <span aria-hidden="true" className="absolute bottom-2 left-4 right-4 h-1 overflow-hidden rounded-full bg-soft">
-      <span className="block h-full w-full origin-left" style={{ backgroundColor: accent, animationName: "notification-countdown", animationDuration: `${duration}ms`, animationTimingFunction: "linear", animationFillMode: "forwards", animationPlayState: paused ? "paused" : "running" }} />
+      <span className="notification-countdown block h-full w-full origin-left" style={{ backgroundColor: accent, animationName: "notification-countdown", animationDuration: `${duration}ms`, animationTimingFunction: "linear", animationFillMode: "forwards", animationPlayState: paused ? "paused" : "running" }} />
     </span>
   </div>
 }

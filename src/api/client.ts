@@ -74,7 +74,7 @@ function writeReturnToCookie(): void {
 // a back-button re-triggering the 401 redirect loop.
 function redirectToSignInPage(signInUrl: string | null): void {
   if (typeof window === "undefined") return
-  window.location.replace(signInUrl || portless(window.location.origin) + "/sign-in")
+  window.location.replace(signInUrl || portless(window.location.origin) + "/sign-in/")
 }
 
 async function request<T>(

@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Icon button — .ib-icon-btn. Always carries aria-label (or .ib-sr text).
    Default: ghost square 40 · --sm 32 · --outline (control border) · --mass (on brand mass, e.g. bell in the tower)
    States: :hover/.is-hover · :focus-visible · [aria-pressed=true]/[aria-expanded=true] (active) · [disabled]

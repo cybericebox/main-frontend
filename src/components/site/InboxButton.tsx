@@ -46,7 +46,7 @@ export type InboxButtonProps = {
 
 function EventLabel({ name }: { name?: string | null }) {
   if (!name) return null
-  return <span className="max-w-[60%] shrink-0 truncate rounded bg-soft px-1.5 py-0.5 text-[11px] font-medium text-dim">{name}</span>
+  return <span className="max-w-[60%] shrink-0 truncate rounded bg-soft px-1.5 py-0.5 text-xs font-medium text-dim">{name}</span>
 }
 
 function safeHref(value: string): string | null {
@@ -343,7 +343,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     <Popover.Trigger asChild>
       <button type="button" aria-label={label} className="relative inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-dim hover:bg-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-action">
         <Icon name="bell" size={20} />
-        {badge > 0 && <span className="absolute -right-1 -top-1 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-action px-0.5 text-[10px] font-semibold leading-none text-on-action">{badge > 99 ? "99+" : badge}</span>}
+        {badge > 0 && <span className="absolute -right-1 -top-1 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-action px-0.5 text-xs font-semibold leading-none text-on-action">{badge > 99 ? "99+" : badge}</span>}
       </button>
     </Popover.Trigger>
     <Popover.Portal>
@@ -357,11 +357,19 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
         </div>
         {/* The segmented control of the catalog's «Область» switch (exercises-frontend). */}
         {tabs.length > 0 && <div className="shrink-0 border-b border-line px-3 pb-3">
-          <div role="tablist" aria-label={t("inbox.tabs")} className="flex h-10 w-full items-center rounded-md bg-muted p-1">
+          <div role="tablist" aria-label={t("inbox.tabs")} onKeyDown={(keyEvent) => {
+            // WAI-ARIA tabs: arrows / Home / End move between the tabs (roving tabindex)
+            const i = tabs.indexOf(tab)
+            const next = keyEvent.key === "ArrowRight" ? tabs[(i + 1) % tabs.length] : keyEvent.key === "ArrowLeft" ? tabs[(i - 1 + tabs.length) % tabs.length] : keyEvent.key === "Home" ? tabs[0] : keyEvent.key === "End" ? tabs[tabs.length - 1] : undefined
+            if (next === undefined) return
+            keyEvent.preventDefault()
+            if (next !== tab) selectTab(next)
+            document.getElementById(`inbox-tab-${next}`)?.focus()
+          }} className="flex h-10 w-full items-center rounded-md bg-muted p-1">
             {tabs.map((value) => {
               const count = counts?.[value] ?? 0
               const selected = tab === value
-              return <button key={value} type="button" role="tab" id={`inbox-tab-${value}`} aria-controls="inbox-tabpanel" aria-selected={selected}
+              return <button key={value} type="button" role="tab" id={`inbox-tab-${value}`} tabIndex={selected ? 0 : -1} aria-controls="inbox-tabpanel" aria-selected={selected}
                 aria-label={count > 0 ? t("inbox.tabCount", { name: t(`inbox.tab.${value}`), count }) : undefined}
                 onClick={() => { if (!selected) selectTab(value) }}
                 className={`inline-flex h-8 min-w-0 flex-auto items-center justify-center gap-1 rounded px-2 text-sm focus-visible:outline-2 focus-visible:outline-action ${selected ? "bg-card font-medium text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
