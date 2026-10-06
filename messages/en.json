@@ -399,5 +399,6 @@
   "a11y.skip": "Skip to content",
   "account.menu": "Account menu: {name}",
   "landing.labs.topoRegion": "Lab diagram (scrollable)",
-  "landing.labs.termRegion": "Lab connection (scrollable)"
+  "landing.labs.termRegion": "Lab connection (scrollable)",
+  "legal.tocItem": "{n}. {heading}"
 }

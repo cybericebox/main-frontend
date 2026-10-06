@@ -104,7 +104,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
   return (
     <article className="lg-doc">
       <div className="lg-doc__grid">
-        <LegalToc title={t("legal.toc")} items={sections.map((n) => ({ id: `s${n}`, label: `${n}. ${t(`legal.${doc}.s${n}.heading`)}` }))} />
+        <LegalToc title={t("legal.toc")} items={sections.map((n) => ({ id: `s${n}`, label: t("legal.tocItem", { n, heading: t(`legal.${doc}.s${n}.heading`) }) }))} />
         <div className="lg-doc__body">
           <h1>{t(`legal.${doc}.title`)}</h1>
           <p className="lg-doc__updated">{t("legal.updated", { date: t(`legal.${doc}.updated`) })}</p>
