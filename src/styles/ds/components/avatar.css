@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Avatar — initials only (no photos yet). Sizes 24 / 32 (default) / 40.
    .ib-avatar           person: circle, brand fill, white initials (15.7:1 both themes)
    .ib-avatar--mass     on brand mass (tower, band): --ib-mass-btn fill, brand initials
@@ -8,7 +8,7 @@
 
 .ib-avatar{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;border-radius:50%;
   background:var(--ib-brand);color:var(--ib-on-brand);font:var(--ib-w-semibold) var(--ib-fs-12)/1 var(--ib-font);letter-spacing:.01em;user-select:none;overflow:hidden}
-.ib-avatar--24{width:24px;height:24px;font-size:10px}
+.ib-avatar--24{width:24px;height:24px;font-size:var(--ib-fs-12);letter-spacing:0}
 .ib-avatar--40{width:40px;height:40px;font-size:var(--ib-fs-14)}
 .ib-avatar--mass{background:var(--ib-mass-btn);color:var(--ib-brand)}
 .ib-avatar--team{border-radius:var(--ib-r);background:var(--ib-soft);color:var(--ib-ink)}

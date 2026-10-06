@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Topology — lab network diagram (landing «Лабораторії», lab page). Inline SVG styled with tokens only.
    Source: prototypes/platform.html (.pl-topo). Behaviour: topology.js — [data-ib-topo] draws the route once
    when it scrolls into view (skipped with reduced motion). Stroke roles:
@@ -7,7 +7,7 @@
      route   — the highlighted path (your PC → target): --ib-action 2.25px
      node    — host box on --ib-raised, --ib-control stroke; --on = on the route (--ib-action stroke 1.5)
      you     — the participant's machine: brand mass fill, on-brand text
-   Text: names 14/600 sans ink, addresses 12 mono dim, notes 12 mono faint.
+   Text: names 14/600 sans ink, addresses 12 mono dim, notes 11.5 mono faint.
    <figure class="ib-topo" data-ib-topo>
      <figcaption class="ib-topo__head"><b>lab-07</b><span class="ib-num">10.10.0.0/16</span></figcaption>
      <div class="ib-topo__canvas"><svg viewBox="…" role="img" aria-label="…">…</svg></div>
@@ -22,7 +22,7 @@
 .ib-topo svg{display:block;width:100%;min-width:600px;height:auto}
 .ib-topo text{font-family:var(--ib-mono);font-size:12px;fill:var(--ib-dim)}
 .ib-topo .ib-topo__name{font-family:var(--ib-font);font-size:14px;font-weight:var(--ib-w-semibold);fill:var(--ib-ink)}
-.ib-topo .ib-topo__note{font-size:12px;fill:var(--ib-faint)}
+.ib-topo .ib-topo__note{font-size:var(--ib-fs-12);fill:var(--ib-faint)}
 .ib-topo .ib-topo__zone{fill:var(--ib-paper);stroke:var(--ib-control)}
 .ib-topo .ib-topo__subnet{fill:var(--ib-surface);stroke:var(--ib-diagram-zone)}
 .ib-topo .ib-topo__link{fill:none;stroke:var(--ib-control);stroke-width:1.25}

@@ -1,4 +1,4 @@
-/* copied from ds-v2 2026-09-24 */
+/* copied from docs/design-system, do not edit: node scripts/sync-ds.mjs */
 /* Accordion — questions & answers on native <details>/<summary> (keyboard: Tab to a question, Enter/Space toggles).
    Source: prototypes/platform.html (FAQ). No JS. For «one open at a time» give every <details> the same name="…".
    <div class="ib-accordion">

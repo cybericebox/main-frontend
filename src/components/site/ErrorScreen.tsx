@@ -18,7 +18,7 @@ export function goBack() {
 // warning mark, «Оновити» (retry the segment) and «Назад». Never shows error details.
 export function ErrorScreen({ onRetry }: { onRetry: () => void }) {
   return (
-    <main className="site-404 site-error">
+    <main id="main" tabIndex={-1} className="site-404 site-error">
       <div className="site-404__box" role="alert">
         <Image src="/assets/crest-128.webp" alt="" width={64} height={64} priority />
         <Wordmark className="site-404__brand" />

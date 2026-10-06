@@ -66,7 +66,7 @@
   "landing.ch.solved": "Solved",
   "landing.ch.solvedPlace": "Solved · place {place} on the demo leaderboard",
   "landing.ch.cats.web": "Web",
-  "landing.ch.cats.pwn": "Pwn",
+  "landing.ch.cats.pwn": "Binary exploitation",
   "landing.ch.cats.crypto": "Crypto",
   "landing.ch.cats.forensics": "Forensics",
   "landing.ch.tiles.jwt": "JWT alg-confusion",

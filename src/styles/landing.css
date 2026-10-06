@@ -54,7 +54,7 @@
 .pl-feat{margin:var(--ib-10) 0 0;border-top:1px solid var(--ib-line)}
 .pl-feat div{display:grid;grid-template-columns:120px 1fr;gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}
 .pl-feat dt{font:var(--ib-w-medium) var(--ib-fs-14)/1.6 var(--ib-mono);color:var(--ib-action)}
-.pl-feat dd{margin:0;font-size:15px;color:var(--ib-body)}
+.pl-feat dd{margin:0;font-size:var(--ib-fs-15);color:var(--ib-body)}
 
 /* faq */
 .pl-faq{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px}
@@ -76,11 +76,11 @@
 @media (max-width:640px){
   .pl-main{padding:48px var(--pl-gut) 32px}
   .pl-main h1{font-size:min(40px,12.4cqi);letter-spacing:-.035em}
-  .pl-sub{font-size:17px;margin-top:20px}
+  .pl-sub{font-size:var(--ib-fs-16);margin-top:20px}
   .pl-actions{margin-top:28px}
   .pl-actions .ib-btn{flex:1}
   .pl-sec{padding:56px 0}
   .pl-sec h2{font-size:36px}
-  .pl-lead{font-size:17px}
+  .pl-lead{font-size:var(--ib-fs-16)}
   .pl-feat div{grid-template-columns:96px 1fr}
 }

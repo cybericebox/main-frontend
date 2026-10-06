@@ -1,7 +1,8 @@
 // Design rule: no shadows. Separation comes from a border (--ib-line) and surface contrast.
 // Fails on Tailwind shadow utilities (shadow-none is fine) in src/**/*.{ts,tsx}, and on
 // box-shadow / text-shadow / drop-shadow() / shadow tokens in src/**/*.css. Focus styles are
-// the only exception: a box-shadow inside a :focus / :focus-visible / :focus-within rule.
+// the only exceptions: a box-shadow inside a :focus / :focus-visible / :focus-within rule, and the design
+// system overlay shadow (--ib-shadow-overlay: toast, modal, popover, dropdown only).
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync, readdirSync } from "node:fs"
@@ -47,6 +48,7 @@ test("no box-shadow outside focus styles in CSS", () => {
       const open = text.lastIndexOf("{", match.index)
       const selector = text.slice(Math.max(text.lastIndexOf("}", open), text.lastIndexOf("{", open - 1)) + 1, open)
       if (prop === "box-shadow" && /:focus/.test(selector)) continue
+      if (prop === "--ib-shadow-overlay" || (prop === "box-shadow" && value.trim() === "var(--ib-shadow-overlay)")) continue
       hits.push(`${relative(ROOT, file)}:${lineOf(text, match.index)} ${prop}`)
     }
   }

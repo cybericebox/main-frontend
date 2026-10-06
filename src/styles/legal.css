@@ -35,7 +35,7 @@
 @media (max-width:640px){
   .lg-doc{padding:var(--ib-10) var(--pl-gut) 72px}
   .lg-doc h1{font-size:36px}
-  .lg-doc__intro{font-size:17px}
+  .lg-doc__intro{font-size:var(--ib-fs-16)}
   /* cookie table: one card per row, column names as labels */
   .lg-doc__table{border:0;overflow:visible}
   .lg-doc__table thead{display:none}
