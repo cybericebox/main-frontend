@@ -26,7 +26,7 @@ function avatarEntry(entry: AccountMenuEntry): AvatarMenuEntry {
   const icon = <Icon {...ACCOUNT_MENU_ICON_PROPS} />
   // «Файли cookie» is a link to the cookie policy that opens the consent panel instead (with JS).
   if (entry.kind === "cookies") {
-    return { href: "/cookies", label: t(ACCOUNT_MENU_LABELS.cookies), ariaLabel: t(ACCOUNT_MENU_LABELS.cookiesAria), icon, onSelect: openConsentSettings }
+    return { href: "/cookies/", label: t(ACCOUNT_MENU_LABELS.cookies), ariaLabel: t(ACCOUNT_MENU_LABELS.cookiesAria), icon, onSelect: openConsentSettings }
   }
   return { href: entry.kind === "link" ? entry.href : idUrl(SIGN_OUT_URI), label: t(ACCOUNT_MENU_LABELS[key]), icon }
 }
