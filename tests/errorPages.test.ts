@@ -74,3 +74,15 @@ test("error and global-error use the error page, retry the segment and log only 
   assert.deepEqual(tKeys("src/app/global-error.tsx"), ["error.page.title"])
   assert.match(source("src/app/not-found.tsx"), /<NotFoundPage \/>/)
 })
+
+test("only the 500 page offers «Повідомити деталі»: URL, time, message trimmed to 200, version", () => {
+  const code = source("src/components/site/ErrorPage.tsx")
+  assert.equal(code.match(/<ReportLink /g)?.length, 1)
+  assert.ok(code.indexOf("<ReportLink ") > code.indexOf("export function ServerErrorPage"))
+  assert.match(code, /\.slice\(0, 200\)/)
+  for (const lang of ["uk", "en"] as const) {
+    const body = catalogs[lang]["error.page.reportBody"]
+    for (const v of ["{url}", "{time}", "{message}", "{version}"]) assert.ok(body.includes(v), `${lang} report body lacks ${v}`)
+  }
+  assert.equal(uk["error.page.report"], "Повідомити деталі")
+})

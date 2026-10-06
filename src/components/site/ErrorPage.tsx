@@ -1,10 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import type { ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { Button } from "@/components/ib/Button"
 import { Wordmark } from "@/components/ib/Wordmark"
 import { FeedbackLink } from "@/components/FeedbackLink"
+import { feedbackHref } from "@/lib/feedback"
 import { t } from "@/i18n/t"
 import "@/styles/ds/components/error-page.css"
 import "@/styles/ds/components/link.css"
@@ -89,6 +90,23 @@ export function NotFoundPage({ mode }: { mode?: "page" | "block" }) {
   )
 }
 
+// «Повідомити деталі»: the feedback mailto prefilled with the page URL, time, the (trimmed) error message and the build version.
+// Built after mount: the URL and time exist only in the browser.
+function ReportLink({ error }: { error?: unknown }) {
+  const [href, setHref] = useState<string | null>(null)
+  useEffect(() => {
+    const message = (error instanceof Error ? error.message : "").slice(0, 200)
+    const app = t("feedback.app")
+    setHref(
+      feedbackHref(
+        t("error.page.reportSubject", { app }),
+        t("error.page.reportBody", { url: window.location.href, time: new Date().toISOString(), message, app, version: process.env.NEXT_PUBLIC_APP_VERSION ?? "" }),
+      ),
+    )
+  }, [error])
+  return <a className="ib-link" href={href ?? feedbackHref(t("error.page.reportSubject", { app: t("feedback.app") }))}>{t("error.page.report")}</a>
+}
+
 export function ServerErrorPage({ onRetry, error, mode }: { onRetry: () => void; error?: unknown; mode?: "page" | "block" }) {
   return (
     <ErrorPage
@@ -101,6 +119,7 @@ export function ServerErrorPage({ onRetry, error, mode }: { onRetry: () => void;
         <>
           <Button variant="primary" onClick={onRetry}>{t("error.page.reload")}</Button>
           <a className="ib-link" href="#back" onClick={(e) => { e.preventDefault(); goBack() }}>{t("error.page.back")}</a>
+          <ReportLink error={error} />
         </>
       }
     />
