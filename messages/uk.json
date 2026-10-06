@@ -399,5 +399,6 @@
   "a11y.skip": "Перейти до вмісту",
   "account.menu": "Меню облікового запису: {name}",
   "landing.labs.topoRegion": "Схема лабораторії (прокручується)",
-  "landing.labs.termRegion": "Підключення до лабораторії (прокручується)"
+  "landing.labs.termRegion": "Підключення до лабораторії (прокручується)",
+  "legal.tocItem": "{n}. {heading}"
 }
