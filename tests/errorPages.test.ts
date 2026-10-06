@@ -37,20 +37,34 @@ function assertTranslated(keys: string[]) {
   }
 }
 
-test("error screen renders the error texts and both actions", () => {
-  const keys = tKeys("src/components/site/ErrorScreen.tsx")
-  assert.deepEqual(keys, ["error.page.title", "error.page.body", "error.page.reload", "error.page.back"])
-  assertTranslated(keys)
-  assert.equal(uk["error.page.title"], "Не вдалося завантажити сторінку")
-  assert.equal(uk["error.page.reload"], "Оновити")
-  assert.equal(uk["error.page.back"], "Назад")
+test("error page: code line only with a code, footer only in page mode, h1 only in page mode", () => {
+  const code = source("src/components/site/ErrorPage.tsx")
+  assert.match(code, /code !== undefined && <p className="ib-error__ref">\{t\("error\.load\.code", \{ code \}\)\}<\/p>/)
+  assert.match(code, /mode === "page" \? "h1" : "h2"/)
+  const [blockBranch, pageBranch] = code.split('if (mode === "block")')[1].split("return (\n    <div className=\"ib-error ib-error--page\">")
+  assert.doesNotMatch(blockBranch, /ib-error__footer|crest/)
+  assert.match(pageBranch, /<footer className="ib-error__footer">/)
+  assert.match(pageBranch, /crest-64/)
+  assert.match(pageBranch, /<FeedbackLink \/>/)
+  assert.match(pageBranch, /href="\/"/)
+  assertTranslated(tKeys("src/components/site/ErrorPage.tsx"))
 })
 
-test("error and global-error use the error screen, retry the segment and log only in dev", () => {
+test("500 page shows catalog texts, retry and back; 404 shows home and back", () => {
+  const keys = tKeys("src/components/site/ErrorPage.tsx")
+  for (const key of ["error.page.title", "error.page.body", "error.page.reload", "error.page.back", "error.notFound", "error.notFoundDescription", "error.goHome", "error.page.links"]) {
+    assert.ok(keys.includes(key), `${key} not rendered`)
+  }
+  assertTranslated(keys)
+  assert.equal(uk["error.page.title"], "Не вдалося завантажити сторінку")
+  assert.equal(uk["error.notFound"], "Сторінку не знайдено")
+})
+
+test("error and global-error use the error page, retry the segment and log only in dev", () => {
   for (const file of ["src/app/error.tsx", "src/app/global-error.tsx"]) {
     const code = source(file)
     assert.match(code, /^"use client"/, `${file} must be a client component`)
-    assert.match(code, /<ErrorScreen onRetry=\{retry\} \/>/)
+    assert.match(code, /<ServerErrorPage onRetry=\{retry\} error=\{error\} \/>/)
     assert.match(code, /process\.env\.NODE_ENV !== "production"\) console\.error\(error\)/)
     assert.doesNotMatch(code, /error\.(message|stack)/, `${file} must not show error details`)
   }
@@ -58,18 +72,5 @@ test("error and global-error use the error screen, retry the segment and log onl
   assert.match(global, /<html /)
   assert.match(global, /readThemeChoice\(\)/)
   assert.deepEqual(tKeys("src/app/global-error.tsx"), ["error.page.title"])
-})
-
-test("404 renders the not-found screen: texts, home link and back", () => {
-  const keys = tKeys("src/components/site/NotFoundScreen.tsx")
-  assert.deepEqual(keys, ["error.notFound", "error.notFoundDescription", "error.goHome", "error.page.back"])
-  assertTranslated(keys)
-  assert.equal(uk["error.notFound"], "Сторінку не знайдено")
-  assert.equal(uk["error.notFoundDescription"], "Сторінка, яку ви шукаєте, не існує або її перенесли.")
-  const screen = source("src/components/site/NotFoundScreen.tsx")
-  assert.match(screen, /href="\/"/)
-  assert.match(screen, /onClick=\{goBack\}/)
-  assert.match(screen, /<Icon name="search-x"/)
-  assert.match(screen, /site-404--block/)
-  assert.match(source("src/app/not-found.tsx"), /<NotFoundScreen \/>/)
+  assert.match(source("src/app/not-found.tsx"), /<NotFoundPage \/>/)
 })

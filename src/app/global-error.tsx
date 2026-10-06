@@ -5,10 +5,9 @@ import "@/styles/site.css"
 import { useEffect } from "react"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
-import { ErrorScreen } from "@/components/site/ErrorScreen"
+import { ServerErrorPage } from "@/components/site/ErrorPage"
 import { applyTheme, readThemeChoice, resolveTheme } from "@/lib/theme"
 import { t } from "@/i18n/t"
-import { FeedbackLink } from "@/components/FeedbackLink"
 
 // Root layout failed: this replaces the whole document, so it brings its own <html>,
 // global styles and the saved theme (cib_theme cookie).
@@ -29,9 +28,7 @@ export default function GlobalError({ error, retry }: { error: Error & { digest?
         <title>{t("error.page.title")}</title>
       </head>
       <body suppressHydrationWarning>
-        <ErrorScreen onRetry={retry} />
-        {/* plain mailto link; the root layout (and its FeedbackLink) is gone here */}
-        <FeedbackLink className="feedback-link--standalone" />
+        <ServerErrorPage onRetry={retry} error={error} />
       </body>
     </html>
   )
