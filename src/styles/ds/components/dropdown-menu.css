@@ -24,6 +24,7 @@
 .ib-menu__head{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px;margin:0 -4px 4px;border-bottom:1px solid var(--ib-line);min-width:0}
 .ib-menu__head b{color:var(--ib-ink);font-weight:var(--ib-w-semibold);font-size:var(--ib-fs-14);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ib-menu__head span{color:var(--ib-dim);font-size:var(--ib-fs-12);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib-menu__list{display:flex;flex-direction:column;gap:1px}   /* local: the role=menu list inside .ib-menu, below the head */
 .ib-menu__label{padding:6px 10px 2px;font-size:var(--ib-fs-12);color:var(--ib-dim)}
 
 .ib-menu__item{display:flex;align-items:center;gap:10px;width:100%;height:var(--ib-control-h);padding:0 10px;

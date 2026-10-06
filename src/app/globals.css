@@ -116,3 +116,8 @@
 @keyframes notification-countdown {
   to { transform: scaleX(0); }
 }
+
+/* reduced motion: the pop-in countdown bar stays a static full bar (the pop-in still closes on its timer) */
+@media (prefers-reduced-motion: reduce) {
+  .notification-countdown { animation: none !important; }
+}

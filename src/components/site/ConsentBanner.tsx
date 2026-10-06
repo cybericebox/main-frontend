@@ -52,7 +52,8 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
 
   // The panel was opened on request: move focus into it. Shown on load: leave focus where it is.
   useEffect(() => {
-    if (layer === "panel") rootRef.current?.focus()
+    // stepping from the panel back to the banner keeps focus inside the consent UI
+    if (layer === "panel" || layer === "banner") rootRef.current?.focus()
   }, [layer])
 
   const close = () => {
@@ -85,7 +86,7 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
 
   if (shown === "banner") {
     return (
-      <div ref={rootRef} className="cb-consent" role="region" aria-label={t("consent.label")} tabIndex={-1}>
+      <div ref={rootRef} className="cb-consent" role="dialog" aria-modal="false" aria-label={t("consent.label")} aria-live="polite" tabIndex={-1}>
         <p className="cb-consent__text">{tRich("consent.text", { link: policyLink })}</p>
         <div className="cb-consent__actions">
           <Button size="sm" onClick={() => setLayer("panel")}>{t("consent.customize")}</Button>
@@ -105,7 +106,7 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
       tabIndex={-1}
       onKeyDown={onKeyDown}
     >
-      <p id="cb-consent-title" className="cb-consent__title">{t("consent.panelTitle")}</p>
+      <h2 id="cb-consent-title" className="cb-consent__title">{t("consent.panelTitle")}</h2>
       <ul className="cb-consent__cats">
         <li>
           <label className="cb-consent__cat">

@@ -36,9 +36,9 @@
 }
 .ib-navbar__link:hover,.ib-navbar__more-btn:hover{color:var(--ib-ink);text-decoration:none}
 .ib-navbar__link:focus-visible,.ib-navbar__more-btn:focus-visible{outline-offset:-4px;border-radius:var(--ib-r)}
-.ib-navbar__link[aria-current="page"],
+.ib-navbar__link[aria-current],
 .ib-navbar__more-btn.is-current{color:var(--ib-ink);font-weight:var(--ib-w-semibold)}
-.ib-navbar__link[aria-current="page"]::after,
+.ib-navbar__link[aria-current]::after,
 .ib-navbar__more-btn.is-current::after{
   content:"";position:absolute;left:var(--ib-3);right:var(--ib-3);bottom:-1px;height:2px;background:var(--ib-action);
 }
@@ -58,7 +58,7 @@
 }
 .ib-navbar__menu a:hover{background:var(--ib-soft);color:var(--ib-ink);text-decoration:none}
 .ib-navbar__menu a:focus-visible{outline-offset:-2px}
-.ib-navbar__menu a[aria-current="page"]{color:var(--ib-ink);font-weight:var(--ib-w-semibold);background:var(--ib-soft)}
+.ib-navbar__menu a[aria-current]{color:var(--ib-ink);font-weight:var(--ib-w-semibold);background:var(--ib-soft)}
 
 /* actions */
 .ib-navbar__actions{display:flex;align-items:center;gap:var(--ib-2);flex:none;margin-left:auto}
@@ -80,7 +80,7 @@
   border-bottom:1px solid var(--ib-line);color:var(--ib-ink);font-weight:var(--ib-w-medium);text-decoration:none;
 }
 .ib-navbar__panel a:last-child{border-bottom:0}
-.ib-navbar__panel a[aria-current="page"]{font-weight:var(--ib-w-semibold)}
+.ib-navbar__panel a[aria-current]{font-weight:var(--ib-w-semibold)}
 .ib-navbar__panel a:focus-visible{outline-offset:-2px}
 
 /* ---------- platform landing variant ---------- */
@@ -89,8 +89,8 @@
 .ib-navbar--platform .ib-navbar__nav{margin-left:0}
 .ib-navbar--platform .ib-navbar__link{height:auto;padding:var(--ib-2) var(--ib-3);border-radius:var(--ib-r);align-self:center}
 .ib-navbar--platform .ib-navbar__link:hover{background:var(--ib-soft)}
-.ib-navbar--platform .ib-navbar__link[aria-current="page"]{background:var(--ib-soft)}
-.ib-navbar--platform .ib-navbar__link[aria-current="page"]::after{display:none}
+.ib-navbar--platform .ib-navbar__link[aria-current]{background:var(--ib-soft)}
+.ib-navbar--platform .ib-navbar__link[aria-current]::after{display:none}
 
 /* ---------- narrow: menu button + panel ---------- */
 @container ib-navbar (max-width: 760px){

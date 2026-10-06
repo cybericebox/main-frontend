@@ -8,7 +8,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
   return (
     <>
       <SiteHeader home={false} />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1}>{children}</main>
       <SiteFooter />
     </>
   )

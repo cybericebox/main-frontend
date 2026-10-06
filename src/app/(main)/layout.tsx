@@ -7,7 +7,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <SiteHeader home />
-      <main id="top">{children}</main>
+      <main id="main" tabIndex={-1}>{children}</main>
       <SiteFooter />
     </>
   )

@@ -3,7 +3,15 @@
 :root{--pl-gut:max(24px,calc(50vw - 660px))}
 @media (max-width:640px){:root{--pl-gut:16px}}
 html{scroll-padding-top:calc(var(--ib-16) + var(--ib-2))}
-body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:hidden}
+body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:clip}
+
+/* skip link: first focusable element; visible only on keyboard focus */
+.site-skip{position:absolute;z-index:100;left:var(--ib-2);top:var(--ib-2);padding:var(--ib-2) var(--ib-4);border-radius:var(--ib-r);background:var(--ib-action);color:var(--ib-on-action);font-weight:var(--ib-w-medium);transform:translateY(-200%)}
+.site-skip:focus{transform:none;text-decoration:none}
+main:focus{outline:none}
+
+/* iOS Safari zooms into inputs under 16px: touch screens get 16px */
+@media (pointer:coarse){.ib-input{font-size:16px}}
 
 /* One loading pattern across the site: centered logo and quiet pulse.
    Captions appear only for meaningful multi-step progress. */
@@ -12,6 +20,8 @@ body{font-size:var(--ib-fs-16);color:var(--ib-ink);overflow-x:hidden}
 .site-loading__logo{width:64px;height:64px;object-fit:contain;animation:site-loading-pulse 1.8s ease-in-out infinite}
 .site-loading--compact{min-height:0;padding:var(--ib-3) var(--ib-4)}
 .site-loading--compact .site-loading__logo{width:20px;height:20px}
+.site-loading--inline{display:inline-flex;width:auto;padding:0}   /* busy button: the crest only, beside the label */
+.site-loading--inline .site-loading__logo{width:16px;height:16px}
 .site-loading__label{color:var(--ib-dim);font-size:var(--ib-fs-13)}
 @keyframes site-loading-pulse{50%{opacity:.45;transform:scale(.94)}}
 @media(prefers-reduced-motion:reduce){.site-loading__logo{animation:none}}

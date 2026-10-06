@@ -1,7 +1,7 @@
 import type React from "react"
 import "@/app/globals.css"
 import "@/styles/site.css"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
@@ -12,6 +12,14 @@ import { pageMetadata } from "@/lib/metadata"
 import { t } from "@/i18n/t"
 
 export const metadata: Metadata = pageMetadata({ title: t("meta.home.title"), description: t("meta.home.description") })
+
+// Browser chrome follows the navbar surface (--ib-surface per theme).
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+        { media: "(prefers-color-scheme: dark)", color: "#413F4E" },
+    ],
+}
 
 // Root layout — HTML shell, theme boot, API probe (optional: the landing renders without the API). Navbar/Footer come
 // from the route-group layouts ((main) landing, (legal) documents).
@@ -26,6 +34,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </head>
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
+                {/* first in the tab order: jumps over the navbar to <main id="main"> */}
+                <a className="site-skip" href="#main">{t("a11y.skip")}</a>
                 <ApiProvider>{children}</ApiProvider>
                 {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
                 <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />

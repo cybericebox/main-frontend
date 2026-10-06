@@ -6,7 +6,7 @@
    Background (tokens only): a radial brand pool from the top-right corner (page tone → brand; stronger in
    dark); the quiet waves (.ib-waves-quiet) sit on top; the bottom fades into the next section (--pl-tone). */
 .pl-hero{--pl-left:calc(560px + var(--pl-gut));--pl-fade:140px;
-  display:grid;grid-template-columns:var(--pl-left) minmax(0,1fr);min-height:max(560px,min(calc(100svh - 64px),820px));overflow:hidden;
+  display:grid;grid-template-columns:var(--pl-left) minmax(0,1fr);min-height:max(560px,min(calc(100svh - 64px),820px));overflow:clip   /* clip, not hidden: focus or find-in-page can never scroll the bled-off window into view */;
   background:var(--pl-pool);
   --pl-pool:radial-gradient(ellipse 72% 125% at 100% 0%,var(--ib-brand) 0%,var(--ib-brand) 48%,color-mix(in srgb,var(--ib-brand) 70%,var(--ib-hero)) 60%,color-mix(in srgb,var(--ib-brand) 35%,var(--ib-hero)) 72%,color-mix(in srgb,var(--ib-brand) 10%,var(--ib-hero)) 84%,var(--ib-hero) 100%)}
 [data-theme="dark"] .pl-hero{--pl-pool:radial-gradient(ellipse 70% 90% at 100% 0%,color-mix(in srgb,var(--ib-brand),#FFFFFF 10%) 0%,var(--ib-brand) 70%)}   /* dark: solid brand + lighter brand glow, no grey mixing */
@@ -16,8 +16,9 @@
 /* both columns centre on the same axis above the fade; the text column never reaches the window —
    h1 scales with the column (container units), 32px air on the right */
 .pl-main{container-type:inline-size;display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 32px var(--pl-fade) var(--pl-gut)}
-.pl-main h1{font-size:min(70px,12.4cqi);line-height:.98;letter-spacing:-.04em;font-weight:650}   /* nbsp keeps «для CTF‑змагань» on one line (7.8em) */
-.pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:30ch}   /* ≥ 7:1 on the page tone and on the dark pool */
+.pl-main h1{font-size:min(70px,12.4cqi);line-height:1.04;letter-spacing:-.04em;font-weight:650}   /* .pl-nowrap keeps «CTF-змагань» on one line (7.8em) */
+.pl-nowrap{white-space:nowrap}
+.pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:34ch}   /* ≥ 7:1 on the page tone and on the dark pool */
 .pl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
 .pl-actions .ib-btn{height:48px;padding:0 22px;font-size:var(--ib-fs-16)}
 .pl-actions .ib-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}

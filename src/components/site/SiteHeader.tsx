@@ -65,7 +65,7 @@ export function SiteHeader({ home }: { home: boolean }) {
   return (
     <>
       <Navbar
-        brandHref={home ? "#top" : "/"}
+        brandHref={home ? "#main" : "/"}
         links={landingLinks(home ? "" : "/")}
         actions={actions}
       />

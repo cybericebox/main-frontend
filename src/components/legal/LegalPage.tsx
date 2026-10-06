@@ -1,6 +1,7 @@
 import * as React from "react"
 import { has, richText, t, tRich } from "@/i18n/t"
 import { PRIVACY_EMAIL, SECURITY_EMAIL } from "@/lib/links"
+import { LegalToc } from "./LegalToc"
 import "@/styles/ds/components/toc.css"
 import "@/styles/legal.css"
 
@@ -96,25 +97,14 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
 }
 
 // Legal document (Terms, Privacy, Cookies) from legal.<doc>.* keys: title, «Останнє оновлення»,
-// intro, numbered sections with anchor ids; from 1024 px a sticky section list on the left.
+// intro, numbered sections with anchor ids; a section list (sticky on the left from 1024 px, collapsed above the text below).
 // Navbar/Footer come from the (legal) route-group layout.
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   const sections = count((i) => `legal.${doc}.s${i}.heading`)
   return (
     <article className="lg-doc">
       <div className="lg-doc__grid">
-        <nav className="ib-toc" aria-label={t("legal.toc")}>
-          <p className="ib-toc__title">{t("legal.toc")}</p>
-          <ol className="ib-toc__list">
-            {sections.map((n) => (
-              <li key={n}>
-                <a className="ib-toc__link" href={`#s${n}`}>
-                  {n}. {t(`legal.${doc}.s${n}.heading`)}
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <LegalToc title={t("legal.toc")} items={sections.map((n) => ({ id: `s${n}`, label: `${n}. ${t(`legal.${doc}.s${n}.heading`)}` }))} />
         <div className="lg-doc__body">
           <h1>{t(`legal.${doc}.title`)}</h1>
           <p className="lg-doc__updated">{t("legal.updated", { date: t(`legal.${doc}.updated`) })}</p>
