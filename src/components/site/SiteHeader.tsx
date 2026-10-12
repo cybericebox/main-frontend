@@ -1,10 +1,11 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Navbar } from "@/components/ib/Navbar"
 import { Button } from "@/components/ib/Button"
 import { AvatarMenu, type AvatarMenuEntry } from "@/components/ib/AvatarMenu"
 import { initials } from "@/lib/initials"
-import { InboxButton } from "@/components/site/InboxButton"
+import { BrandLoading } from "@/components/site/BrandLoading"
 import { t } from "@/i18n/t"
 import { useApi } from "@/lib/useApi"
 import { idUrl, isAdminTier } from "@/lib/auth"
@@ -15,6 +16,12 @@ import { openConsentSettings } from "@/lib/consent"
 import { mediaUrl } from "@/api/client"
 import { landingLinks } from "./sections"
 import { SiteBanners } from "./SiteBanners"
+
+// Anonymous visitors never need the inbox, its popover, or its HTML sanitizer.
+// Keep the existing signed-in condition below and load that UI only when it is rendered.
+const InboxButton = dynamic(() => import("@/components/site/InboxButton").then((module) => module.InboxButton), {
+  loading: () => <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center"><BrandLoading inline /></span>,
+})
 
 // Platform navbar. Actions depend on the API probe (lib/useApi): absent while
 // pending/down (their slot keeps its width), «Увійти» for anonymous visitors,
