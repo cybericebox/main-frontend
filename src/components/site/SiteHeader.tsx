@@ -1,9 +1,11 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { usePathname } from "next/navigation"
+import { MessageSquare } from "lucide-react"
 import { Navbar } from "@/components/ib/Navbar"
 import { Button } from "@/components/ib/Button"
-import { AvatarMenu, type AvatarMenuEntry } from "@/components/ib/AvatarMenu"
+import { AvatarMenu, type AvatarMenuEntry, type AvatarMenuItem } from "@/components/ib/AvatarMenu"
 import { initials } from "@/lib/initials"
 import { BrandLoading } from "@/components/site/BrandLoading"
 import { t } from "@/i18n/t"
@@ -14,6 +16,7 @@ import { ACCOUNT_MENU_ICON_PROPS, ACCOUNT_MENU_ICONS, ACCOUNT_MENU_LABELS, accou
 import { useCatalogAccess } from "@/lib/useCatalogAccess"
 import { openConsentSettings } from "@/lib/consent"
 import { mediaUrl } from "@/api/client"
+import { feedbackHref } from "@/lib/feedback"
 import { landingLinks } from "./sections"
 import { SiteBanners } from "./SiteBanners"
 
@@ -42,6 +45,12 @@ export function SiteHeader({ home }: { home: boolean }) {
   const { status, me } = useApi()
   const up = status === "up"
   const catalog = useCatalogAccess(me)
+  const pathname = usePathname() || "/"
+  const entries = accountMenu(
+    "main",
+    { adminTier: Boolean(me && isAdminTier(me)), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
+    { id: ID_ORIGIN, admin: ADMIN_ORIGIN, exercises: EXERCISES_ORIGIN },
+  )
 
   const actions = (
     <div className="site-nav-slot">
@@ -58,11 +67,12 @@ export function SiteHeader({ home }: { home: boolean }) {
             email={me.Email}
             picture={mediaUrl(me.Picture)}
             initials={initials(me.FirstName, me.LastName, me.Email)}
-            items={accountMenu(
-              "main",
-              { adminTier: isAdminTier(me), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
-              { id: ID_ORIGIN, admin: ADMIN_ORIGIN, exercises: EXERCISES_ORIGIN },
-            ).map(avatarEntry)}
+            navigation={entries.filter((entry) => entry.kind === "link").map((entry) => avatarEntry(entry) as AvatarMenuItem)}
+            items={entries.filter((entry) => entry.kind !== "link").flatMap<AvatarMenuEntry>((entry) => entry.kind === "cookies" ? [{
+              href: feedbackHref(t("feedback.subject", { app: t("feedback.app"), page: pathname })),
+              label: t("feedback.link"),
+              icon: <MessageSquare {...ACCOUNT_MENU_ICON_PROPS} />,
+            }, avatarEntry(entry)] : [avatarEntry(entry)])}
           />
         </>
       ) : null}
