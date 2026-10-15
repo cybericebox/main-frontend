@@ -41,3 +41,11 @@ main:focus{outline:none}
 
 /* navbar avatar trigger: avatar only (no chevron) — round, symmetric hit area */
 .ib-navbar .ib-avatar-btn{padding:4px;border-radius:50%}
+
+/* Account data can be longer than the mobile menu: keep it inside its panel. */
+.ib-dropdown.ib-dropdown--end>.ib-menu{max-width:min(320px,calc(100vw - 32px));max-height:calc(100dvh - 88px);overflow-y:auto}
+.ib-account-theme__choice{margin-left:auto;color:var(--ib-dim);font-size:var(--ib-fs-12)}
+.ib-account-theme>svg:last-child{width:14px;height:14px;transition:transform var(--ib-dur) var(--ib-ease)}
+.ib-account-theme>svg.is-expanded{transform:rotate(180deg)}
+.ib-account-theme-option__check{display:flex;width:12px;flex:none}
+.ib-account-theme-option__check>svg{width:12px;height:12px}

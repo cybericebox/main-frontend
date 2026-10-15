@@ -52,7 +52,7 @@
 .pl-labs{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px;align-items:start}
 .pl-labs h2{max-width:10ch}
 .pl-feat{margin:var(--ib-10) 0 0;border-top:1px solid var(--ib-line)}
-.pl-feat div{display:grid;grid-template-columns:120px 1fr;gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}
+.pl-feat div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}
 .pl-feat dt{font:var(--ib-w-medium) var(--ib-fs-14)/1.6 var(--ib-mono);color:var(--ib-action)}
 .pl-feat dd{margin:0;font-size:var(--ib-fs-15);color:var(--ib-body)}
 
@@ -82,5 +82,5 @@
   .pl-sec{padding:56px 0}
   .pl-sec h2{font-size:36px}
   .pl-lead{font-size:var(--ib-fs-16)}
-  .pl-feat div{grid-template-columns:96px 1fr}
+  .pl-feat div{grid-template-columns:96px minmax(0,1fr)}
 }
