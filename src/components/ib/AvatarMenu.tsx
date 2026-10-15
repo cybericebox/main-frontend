@@ -1,6 +1,8 @@
 "use client"
 
 import { Fragment, useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react"
+import { ChevronDown, Check } from "lucide-react"
+import { THEME_OPTIONS, useThemeChoice } from "./ThemeSwitch"
 import { t } from "@/i18n/t"
 import "@/styles/ds/components/avatar.css"
 import "@/styles/ds/components/dropdown-menu.css"
@@ -26,6 +28,13 @@ export function AvatarMenu({
   items: AvatarMenuEntry[]
 }) {
   const [open, setOpen] = useState(false)
+  const [themeExpanded, setThemeExpanded] = useState(false)
+  const [themeChoice, selectTheme] = useThemeChoice()
+  const themeChoicesId = useId()
+  const themeTriggerRef = useRef<HTMLButtonElement>(null)
+  const currentTheme = THEME_OPTIONS.find((option) => option.value === (themeChoice ?? "system"))!
+  const ThemeIcon = currentTheme.icon
+  useEffect(() => { if (!open) setThemeExpanded(false) }, [open])
   const rootRef = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
   const menuId = useId()
@@ -51,7 +60,7 @@ export function AvatarMenu({
 
   /* opened: focus moves to the first item (menu button pattern) */
   useEffect(() => {
-    if (open) rootRef.current?.querySelector<HTMLAnchorElement>(".ib-menu__item")?.focus()
+    if (open) rootRef.current?.querySelector<HTMLElement>(".ib-menu__item")?.focus()
   }, [open])
 
   const onTriggerKey = (e: ReactKeyboardEvent<HTMLButtonElement>) => {
@@ -62,8 +71,8 @@ export function AvatarMenu({
   }
 
   const onMenuKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
-    const links = Array.from(e.currentTarget.querySelectorAll<HTMLAnchorElement>(".ib-menu__item"))
-    const i = links.indexOf(document.activeElement as HTMLAnchorElement)
+    const links = Array.from(e.currentTarget.querySelectorAll<HTMLElement>(".ib-menu__item"))
+    const i = links.indexOf(document.activeElement as HTMLElement)
     if (e.key === "Tab") {
       // Tab leaves the menu: close it and continue from the button
       setOpen(false)
@@ -130,6 +139,20 @@ export function AvatarMenu({
           <span>{email}</span>
         </div>
         <div className="ib-menu__list" role="menu" aria-label={t("account.menu", { name })}>
+          <button ref={themeTriggerRef} type="button" role="menuitem" className="ib-menu__item ib-account-theme" aria-expanded={themeExpanded} aria-controls={themeChoicesId}
+            onClick={() => setThemeExpanded((value) => !value)}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowRight") { event.preventDefault(); setThemeExpanded(true) }
+              if (event.key === "ArrowLeft") { event.preventDefault(); setThemeExpanded(false) }
+            }}>
+            <ThemeIcon aria-hidden="true" /><span>{t("theme.label")}</span><span className="ib-account-theme__choice">{t(currentTheme.label)}</span><ChevronDown aria-hidden="true" className={themeExpanded ? "is-expanded" : undefined} />
+          </button>
+          {themeExpanded && <div id={themeChoicesId} role="group" aria-label={t("theme.label")} onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") { event.preventDefault(); setThemeExpanded(false); themeTriggerRef.current?.focus() }
+          }}>
+            {THEME_OPTIONS.map(({ value, icon: Icon, label }) => <button key={value} type="button" role="menuitemradio" aria-checked={themeChoice === value} className="ib-menu__item ib-account-theme-option" onClick={() => { selectTheme(value); setOpen(false); btnRef.current?.focus() }}><span className="ib-account-theme-option__check">{themeChoice === value && <Check aria-hidden="true" />}</span><Icon aria-hidden="true" />{t(label)}</button>)}
+          </div>}
+          <hr className="ib-menu__sep" />
           {items.map((it, i) => <Fragment key={i}>{it === "divider" ? <hr className="ib-menu__sep" /> : item(it)}</Fragment>)}
         </div>
       </div>

@@ -5,7 +5,7 @@
 .lg-doc .ib-toc{position:static;margin-bottom:var(--ib-8);padding:var(--ib-3);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg)}
 .lg-doc .ib-toc summary{margin:0;cursor:pointer}
 .lg-doc .ib-toc details[open] summary{margin-bottom:var(--ib-2)}
-.lg-doc__body{max-width:68ch}
+.lg-doc__body{min-width:0;max-width:68ch;overflow-wrap:anywhere}
 .lg-doc h1{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
 .lg-doc__updated{margin-top:var(--ib-3);font-size:var(--ib-fs-14);color:var(--ib-faint)}
 .lg-doc__intro{margin-top:var(--ib-8);font-size:18px;line-height:var(--ib-lh-body);color:var(--ib-body)}
