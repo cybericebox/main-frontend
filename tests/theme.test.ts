@@ -62,3 +62,21 @@ test("the cookie carries the Domain from NEXT_PUBLIC_DOMAIN and fails without it
     process.env.NEXT_PUBLIC_DOMAIN = saved
   }
 })
+
+
+test("every mounted selector receives the chosen theme and can unsubscribe", () => {
+  fakeBrowser({})
+  const footer: string[] = []
+  const menu: string[] = []
+  const stopFooter = theme.subscribeThemeChoice((choice) => footer.push(choice))
+  const stopMenu = theme.subscribeThemeChoice((choice) => menu.push(choice))
+  theme.setThemeChoice("dark")
+  theme.setThemeChoice("system")
+  assert.deepEqual(footer, ["dark", "system"])
+  assert.deepEqual(menu, footer)
+  stopMenu()
+  theme.setThemeChoice("light")
+  assert.deepEqual(footer, ["dark", "system", "light"])
+  assert.deepEqual(menu, ["dark", "system"])
+  stopFooter()
+})

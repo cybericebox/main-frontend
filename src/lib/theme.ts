@@ -17,6 +17,13 @@ export type ThemeChoice = "light" | "dark" | "system"
 
 export const THEME_COOKIE = "cib_theme"
 const MAX_AGE = 60 * 60 * 24 * 365
+const themeListeners = new Set<(choice: ThemeChoice) => void>()
+
+export function subscribeThemeChoice(listener: (choice: ThemeChoice) => void): () => void {
+  themeListeners.add(listener)
+  return () => { themeListeners.delete(listener) }
+}
+
 const DARK_QUERY = "(prefers-color-scheme: dark)"
 
 // Keep in sync with readThemeChoice/resolveTheme/applyTheme below.
@@ -55,6 +62,7 @@ export function applyTheme(choice: ThemeChoice): void {
 export function setThemeChoice(choice: ThemeChoice): void {
   writeCookie(choice, MAX_AGE)
   applyTheme(choice)
+  themeListeners.forEach((listener) => listener(choice))
 }
 
 /** Re-apply when the OS theme changes while the choice is `system`. Returns an unsubscribe. */
