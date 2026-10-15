@@ -6,6 +6,7 @@ import { THEME_OPTIONS, useThemeChoice } from "./ThemeSwitch"
 import { t } from "@/i18n/t"
 import "@/styles/ds/components/avatar.css"
 import "@/styles/ds/components/dropdown-menu.css"
+import "@/styles/account-menu.css"
 
 // An item is a link; with `onSelect` the navigation is cancelled (when JS runs), the menu closes
 // and hands focus back to its button, then `onSelect` runs.
@@ -19,12 +20,14 @@ export function AvatarMenu({
   email,
   picture,
   initials: ini,
+  navigation,
   items,
 }: {
   name: string
   email: string
   picture?: string
   initials: string
+  navigation: AvatarMenuItem[]
   items: AvatarMenuEntry[]
 }) {
   const [open, setOpen] = useState(false)
@@ -98,15 +101,15 @@ export function AvatarMenu({
       role="menuitem"
       href={it.href}
       aria-label={it.ariaLabel}
-      onClick={it.onSelect ? (e) => {
-        e.preventDefault()
+      onClick={(e) => {
+        if (it.onSelect) e.preventDefault()
         setOpen(false)
         btnRef.current?.focus()
         it.onSelect?.()
-      } : undefined}
+      }}
     >
       {it.icon}
-      {it.label}
+      <span className="account-menu__label">{it.label}</span>
     </a>
   )
 
@@ -132,13 +135,16 @@ export function AvatarMenu({
           )}
         </span>
       </button>
-      <div className="ib-menu" id={menuId} hidden={!open} onKeyDown={onMenuKey}>
+      <div className="ib-menu account-menu" id={menuId} hidden={!open} onKeyDown={onMenuKey}>
         {/* the name/e-mail header is not a menu item, so it stays outside role=menu */}
-        <div className="ib-menu__head">
-          <b>{name}</b>
-          <span>{email}</span>
+        <div className="ib-menu__head account-menu__identity">
+          <b title={name}>{name}</b>
+          <span title={email}>{email}</span>
         </div>
         <div className="ib-menu__list" role="menu" aria-label={t("account.menu", { name })}>
+          <hr className="ib-menu__sep" />
+          {navigation.map((entry) => <Fragment key={entry.href}>{item(entry)}</Fragment>)}
+          {navigation.length > 0 && <hr className="ib-menu__sep" />}
           <button ref={themeTriggerRef} type="button" role="menuitem" className="ib-menu__item ib-account-theme" aria-expanded={themeExpanded} aria-controls={themeChoicesId}
             onClick={() => setThemeExpanded((value) => !value)}
             onKeyDown={(event) => {
@@ -152,7 +158,6 @@ export function AvatarMenu({
           }}>
             {THEME_OPTIONS.map(({ value, icon: Icon, label }) => <button key={value} type="button" role="menuitemradio" aria-checked={themeChoice === value} className="ib-menu__item ib-account-theme-option" onClick={() => { selectTheme(value); setOpen(false); btnRef.current?.focus() }}><span className="ib-account-theme-option__check">{themeChoice === value && <Check aria-hidden="true" />}</span><Icon aria-hidden="true" />{t(label)}</button>)}
           </div>}
-          <hr className="ib-menu__sep" />
           {items.map((it, i) => <Fragment key={i}>{it === "divider" ? <hr className="ib-menu__sep" /> : item(it)}</Fragment>)}
         </div>
       </div>
