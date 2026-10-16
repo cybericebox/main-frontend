@@ -17,3 +17,13 @@ test("the cookie settings link keeps a 24px target (44px on touch)", () => {
   assert.match(consent, /\.cb-consent-link\{[^}]*min-height:24px/)
   assert.match(consent, /pointer:coarse\)\{\.cb-consent-link\{min-height:44px/)
 })
+
+
+test("warm-up validation follows the flag inside its field before the submit action", () => {
+  const source = readFileSync("src/components/landing/HeroChallenge.tsx", "utf8")
+  const field = source.slice(source.indexOf('<div className="hc-card__field">'), source.indexOf('<Button type="submit"'))
+  assert.match(field, /id="warmup-flag"/)
+  assert.match(field, /aria-describedby=\{error \? "warmup-error"/)
+  assert.match(field, /id="warmup-error"[^>]*role="alert"/)
+  assert.ok(field.indexOf('id="warmup-error"') > field.indexOf('id="warmup-flag"'))
+})
