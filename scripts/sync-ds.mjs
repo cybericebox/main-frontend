@@ -19,9 +19,10 @@ const sha = (text) => createHash("sha256").update(text).digest("hex")
 const candidates = [process.env.DS_DIR, join(root, "../docs/design-system"), join(root, "../../docs/design-system"), join(root, "../../../docs/design-system"), join(root, "ds-source")].filter(Boolean)
 const src = candidates.find((d) => existsSync(join(d, "tokens.css")))
 
-// target file → source file in the DS. icon.css is local (not in the DS).
+// target file → source file in the DS.
 const files = {
     "tokens.css": "tokens.css",
+    "components/icon.css": "foundations/icons.css",
     "base.css": "base.css",
     "components/accordion.css": "components/accordion/accordion.css",
     "components/avatar.css": "components/avatar/avatar.css",

@@ -30,7 +30,7 @@
 .hc-tile small{font-size:var(--ib-fs-12);color:var(--ib-faint)}
 .hc-tile b{font-size:var(--ib-fs-13);font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hc-tile .ib-num{display:inline-flex;align-items:center;gap:4px;font-size:var(--ib-fs-13);font-weight:600}
-.hc-tile svg{width:13px;height:13px;flex:none;fill:none;stroke:var(--ib-ok);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hc-tile svg{width:13px;height:13px;flex:none;fill:none;stroke:var(--ib-ok);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hc-tile.is-solved{background:var(--ib-solved);color:var(--ib-dim)}
 .hc-tile.is-warm{border:2px solid var(--ib-action);padding:11px}
 
@@ -66,7 +66,7 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 .hc-card__pts span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
 .hc-card__pts,.hc-card__done{min-height:52px}   /* same height in both states */
 .hc-card__done{display:inline-flex;align-items:flex-start;gap:6px;flex:none;margin:4px 0 0;font-size:var(--ib-fs-14);font-weight:600;color:var(--ib-ok)}
-.hc-card__done svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hc-card__done svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hc-card__close{flex:none;margin-top:-4px}
 
 .hc-card__body{display:grid;gap:14px;padding:14px 22px 18px;font-size:var(--ib-fs-14)}

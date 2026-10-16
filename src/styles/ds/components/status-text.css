@@ -15,7 +15,7 @@
 [data-theme="dark"]{--ib-status-warn-on-soft:#F2CB8A;--ib-status-bad-on-soft:#FFC4BE}                            /* 4.9 / 5.0 on #555361 */
 
 .ib-status{display:inline-flex;align-items:center;gap:var(--ib-1);font-weight:var(--ib-w-medium);line-height:var(--ib-lh-ui);white-space:nowrap}
-.ib-status>svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib-status>svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ib-status--ok{color:var(--ib-ok)}
 .ib-status--warn{color:var(--ib-warn)}
 .ib-status--bad{color:var(--ib-danger)}
