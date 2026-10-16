@@ -19,7 +19,7 @@
   transition:background-color var(--ib-dur-fast) var(--ib-ease)}
 .ib-avatar-btn:hover,.ib-avatar-btn.is-hover,.ib-avatar-btn[aria-expanded="true"]{background:color-mix(in srgb,var(--ib-ink) 6%,transparent)}
 .ib-avatar-btn:focus-visible,.ib-avatar-btn.is-focus{outline:2px solid var(--ib-action);outline-offset:2px}
-.ib-avatar-btn>svg{width:14px;height:14px;color:var(--ib-dim);stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib-avatar-btn>svg{width:14px;height:14px;color:var(--ib-dim);stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ib-avatar-btn small{display:block;color:var(--ib-dim);font-size:var(--ib-fs-12);font-weight:var(--ib-w-regular)}
 .ib-mass .ib-avatar-btn{color:var(--ib-on-brand)}
 .ib-mass .ib-avatar-btn small,.ib-mass .ib-avatar-btn>svg{color:var(--ib-on-brand-3)}

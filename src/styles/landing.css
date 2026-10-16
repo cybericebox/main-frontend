@@ -21,7 +21,7 @@
 .pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:34ch}   /* ≥ 7:1 on the page tone and on the dark pool */
 .pl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
 .pl-actions .ib-btn{height:48px;padding:0 22px;font-size:var(--ib-fs-16)}
-.pl-actions .ib-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pl-actions .ib-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* warm-up done: a quiet, still clickable button (opens the solved card read-only) */
 .pl-actions .ib-btn--primary.is-done{background:transparent;border-color:var(--ib-control);color:var(--ib-ink)}
 .pl-actions .ib-btn--primary.is-done svg{color:var(--ib-ok)}
