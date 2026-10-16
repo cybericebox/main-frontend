@@ -3,7 +3,7 @@
 .ib-theme__btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;
   border:0;border-radius:4px;background:transparent;color:var(--ib-dim);cursor:pointer;
   transition:color var(--ib-dur-fast) var(--ib-ease),background-color var(--ib-dur-fast) var(--ib-ease)}
-.ib-theme__btn:hover{background:var(--ib-hover);color:var(--ib-ink)}
+@media (hover:hover) and (pointer:fine){.ib-theme__btn:hover{background:var(--ib-hover);color:var(--ib-ink)}}
 .ib-theme__btn:focus-visible{outline:2px solid var(--ib-action);outline-offset:1px}
 .ib-theme__btn[aria-checked="true"]{background:var(--ib-hero);color:var(--ib-ink)}
 .ib-theme__btn svg{width:16px;height:16px}
