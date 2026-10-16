@@ -9,7 +9,7 @@
 .ib-footer__row{display:flex;align-items:center;justify-content:space-between;gap:var(--ib-6);padding:var(--ib-8) 0}
 .ib-footer__row+.ib-footer__row{padding:var(--ib-5) 0 var(--ib-6);border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
 .ib-footer__brand{display:flex;align-items:center;gap:var(--ib-3);color:var(--ib-ink);font-size:var(--ib-fs-16);font-weight:var(--ib-w-semibold);letter-spacing:-.015em;text-decoration:none}
-.ib-footer__brand:hover{text-decoration:none}
+@media (hover:hover) and (pointer:fine){.ib-footer__brand:hover{text-decoration:none}}
 .ib-footer__brand img{width:32px;height:32px;object-fit:contain}
 
 /* platform (--mass): the whole footer on the brand mass in both themes, over a faint ice-cube lattice
@@ -25,11 +25,11 @@
 .ib-footer__credit .ib-tip{display:inline}
 .ib-footer__credit a,.ib-footer__copy{color:var(--ib-on-brand)}
 .ib-footer__credit a{font-weight:var(--ib-w-regular);text-decoration:none}
-.ib-footer__credit a:hover{color:var(--ib-ice)}
+@media (hover:hover) and (pointer:fine){.ib-footer__credit a:hover{color:var(--ib-ice)}}
 .ib-footer__links{display:flex;flex-wrap:wrap;align-items:center;gap:var(--ib-2) var(--ib-5);margin:0;padding:0;list-style:none}
 .ib-footer--mass .ib-footer__links a{display:inline-flex;align-items:center;gap:6px;color:var(--ib-on-brand-2);font-size:inherit;font-weight:var(--ib-w-regular);white-space:nowrap;text-decoration:none;
   transition:color var(--ib-dur-fast) var(--ib-ease)}
-.ib-footer--mass .ib-footer__links a:hover{color:var(--ib-on-brand)}
+@media (hover:hover) and (pointer:fine){.ib-footer--mass .ib-footer__links a:hover{color:var(--ib-on-brand)}}
 .ib-footer__top{font-size:var(--ib-fs-14);line-height:1.5}
 .ib-footer__links svg{width:16px;height:16px;flex:none}
 /* 24px target (44px rows on phones) */
@@ -46,7 +46,7 @@
 /* theme switch in mass colours */
 .ib-footer--mass .ib-theme{flex:none;border-color:var(--ib-brand-line)}
 .ib-footer--mass .ib-theme__btn{color:var(--ib-on-brand-3)}
-.ib-footer--mass .ib-theme__btn:hover{background:var(--ib-brand-hover);color:var(--ib-on-brand)}
+@media (hover:hover) and (pointer:fine){.ib-footer--mass .ib-theme__btn:hover{background:var(--ib-brand-hover);color:var(--ib-on-brand)}}
 .ib-footer--mass .ib-theme__btn[aria-checked="true"]{background:var(--ib-brand-active);color:var(--ib-on-brand)}
 .ib-footer--mass .ib-theme__btn:focus-visible{outline-color:var(--ib-on-brand)}
 /* the switch sits on the right edge: its last hint opens leftwards */
