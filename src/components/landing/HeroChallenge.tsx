@@ -227,6 +227,7 @@ export function HeroChallenge() {
           <label className="hc-card__label" htmlFor="warmup-flag">
             {t("landing.ch.flag")}
           </label>
+          <div className="hc-card__field">
           <input
             ref={inputRef}
             className="ib-input ib-input--mono"
@@ -236,7 +237,7 @@ export function HeroChallenge() {
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            aria-describedby="warmup-msg"
+            aria-describedby={error ? "warmup-error" : done ? "warmup-msg" : undefined}
             // sheet: keep the field in view inside the (keyboard-shortened) sheet
             onFocus={compact ? (e) => e.currentTarget.scrollIntoView({ block: "nearest" }) : undefined}
             aria-invalid={error ? true : undefined}
@@ -247,13 +248,15 @@ export function HeroChallenge() {
               if (error) setError("")
             }}
           />
+          {error && <p id="warmup-error" className="hc-card__field-error" role="alert">{error}</p>}
+          </div>
           <Button type="submit" variant="primary" disabled={done || checking} aria-busy={checking || undefined}>
             {checking ? <BrandLoading inline label={t("common.loading")} /> : null}
             {t("landing.warmup.submit")}
           </Button>
         </form>
-        <p id="warmup-msg" className={"hc-card__msg" + (error ? " is-error" : done ? " ib-status ib-status--ok" : "")} role={error ? "alert" : "status"}>
-          {error || (done ? t("landing.ch.solvedPlace", { place: RANK.place }) : "")}
+        <p id="warmup-msg" className={"hc-card__msg" + (done ? " ib-status ib-status--ok" : "")} role="status">
+          {done ? t("landing.ch.solvedPlace", { place: RANK.place }) : ""}
         </p>
       </div>
     </>

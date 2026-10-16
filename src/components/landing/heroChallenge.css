@@ -77,10 +77,11 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 .hc-card__kv dd{margin:0}
 .hc-card__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px}
 .hc-card__label{grid-column:1/-1;font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-dim)}
+.hc-card__field{min-width:0}
+.hc-card__field-error{margin:6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-danger)}
 .hc-card__form .ib-input{min-width:0;height:44px;font-size:var(--ib-fs-15)}
 .hc-card__form .ib-btn{height:44px;padding:0 18px}
 .hc-card__msg{min-height:20px;margin:-6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
-.hc-card__msg.is-error{color:var(--ib-danger)}
 
 /* stacked: the window sits in the page gutter (no bleed); the card is centred over it */
 /* the window bleeds off the right edge: fade it out instead of clipping mid-word (the card keeps 48px clear of the fade) */
