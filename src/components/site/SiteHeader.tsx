@@ -81,13 +81,13 @@ export function SiteHeader({ home }: { home: boolean }) {
 
   return (
     <>
+      {/* client-only, renders nothing until /api/banners answers: no landing SSR/LCP cost */}
+      <SiteBanners />
       <Navbar
         brandHref={home ? "#main" : "/"}
         links={landingLinks(home ? "" : "/")}
         actions={actions}
       />
-      {/* client-only, renders nothing until /api/banners answers: no landing SSR/LCP cost */}
-      <SiteBanners />
     </>
   )
 }
