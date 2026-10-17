@@ -5,15 +5,15 @@
  *
  * One probe on load (<ApiProvider/> in the root layout): GET /api/auth/me.
  *   200 → user, 401 (or another 4xx) → anonymous; both mean the API is up.
- *   Network error / 5xx / timeout (~4 s) → down. The probe is not retried:
- * its 4 s budget is the wait, and an overloaded API counts as down.
+ *   Network error / 5xx / timeout (~4 s) → down, except an overload answer (503 with
+ * Retry-After), which stays pending. The probe is not retried: its 4 s budget is the wait.
  * The landing is static by nature: `pending` and `down` render the same (API-driven
  * controls absent), nothing overlays the page. No 401 redirect from here.
  */
 
 import { createContext, use } from "react"
-import { ApiError } from "@/api/client"
 import { fetchMe, type Me } from "@/lib/auth"
+import { probeFailureStatus } from "@/lib/probeFailure"
 
 export type ApiStatus = "pending" | "up" | "down"
 
@@ -38,9 +38,10 @@ export async function probeApi(): Promise<ApiState> {
   try {
     return { status: "up", me: await fetchMe({ signal: ctrl.signal, cache: "no-store" }, { retry: false }) }
   } catch (err) {
-    // A 4xx other than 401 is still an answer from the backend: reachable, anonymous.
-    if (err instanceof ApiError && err.status < 500) return { status: "up", me: null }
-    return { status: "down", me: null }
+    // A 4xx is still an answer from the backend: reachable, anonymous. An overload
+    // answer is a busy backend, never "down" (see lib/probeFailure).
+    const status = probeFailureStatus(err)
+    return { status, me: null }
   } finally {
     clearTimeout(timer)
   }
