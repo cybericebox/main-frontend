@@ -100,6 +100,7 @@
   "error.goHome": "Go home",
   "error.tooManyRequests": "Too many requests. Try again in a moment.",
   "error.tooManyRequests.wait": "Too many requests. Try again in {seconds} s.",
+  "error.overloaded": "The server is overloaded, try again in a few seconds",
   "error.generic": "Something went wrong",
   "error.page.title": "The page couldn’t load",
   "error.page.body": "Something unexpected went wrong. Reload the page or go back.",
