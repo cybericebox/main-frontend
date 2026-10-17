@@ -5,9 +5,9 @@ import { probeFailureStatus } from "@/lib/probeFailure"
 const apiError = (status: number, retryAfterSeconds?: number) => Object.assign(new Error(`API error ${status}`), { status, retryAfterSeconds })
 
 describe("probeFailureStatus", () => {
-  it("an overload 503 (Retry-After, no X-Request-ID) is never down", () => {
-    assert.equal(probeFailureStatus(apiError(503, 1)), "pending")
-    assert.equal(probeFailureStatus(apiError(503, 0)), "pending")
+  it("an overload 503 (Retry-After, no X-Request-ID) counts as up, never down", () => {
+    assert.equal(probeFailureStatus(apiError(503, 1)), "up")
+    assert.equal(probeFailureStatus(apiError(503, 0)), "up")
   })
 
   it("a bare 503, other 5xx and network errors are down", () => {
