@@ -9,6 +9,7 @@
 import errorsUk from "../../messages/errors.uk.json"
 import errorsEn from "../../messages/errors.en.json"
 import { ApiError } from "@/api/client"
+import { isOverloadError } from "@/api/retry"
 import { t } from "./t"
 
 const uk = errorsUk as Record<string, string>
@@ -26,5 +27,7 @@ export function localizedError(err: unknown): string {
     const msg = uk[key] ?? en[key]
     if (msg) return msg
   }
+  // An overload 503 (with Retry-After) without a catalog message; reads were already retried.
+  if (err instanceof ApiError && isOverloadError(err)) return t("error.overloaded")
   return t("error.generic")
 }

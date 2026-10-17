@@ -5,7 +5,8 @@
  *
  * One probe on load (<ApiProvider/> in the root layout): GET /api/auth/me.
  *   200 → user, 401 (or another 4xx) → anonymous; both mean the API is up.
- *   Network error / 5xx / timeout (~4 s) → down.
+ *   Network error / 5xx / timeout (~4 s) → down. The probe is not retried:
+ * its 4 s budget is the wait, and an overloaded API counts as down.
  * The landing is static by nature: `pending` and `down` render the same (API-driven
  * controls absent), nothing overlays the page. No 401 redirect from here.
  */
@@ -35,7 +36,7 @@ export async function probeApi(): Promise<ApiState> {
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), PROBE_TIMEOUT_MS)
   try {
-    return { status: "up", me: await fetchMe({ signal: ctrl.signal, cache: "no-store" }) }
+    return { status: "up", me: await fetchMe({ signal: ctrl.signal, cache: "no-store" }, { retry: false }) }
   } catch (err) {
     // A 4xx other than 401 is still an answer from the backend: reachable, anonymous.
     if (err instanceof ApiError && err.status < 500) return { status: "up", me: null }

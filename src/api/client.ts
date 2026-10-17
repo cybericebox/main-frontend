@@ -6,6 +6,7 @@
 
 import { API_ORIGIN } from "@/lib/links"
 import { COOKIE_RETURN_TO } from "@/lib/storageKeys"
+import { fetchWithOverloadRetry, parseRetryAfterSeconds } from "./retry"
 
 export class ApiError extends Error {
   constructor(
@@ -18,19 +19,12 @@ export class ApiError extends Error {
     // Stable numeric FullCode from the envelope (Status.Code). This — not the
     // English message — is the i18n key callers localize against (see i18n/apiError).
     public readonly code?: number,
-    // Seconds from the Retry-After header of a 429 (rate limit / lockout), when sent.
+    // Seconds from the Retry-After header (429 rate limit / lockout, overload 503), when sent; 0 when it says now.
     public readonly retryAfterSeconds?: number
   ) {
     super(message ?? `API error ${status}`)
     this.name = "ApiError"
   }
-}
-
-// Retry-After of a 429, in whole seconds (the backend sends delta-seconds, >= 1).
-export function parseRetryAfter(header: string | null): number | undefined {
-  if (!header) return undefined
-  const seconds = Number(header)
-  return Number.isFinite(seconds) && seconds > 0 ? Math.ceil(seconds) : undefined
 }
 
 // ApiOptions controls cross-cutting request behavior.
@@ -40,7 +34,10 @@ export function parseRetryAfter(header: string | null): number | undefined {
 //       runs on the caller.
 //   required: false — opt out (e.g. fetchMe, which treats 401 as "anonymous").
 //       The 401 is thrown as ApiError so the caller can handle it.
-export type ApiOptions = { required?: boolean }
+//   retry (default true) — a GET answered 429/503 (with Retry-After) is tried again
+//       with backoff (api/retry); the promise stays pending meanwhile. Mutations never repeat.
+//   retry: false — return the first answer (a caller that bounds the wait itself).
+export type ApiOptions = { required?: boolean; retry?: boolean }
 
 // portless strips the port from a URL and forces https:, matching the backend's
 // expectations for return_to (port-free, https-only). Returns the input unchanged
@@ -84,14 +81,20 @@ async function request<T>(
 ): Promise<T> {
   const url = `${API_ORIGIN}${path}`
 
-  const res = await fetch(url, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  })
+  const doFetch = () =>
+    fetch(url, {
+      ...init,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(init.headers ?? {}),
+      },
+    })
+  // Only the final answer is handled below, so a retried overload answer never surfaces.
+  const res =
+    (opts.retry ?? true)
+      ? await fetchWithOverloadRetry(doFetch, { method: init.method ?? "GET", signal: init.signal })
+      : await doFetch()
 
   // Centralized auth handling: required (default true) → write cib_return_to cookie
   // and redirect to sign-in. Returning a never-resolving promise stops the
@@ -130,7 +133,7 @@ async function request<T>(
       envelope?.Status?.Message,
       res.headers.get("X-Sign-In-URL") ?? undefined,
       envelope?.Status?.Code,
-      parseRetryAfter(res.headers.get("Retry-After"))
+      parseRetryAfterSeconds(res.headers.get("Retry-After"))
     )
   }
 
