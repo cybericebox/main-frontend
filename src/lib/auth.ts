@@ -4,7 +4,7 @@
  * No JSX — plain TypeScript; safe to import without 'use client' propagation issues.
  */
 
-import { apiGet, ApiError } from "@/api/client"
+import { apiGet, ApiError, type ApiOptions } from "@/api/client"
 import { ID_ORIGIN } from "@/lib/links"
 
 // ---------------------------------------------------------------------------
@@ -28,9 +28,9 @@ export interface Me {
  *
  * Uses required:false so a 401 is treated as "anonymous" (no redirect).
  */
-export async function fetchMe(init?: RequestInit): Promise<Me | null> {
+export async function fetchMe(init?: RequestInit, opts?: Pick<ApiOptions, "retry">): Promise<Me | null> {
   try {
-    return await apiGet<Me>("/api/auth/me", init, { required: false })
+    return await apiGet<Me>("/api/auth/me", init, { ...opts, required: false })
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       return null
