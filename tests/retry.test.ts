@@ -16,8 +16,8 @@ function answers(...statuses: Array<number | Response>) {
   })
 }
 
-/** An error shaped like any client's API error (status + optional Retry-After field). */
-const apiError = (status: number, fields: { retryAfter?: number; retryAfterSeconds?: number } = {}) => Object.assign(new Error(`API error ${status}`), { status, ...fields })
+/** An error shaped like any client's API error (status + optional Retry-After field and error code). */
+const apiError = (status: number, fields: { retryAfter?: number; retryAfterSeconds?: number; code?: number } = {}) => Object.assign(new Error(`API error ${status}`), { status, ...fields })
 
 const T0 = Date.parse("2026-10-18T12:00:00Z")
 const settle = async () => { for (let i = 0; i < 5; i++) await new Promise((r) => setImmediate(r)) }
@@ -197,18 +197,31 @@ describe("isOverloadResponse", () => {
 })
 
 describe("isOverloadError", () => {
-  it("is a 429, or a 503 that carried Retry-After (0 included), under either field name", () => {
-    assert.equal(isOverloadError(apiError(429)), true)
+  it("is a 503 that carried Retry-After (0 included), under either field name", () => {
     assert.equal(isOverloadError(apiError(503, { retryAfter: 1 })), true)
     assert.equal(isOverloadError(apiError(503, { retryAfterSeconds: 1 })), true)
     assert.equal(isOverloadError(apiError(503, { retryAfterSeconds: 0 })), true)
   })
 
-  it("is false for a 503 without Retry-After, other statuses and non-API errors", () => {
+  it("is an overload code (ServiceOverloaded 70431, DatabaseBusy 70432), full or as the detail code", () => {
+    assert.equal(isOverloadError(apiError(503, { code: 70431 })), true)
+    assert.equal(isOverloadError(apiError(503, { code: 70432 })), true)
+    assert.equal(isOverloadError(apiError(503, { code: 431 })), true)
+    assert.equal(isOverloadError(apiError(503, { code: 432 })), true)
+  })
+
+  it("is never a 429: a personal rate limit is not the server overload", () => {
+    assert.equal(isOverloadError(apiError(429)), false)
+    assert.equal(isOverloadError(apiError(429, { retryAfter: 30, code: 70428 })), false)
+    assert.equal(isOverloadError(apiError(429, { retryAfterSeconds: 30, code: 428 })), false)
+  })
+
+  it("is false for a 503 without Retry-After, other statuses, other codes and non-API errors", () => {
     assert.equal(isOverloadError(apiError(503)), false)
+    assert.equal(isOverloadError(apiError(503, { code: 20225 })), false)
     assert.equal(isOverloadError(apiError(500, { retryAfterSeconds: 1 })), false)
     assert.equal(isOverloadError(new Error("503")), false)
-    assert.equal(isOverloadError({ status: 429 }), false)
+    assert.equal(isOverloadError({ status: 503, retryAfterSeconds: 1 }), false)
     assert.equal(isOverloadError(null), false)
   })
 
