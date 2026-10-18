@@ -226,7 +226,7 @@
   "legal.privacy.s5.heading": "International transfers",
   "legal.privacy.s5.body": "Some providers may process data outside Ukraine; in that case we rely on their contractual data protection safeguards.",
   "legal.privacy.s6.heading": "Retention",
-  "legal.privacy.s6.items.1": "Account — while it is active. An unfinished registration (an invitation or a self sign-up that was never confirmed) is deleted up to {PendingAccount_gen} after it was created or after the last invitation was sent, whichever is later. After a deletion request — no longer than {DeletionRequest_gen}; accounts inactive for over {InactiveAccount} are deleted after a warning.",
+  "legal.privacy.s6.items.1": "Account — while it is active. An unfinished registration (an invitation or a self sign-up that was never confirmed) is deleted {PendingAccount} after it was created or after the last invitation was sent, whichever is later. After a deletion request — no longer than {DeletionRequest_gen}; accounts inactive for over {InactiveAccount} are deleted after a warning.",
   "legal.privacy.s6.items.2": "Sign-in, lab and VPN access logs — up to {SessionAfterExpiry_gen}; email delivery logs — up to {DeliveryLog_gen}; backups — up to {Backups_gen}.",
   "legal.privacy.s6.items.3": "Registration form answers and the event activity log (task opens, file downloads, rejected attempts, team changes, stand and VPN status, lab access counters) — until the event ends plus {FormAnswersAfterEventEnd}; the history of service events (registrations, invitations) — {SignalHistory}, and it is anonymized when the account is deleted.",
   "legal.privacy.s6.items.4": "Competition results — kept as part of the event history; they are anonymized when the account is deleted.",
