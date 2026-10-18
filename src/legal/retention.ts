@@ -5,7 +5,9 @@ import { t } from "@/i18n/t"
 import retentionData from "./retention.json"
 
 export type RetentionUnit = "days" | "months" | "years"
-export type RetentionPeriod = { value: number; unit: RetentionUnit }
+/** How the Policy phrases the period: «через N» (after), «до N» (upTo), «понад N» (over), «ще N» after the event ends (plus), a bare «N» (for). */
+export type RetentionKind = "after" | "upTo" | "over" | "plus" | "for"
+export type RetentionPeriod = { value: number; unit: RetentionUnit; kind: RetentionKind }
 export type RetentionData = Record<string, RetentionPeriod>
 
 export const RETENTION: RetentionData = retentionData as RetentionData
