@@ -1,5 +1,6 @@
 import * as React from "react"
 import { has, richText, t, tRich } from "@/i18n/t"
+import { fillRetention } from "@/legal/retention"
 import { PRIVACY_EMAIL, SECURITY_EMAIL } from "@/lib/links"
 import { LegalToc } from "./LegalToc"
 import "@/styles/ds/components/toc.css"
@@ -10,7 +11,8 @@ export type LegalDoc = "privacy" | "terms" | "cookies" | "security"
 const COLUMNS = ["name", "purpose", "provider", "duration", "category"] as const
 
 // Inside any paragraph or item: {privacyEmail} / {securityEmail} become mailto links, and
-// [text](/path) a link to another legal page (the text carries the grammatical case).
+// [text](/path) a link to another legal page (the text carries the grammatical case); {Key} / {Key_gen} a retention
+// period from src/legal/retention.json.
 const EMAILS: Record<string, React.ReactNode> = {
   privacyEmail: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>,
   securityEmail: <a href={`mailto:${SECURITY_EMAIL}`}>{SECURITY_EMAIL}</a>,
@@ -20,7 +22,7 @@ const DOC_LINK = /\[([^\]]+)\]\((\/[a-z]+)\)/g
 function rich(key: string): React.ReactNode[] {
   const vars: Record<string, React.ReactNode> = { ...EMAILS }
   let n = 0
-  const text = t(key).replace(DOC_LINK, (_m, label: string, href: string) => {
+  const text = fillRetention(t(key)).replace(DOC_LINK, (_m, label: string, href: string) => {
     vars[`doc${n}`] = <a href={href}>{label}</a>
     return `{doc${n++}}`
   })

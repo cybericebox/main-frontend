@@ -1,0 +1,13 @@
+{
+  "PendingAccount": { "value": 30, "unit": "days" },
+  "InactiveAccount": { "value": 3, "unit": "years" },
+  "DeletionRequest": { "value": 30, "unit": "days" },
+  "SessionAfterExpiry": { "value": 90, "unit": "days" },
+  "LabTelemetry": { "value": 90, "unit": "days" },
+  "DeliveryLog": { "value": 180, "unit": "days" },
+  "Backups": { "value": 30, "unit": "days" },
+  "FormAnswersAfterEventEnd": { "value": 1, "unit": "years" },
+  "EventAnalyticsAfterEnd": { "value": 1, "unit": "years" },
+  "SignalHistory": { "value": 1, "unit": "years" },
+  "Analytics": { "value": 14, "unit": "months" }
+}
