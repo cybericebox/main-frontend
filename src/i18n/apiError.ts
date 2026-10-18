@@ -9,25 +9,15 @@
 import errorsUk from "../../messages/errors.uk.json"
 import errorsEn from "../../messages/errors.en.json"
 import { ApiError } from "@/api/client"
-import { isOverloadError } from "@/api/retry"
+import { errorMessageChoice } from "./errorMessage"
 import { t } from "./t"
 
 const uk = errorsUk as Record<string, string>
 const en = errorsEn as Record<string, string>
 
 export function localizedError(err: unknown): string {
-  // 429 (the request limiter or an auth lockout): no per-code text, tell how long to wait.
-  if (err instanceof ApiError && err.status === 429) {
-    return err.retryAfterSeconds
-      ? t("error.tooManyRequests.wait", { seconds: err.retryAfterSeconds })
-      : t("error.tooManyRequests")
-  }
-  if (err instanceof ApiError && err.code != null) {
-    const key = String(err.code)
-    const msg = uk[key] ?? en[key]
-    if (msg) return msg
-  }
-  // The server's overload signal (a 503 with Retry-After, an overload code) without a catalog message; reads were already retried.
-  if (err instanceof ApiError && isOverloadError(err)) return t("error.overloaded")
-  return t("error.generic")
+  if (!(err instanceof ApiError)) return t("error.generic")
+  const choice = errorMessageChoice(err, (key) => Boolean(uk[key] ?? en[key]))
+  if ("catalog" in choice) return uk[choice.catalog] ?? en[choice.catalog]
+  return "vars" in choice ? t(choice.key, choice.vars) : t(choice.key)
 }
