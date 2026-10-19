@@ -19,7 +19,7 @@ export function notificationAccent(tone = "neutral", accentColor = ""): string {
 }
 
 /** The platform's notification layout, shared by the inbox and pop-ins (a copy of admin's). */
-export function NotificationMessageCard({ icon = "bell", tone = "neutral", accentColor = "", title, body, timestamp, unread = false, actions, compact = false }: {
+export function NotificationMessageCard({ icon = "bell", tone = "neutral", accentColor = "", title, body, timestamp, unread = false, needsAction = false, actions, compact = false }: {
   icon?: string
   tone?: string
   accentColor?: string
@@ -27,6 +27,7 @@ export function NotificationMessageCard({ icon = "bell", tone = "neutral", accen
   body?: ReactNode
   timestamp?: ReactNode
   unread?: boolean
+  needsAction?: boolean
   actions?: ReactNode
   compact?: boolean
 }) {
@@ -39,6 +40,7 @@ export function NotificationMessageCard({ icon = "bell", tone = "neutral", accen
     <div className="min-w-0 flex-1">
       {title && <div className="flex min-w-0 items-start gap-2">
         <p className={`min-w-0 flex-1 break-words text-sm leading-snug text-ink ${unread ? "font-semibold" : "font-medium"}`}>{keepBrand(title)}</p>
+        {needsAction && <span className="mt-px shrink-0 rounded px-1.5 py-px text-xs font-medium bg-[var(--ib-warn-bg)] text-[var(--ib-warn)]">{t("inbox.needsAction")}</span>}
         {unread && <span className="mt-px shrink-0 text-xs font-medium text-action">{t("inbox.unreadItem")}</span>}
       </div>}
       {body && <div className={`${title ? "mt-1" : ""} break-words text-sm leading-relaxed text-dim ${compact ? "line-clamp-2" : ""}`}>{body}</div>}

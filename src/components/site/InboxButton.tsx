@@ -22,7 +22,7 @@ import { NotificationMessageCard } from "./NotificationMessageCard"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 import {
   INBOX_TABS, canResolve, countsAfterRead, countsAfterReadAll, countsAfterResolve, formatInboxTime, inTab, inboxQuery, isUnread, orderForTab,
-  bellCount, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
+  bellCount, bellLabel, needsAction, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
   type InboxCounts, type InboxDefaultTab, type InboxMessage as Message, type InboxTab,
 } from "./inboxModel"
 import { keepBrand } from "@/i18n/brand"
@@ -258,7 +258,8 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   }, [openInbox])
 
   const badge = bellCount(unread, counts)
-  const label = badge ? t("inbox.titleUnread", { count: badge }) : t("inbox.title")
+  const bell = bellLabel(unread, counts)
+  const label = t(bell.key, bell.vars)
   const tabs = counts ? INBOX_TABS : []
   const tabHasUnread = items.some(isUnread) || (tab === "all" ? unread > 0 : tab !== "requests" && (counts?.[tab] ?? 0) > 0)
 
@@ -370,7 +371,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
               const count = counts?.[value] ?? 0
               const selected = tab === value
               return <button key={value} type="button" role="tab" id={`inbox-tab-${value}`} tabIndex={selected ? 0 : -1} aria-controls="inbox-tabpanel" aria-selected={selected}
-                aria-label={count > 0 ? t("inbox.tabCount", { name: t(`inbox.tab.${value}`), count }) : undefined}
+                aria-label={count > 0 ? t(value === "requests" ? "inbox.tabCountRequests" : "inbox.tabCount", { name: t(`inbox.tab.${value}`), count }) : undefined}
                 onClick={() => { if (!selected) selectTab(value) }}
                 className={`inline-flex h-8 min-w-0 flex-auto items-center justify-center gap-1 rounded px-2 text-sm focus-visible:outline-2 focus-visible:outline-action ${selected ? "bg-card font-medium text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
                 <span className="truncate">{t(`inbox.tab.${value}`)}</span>
@@ -391,7 +392,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
               <NotificationMessageCard
                 icon={item.Icon} tone={item.Tone} accentColor={item.AccentColor} title={item.Title}
                 body={item.Body ? <span dangerouslySetInnerHTML={{ __html: keepBrand(DOMPurify.sanitize(item.Body, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })) }} /> : undefined}
-                unread={unreadItem} compact
+                unread={unreadItem} needsAction={needsAction(item)} compact
                 timestamp={<span className="flex min-w-0 items-center justify-between gap-2">
                   {resolved
                     ? <Tooltip content={formatInboxTime(item.CreatedAt)} align="start" className="min-w-0">{(describedBy) => <span className="min-w-0 truncate" aria-describedby={describedBy}>{resolvedLine(item)}</span>}</Tooltip>
