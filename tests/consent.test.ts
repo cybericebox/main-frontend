@@ -63,6 +63,41 @@ test("accept all grants analytics_storage only", () => {
   assert.deepEqual(consent.readConsent(), { analytics: true })
 })
 
+test("«Лише необхідні» stores the same choice as saving the panel with analytics off", () => {
+  assert.deepEqual(consent.NECESSARY_ONLY, { analytics: false })
+  const { calls, jar } = fakeBrowser()
+  jar.set("_ga", "GA1.1.1")
+  consent.saveConsent(consent.NECESSARY_ONLY)
+  assert.deepEqual(calls, [["consent", "update", { analytics_storage: "denied" }]])
+  assert.deepEqual(consent.readConsent(), { analytics: false })
+  assert.ok(!jar.has("_ga"))
+  // a stored choice: the banner is gone, for good
+  assert.equal(consent.shouldShowBanner("G-TEST", consent.readConsent()), false)
+})
+
+test("banner (variant B): text link «Налаштувати» opens the panel, then «Лише необхідні» and «Прийняти всі»", async () => {
+  const { readFileSync } = await import("node:fs")
+  const src = readFileSync(new URL("../src/components/site/ConsentBanner.tsx", import.meta.url), "utf8")
+  const banner = src.slice(src.indexOf('if (shown === "banner")'), src.indexOf("return (", src.indexOf('if (shown === "banner")') + 40))
+  const more = banner.indexOf('className="cb-consent__more"')
+  const necessary = banner.indexOf("choose(NECESSARY_ONLY)")
+  const all = banner.indexOf("choose(ACCEPT_ALL)")
+  // DOM order = focus order: text link → «Лише необхідні» → «Прийняти всі»
+  assert.ok(more > 0 && more < necessary && necessary < all)
+  assert.match(banner.slice(more, necessary), /onClick=\{\(\) => setLayer\("panel"\)\}[\s\S]*t\("consent\.customize"\)/)
+  // two equal buttons, both primary
+  assert.match(banner, /<Button variant="primary" onClick=\{\(\) => choose\(NECESSARY_ONLY\)\}>\{t\("consent\.necessaryOnly"\)\}/)
+  assert.match(banner, /<Button variant="primary" onClick=\{\(\) => choose\(ACCEPT_ALL\)\}>\{t\("consent\.acceptAll"\)\}/)
+  // choose() saves and closes the banner
+  assert.match(src, /const choose = \(prefs: ConsentPrefs\) => \{\s*saveConsent\(prefs\)\s*close\(\)/)
+  const css = readFileSync(new URL("../src/styles/consent.css", import.meta.url), "utf8")
+  assert.match(css, /\.cb-consent__actions>\.ib-btn\{height:44px/)
+  for (const lang of ["uk", "en"]) {
+    const m = JSON.parse(readFileSync(new URL(`../messages/${lang}.json`, import.meta.url), "utf8")) as Record<string, string>
+    assert.ok(m["consent.necessaryOnly"] && m["consent.customize"] && m["consent.text"].endsWith("{link}"), lang)
+  }
+})
+
 test("customize: save choice with analytics on grants it", () => {
   const { calls } = fakeBrowser()
   consent.saveConsent({ analytics: true })
@@ -135,9 +170,22 @@ test("every link in the banner spreads POLICY_LINK_ATTRS, says so in aria-label 
   for (const a of anchors) {
     const attrs = a.attributes.properties.map((p) => p.getText(sf))
     assert.ok(attrs.includes("{...POLICY_LINK_ATTRS}"), attrs.join(" "))
-    assert.ok(attrs.some((x) => x.startsWith('aria-label={t("consent.policyLinkNewTab")')), attrs.join(" "))
+    assert.ok(attrs.some((x) => /^aria-label=\{t\("consent\.policyLink(Short)?NewTab"\)/.test(x)), attrs.join(" "))
     assert.ok(attrs.some((x) => x.includes("stopPropagation")), attrs.join(" "))
   }
+})
+
+test("the short phone line: its link name starts with the visible words, both catalogs", async () => {
+  const { readFileSync } = await import("node:fs")
+  for (const lang of ["uk", "en"]) {
+    const m = JSON.parse(readFileSync(new URL(`../messages/${lang}.json`, import.meta.url), "utf8")) as Record<string, string>
+    assert.ok(m["consent.textShort"].startsWith("{link}"), lang)
+    assert.ok(m["consent.policyLinkShortNewTab"].startsWith(m["consent.policyLinkShort"]), lang)
+    assert.ok(m["consent.textShort"].length < m["consent.text"].length, lang)
+  }
+  const css = readFileSync(new URL("../src/styles/consent.css", import.meta.url), "utf8")
+  assert.match(css, /\.cb-consent__short\{display:none\}/)
+  assert.match(css, /@media \(max-width:640px\)\{[^}]*\}[^@]*\.cb-consent__full\{display:none\}\s*\.cb-consent__short\{display:inline\}/)
 })
 
 test("«Налаштування файлів cookie» link opens the panel instead of navigating", () => {

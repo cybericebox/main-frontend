@@ -8,7 +8,7 @@ export function Faq() {
     <section className="pl-sec" id="faq" aria-labelledby="faq-h">
       <div className="pl-wrap pl-faq">
         <h2 id="faq-h">{t("landing.faq.title")}</h2>
-        <Accordion items={ITEMS} size="lg" />
+        <Accordion items={ITEMS} size="lg" name="faq" />
       </div>
     </section>
   )

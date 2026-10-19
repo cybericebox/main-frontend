@@ -1,5 +1,6 @@
 import * as React from "react"
 import { has, richText, t, tRich } from "@/i18n/t"
+import { legalNbsp } from "@/i18n/typo"
 import { fillRetention } from "@/legal/retention"
 import { PRIVACY_EMAIL, SECURITY_EMAIL } from "@/lib/links"
 import { LegalToc } from "./LegalToc"
@@ -22,7 +23,7 @@ const DOC_LINK = /\[([^\]]+)\]\((\/[a-z]+)\)/g
 function rich(key: string): React.ReactNode[] {
   const vars: Record<string, React.ReactNode> = { ...EMAILS }
   let n = 0
-  const text = fillRetention(t(key)).replace(DOC_LINK, (_m, label: string, href: string) => {
+  const text = legalNbsp(fillRetention(t(key))).replace(DOC_LINK, (_m, label: string, href: string) => {
     vars[`doc${n}`] = <a href={href}>{label}</a>
     return `{doc${n++}}`
   })
@@ -79,11 +80,19 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
                   {COLUMNS.map((c) =>
                     c === "name" ? (
                       <th key={c} scope="row">
-                        <code>{t(`${k}.rows.${r}.${c}`)}</code>
+                        {/* one <code> per cookie name: the list wraps between names, never inside one */}
+                        {t(`${k}.rows.${r}.${c}`)
+                          .split(", ")
+                          .map((name, j) => (
+                            <React.Fragment key={name}>
+                              {j > 0 && ", "}
+                              <code>{name}</code>
+                            </React.Fragment>
+                          ))}
                       </th>
                     ) : (
                       <td key={c} data-label={t(`legal.cookies.col.${c}`)}>
-                        {t(`${k}.rows.${r}.${c}`)}
+                        {legalNbsp(t(`${k}.rows.${r}.${c}`))}
                       </td>
                     ),
                   )}
@@ -99,17 +108,20 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
 }
 
 // Legal document (Terms, Privacy, Cookies) from legal.<doc>.* keys: title, «Останнє оновлення»,
-// intro, numbered sections with anchor ids; a section list (sticky on the left from 1024 px, collapsed above the text below).
+// intro, numbered sections with anchor ids; a section list (sticky on the left from 1024 px; below that collapsed
+// under the title and the date, before the text).
 // Navbar/Footer come from the (legal) route-group layout.
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   const sections = count((i) => `legal.${doc}.s${i}.heading`)
   return (
     <article className="lg-doc">
       <div className="lg-doc__grid">
-        <LegalToc title={t("legal.toc")} items={sections.map((n) => ({ id: `s${n}`, label: t("legal.tocItem", { n, heading: t(`legal.${doc}.s${n}.heading`) }) }))} />
-        <div className="lg-doc__body">
+        <header className="lg-doc__head">
           <h1>{t(`legal.${doc}.title`)}</h1>
           <p className="lg-doc__updated">{t("legal.updated", { date: t(`legal.${doc}.updated`) })}</p>
+        </header>
+        <LegalToc title={t("legal.toc")} items={sections.map((n) => ({ id: `s${n}`, label: t("legal.tocItem", { n, heading: t(`legal.${doc}.s${n}.heading`) }) }))} />
+        <div className="lg-doc__body">
           {has(`legal.${doc}.intro`) && <p className="lg-doc__intro">{rich(`legal.${doc}.intro`)}</p>}
           {sections.map((n) => (
             <Section key={n} doc={doc} n={n} />

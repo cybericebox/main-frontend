@@ -13,6 +13,12 @@
 .pl-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--pl-fade);pointer-events:none;
   background:linear-gradient(to bottom,color-mix(in srgb,var(--pl-tone) 0%,transparent),var(--pl-tone))}
 @media (min-width:1600px){.pl-hero{--pl-fade:160px}}
+/* light, two columns up to 1440: the pool is close to the header there — a shorter solid core and a soft top
+   edge, so the brand mass never butts against the white bar */
+@media (min-width:981px) and (max-width:1440px){
+  .pl-hero{--pl-pool:linear-gradient(to bottom,color-mix(in srgb,var(--ib-hero) 70%,transparent),transparent 160px),
+    radial-gradient(ellipse 72% 125% at 100% 0%,var(--ib-brand) 0%,var(--ib-brand) 34%,color-mix(in srgb,var(--ib-brand) 72%,var(--ib-hero)) 50%,color-mix(in srgb,var(--ib-brand) 40%,var(--ib-hero)) 64%,color-mix(in srgb,var(--ib-brand) 14%,var(--ib-hero)) 80%,var(--ib-hero) 100%)}
+}
 /* both columns centre on the same axis above the fade; the text column never reaches the window —
    h1 scales with the column (container units), 32px air on the right */
 .pl-main{container-type:inline-size;display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 32px var(--pl-fade) var(--pl-gut)}
@@ -50,6 +56,15 @@
 
 /* labs */
 .pl-labs{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px;align-items:start}
+/* the lab scheme never scrolls inside its card: the wide one scales down with its column (no 600px floor),
+   phones get the column layout (Topology.tsx) */
+.ib-topo .ib-topo__wide{min-width:0}
+.ib-topo .ib-topo__tall{display:none;min-width:0;max-width:420px;margin:0 auto}
+@media (max-width:640px){
+  .ib-topo .ib-topo__wide{display:none}
+  .ib-topo .ib-topo__tall{display:block}
+  .ib-topo .ib-topo__term{white-space:pre-wrap;font-size:var(--ib-fs-12)}   /* the second column wraps under the first */
+}
 .pl-labs h2{max-width:10ch}
 .pl-feat{margin:var(--ib-10) 0 0;border-top:1px solid var(--ib-line)}
 .pl-feat div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}

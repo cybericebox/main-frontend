@@ -5,6 +5,14 @@
 .cb-consent:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 .cb-consent a{color:var(--ib-ink);text-decoration:underline;text-underline-offset:3px}
 .cb-consent__text{flex:1;min-width:0}
+/* phones show the short line (the hidden one is display:none, so out of the tab order too) */
+.cb-consent__short{display:none}
+/* «Політика файлів cookie · Налаштувати»: the button reads like the link beside it */
+.cb-consent__sep{padding:0 6px;color:var(--ib-faint)}
+.cb-consent__more{display:inline;padding:0;border:0;background:none;color:var(--ib-ink);font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.cb-consent__more:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px;border-radius:2px}
+/* first layer: two equal 44px buttons */
+.cb-consent__actions>.ib-btn{height:44px;padding:0 var(--ib-4);font-size:var(--ib-fs-14)}
 .cb-consent__actions{display:flex;align-items:center;gap:var(--ib-2);flex:none}
 
 .cb-consent--panel{display:block;max-width:360px;max-height:calc(100dvh - var(--ib-8));overflow-y:auto;padding:var(--ib-5)}
@@ -31,7 +39,13 @@
 @media (max-width:640px){
   .cb-consent{flex-direction:column;align-items:stretch;gap:var(--ib-3);left:var(--ib-2);right:var(--ib-2);bottom:var(--ib-2)}
   .cb-consent__actions>.ib-btn{flex:1}
+  .cb-consent__full{display:none}
+  .cb-consent__short{display:inline}
+  .cb-consent{padding:var(--ib-4)}
+  .cb-consent__text{font-size:var(--ib-fs-13)}   /* the short line plus «· Налаштувати» fits one line from 390 */
 }
+/* touch: the panel buttons at 44px too */
+@media (pointer:coarse){.cb-consent .ib-btn{height:44px;padding:0 var(--ib-4)}}
 
 /* «Налаштування файлів cookie»: reads as a footer link */
 .cb-consent-link{display:inline-flex;align-items:center;min-height:24px;padding:0;border:0;background:none;color:var(--ib-dim);font:inherit;font-size:var(--ib-fs-14);cursor:pointer}
