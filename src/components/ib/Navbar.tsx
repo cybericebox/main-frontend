@@ -57,6 +57,8 @@ export function Navbar({
     }
 
     const update = () => {
+      // the bar grew past the phone layout: the toggle is gone, so is the panel
+      if (root.classList.contains("is-open") && !toggle.offsetWidth) setOpen(false, false)
       const wasOpen = !menu.hidden
       closeMenu(false)
       items.forEach((li) => (li.hidden = false))
@@ -94,8 +96,21 @@ export function Navbar({
       if (wasOpen) openMenu()
     }
 
+    // The page behind the open panel does not scroll; the scrollbar's width is kept as padding so nothing jumps.
+    const html = document.documentElement
+    const lockScroll = (on: boolean) => {
+      if (on) {
+        const bar = window.innerWidth - html.clientWidth
+        html.style.overflow = "hidden"
+        if (bar > 0) html.style.paddingRight = `${bar}px`
+      } else {
+        html.style.overflow = ""
+        html.style.paddingRight = ""
+      }
+    }
     const setOpen = (on: boolean, focusToggle: boolean) => {
       root.classList.toggle("is-open", on)
+      lockScroll(on)
       toggle.setAttribute("aria-expanded", String(on))
       toggle.setAttribute("aria-label", on ? t("landing.nav.closeMenu") : t("landing.nav.menu"))
       if (focusToggle) toggle.focus()
@@ -130,11 +145,17 @@ export function Navbar({
     }
     const onDocClick = (e: MouseEvent) => {
       if (!more.contains(e.target as Node)) closeMenu(false)
+      // a tap outside the bar and the panel (the scrim, or anything else) closes the mobile panel
+      const target = e.target as HTMLElement
+      if (root.classList.contains("is-open") && !target.closest(".ib-navbar__bar, .ib-navbar__panel")) setOpen(false, true)
     }
     const onToggle = () => setOpen(!root.classList.contains("is-open"), false)
     // Close the mobile panel after a jump to an anchor.
     const onPanelClick = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest("a")) setOpen(false, false)
+      if ((e.target as HTMLElement).closest("a")) {
+        setOpen(false, false)
+        window.setTimeout(() => toggle.focus(), 0) // after the anchor jump has moved focus
+      }
     }
 
     moreBtn.addEventListener("click", onMoreClick)
@@ -177,6 +198,7 @@ export function Navbar({
 
     return () => {
       alive = false
+      lockScroll(false)
       window.removeEventListener("scroll", onScroll)
       if (frame) window.cancelAnimationFrame(frame)
       ro.disconnect()
