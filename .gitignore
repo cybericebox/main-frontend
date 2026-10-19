@@ -50,3 +50,4 @@ certificates
 /.agents/
 /graphify-out/
 /.graphify/
+.worktrees/
