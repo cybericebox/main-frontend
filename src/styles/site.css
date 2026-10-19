@@ -39,6 +39,12 @@ main:focus{outline:none}
 .ib-navbar.ib-navbar--platform .ib-navbar__link:hover{color:var(--ib-ink)}
 [data-theme="dark"] .ib-navbar.ib-navbar--platform .ib-navbar__link{color:var(--ib-body)}   /* dim (~6:1) reads too faint on dark surface */
 
+/* touch: 44px targets for the logo link and the menu button */
+@media (pointer:coarse){
+  .ib-navbar.ib-navbar--platform .ib-navbar__brand{min-width:44px;min-height:44px}
+  .ib-navbar.ib-navbar--platform .ib-navbar__toggle{width:44px;height:44px}
+}
+
 /* navbar avatar trigger: avatar only (no chevron) — round, symmetric hit area */
 .ib-navbar .ib-avatar-btn{padding:4px;border-radius:50%}
 

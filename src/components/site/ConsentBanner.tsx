@@ -73,6 +73,13 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
     </a>
   )
 
+  // phones: one short line; the policy link is its first words
+  const policyLinkShort = (
+    <a href={policyHref} {...POLICY_LINK_ATTRS} aria-label={t("consent.policyLinkShortNewTab")} onClick={(e) => e.stopPropagation()}>
+      {t("consent.policyLinkShort")}
+    </a>
+  )
+
   if (stored === "ssr") return null
   const asking = shouldShowBanner(gaId, stored === "none" ? null : { analytics: stored === "granted" })
   const shown = layer ?? (asking ? "banner" : null)
@@ -87,7 +94,8 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
   if (shown === "banner") {
     return (
       <div ref={rootRef} className="cb-consent" role="dialog" aria-modal="false" aria-label={t("consent.label")} aria-live="polite" tabIndex={-1}>
-        <p className="cb-consent__text">{tRich("consent.text", { link: policyLink })}</p>
+        <p className="cb-consent__text cb-consent__text--full">{tRich("consent.text", { link: policyLink })}</p>
+        <p className="cb-consent__text cb-consent__text--short">{tRich("consent.textShort", { link: policyLinkShort })}</p>
         <div className="cb-consent__actions">
           <Button size="sm" onClick={() => setLayer("panel")}>{t("consent.customize")}</Button>
           <Button size="sm" variant="primary" onClick={() => choose(ACCEPT_ALL)}>{t("consent.acceptAll")}</Button>

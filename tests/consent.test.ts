@@ -135,8 +135,18 @@ test("every link in the banner spreads POLICY_LINK_ATTRS, says so in aria-label 
   for (const a of anchors) {
     const attrs = a.attributes.properties.map((p) => p.getText(sf))
     assert.ok(attrs.includes("{...POLICY_LINK_ATTRS}"), attrs.join(" "))
-    assert.ok(attrs.some((x) => x.startsWith('aria-label={t("consent.policyLinkNewTab")')), attrs.join(" "))
+    assert.ok(attrs.some((x) => /^aria-label=\{t\("consent\.policyLink(Short)?NewTab"\)/.test(x)), attrs.join(" "))
     assert.ok(attrs.some((x) => x.includes("stopPropagation")), attrs.join(" "))
+  }
+})
+
+test("the short phone line: its link name starts with the visible words, both catalogs", async () => {
+  const { readFileSync } = await import("node:fs")
+  for (const lang of ["uk", "en"]) {
+    const m = JSON.parse(readFileSync(new URL(`../messages/${lang}.json`, import.meta.url), "utf8")) as Record<string, string>
+    assert.ok(m["consent.textShort"].startsWith("{link}"), lang)
+    assert.ok(m["consent.policyLinkShortNewTab"].startsWith(m["consent.policyLinkShort"]), lang)
+    assert.ok(m["consent.textShort"].length < m["consent.text"].length, lang)
   }
 })
 

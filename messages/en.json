@@ -124,6 +124,7 @@
   "landing.nav.sections": "Sections",
   "landing.nav.home": "Cyber ICE Box, to the top",
   "landing.warmup.submit": "Submit",
+  "landing.warmup.checking": "Checking…",
   "landing.warmup.empty": "Enter a flag in the ICE{…} format",
   "landing.warmup.wrong": "Flag rejected. Check the case and braces.",
   "landing.warmup.trail": "warm-up: robots.txt",
@@ -399,6 +400,9 @@
   "meta.security.description": "How to report a vulnerability in the Cyber ICE Box platform to the team: scope, rules and our commitment.",
   "consent.label": "Cookie consent",
   "consent.text": "We use cookies to make the site work and, with your consent, to improve it. {link}",
+  "consent.textShort": "{link} for the site; analytics with consent.",
+  "consent.policyLinkShort": "Cookies",
+  "consent.policyLinkShortNewTab": "Cookies: the policy (opens in a new tab)",
   "consent.policyLink": "Cookie Policy",
   "consent.policyLinkNewTab": "Cookie Policy (opens in a new tab)",
   "consent.policy": "Details: {link}.",
@@ -431,7 +435,6 @@
   "landing.hero.contests": "CTF contests",
   "a11y.skip": "Skip to content",
   "account.menu": "Account menu: {name}",
-  "landing.labs.topoRegion": "Lab diagram (scrollable)",
   "landing.labs.termRegion": "Lab connection (scrollable)",
   "legal.tocItem": "{n}. {heading}"
 }

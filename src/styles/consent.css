@@ -5,6 +5,7 @@
 .cb-consent:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 .cb-consent a{color:var(--ib-ink);text-decoration:underline;text-underline-offset:3px}
 .cb-consent__text{flex:1;min-width:0}
+.cb-consent__text--short{display:none}
 .cb-consent__actions{display:flex;align-items:center;gap:var(--ib-2);flex:none}
 
 .cb-consent--panel{display:block;max-width:360px;max-height:calc(100dvh - var(--ib-8));overflow-y:auto;padding:var(--ib-5)}
@@ -31,7 +32,11 @@
 @media (max-width:640px){
   .cb-consent{flex-direction:column;align-items:stretch;gap:var(--ib-3);left:var(--ib-2);right:var(--ib-2);bottom:var(--ib-2)}
   .cb-consent__actions>.ib-btn{flex:1}
+  .cb-consent__text--full{display:none}
+  .cb-consent__text--short{display:block}
 }
+/* touch: the regular 44px buttons, not the compact 32px ones */
+@media (pointer:coarse){.cb-consent .ib-btn{height:44px;padding:0 var(--ib-4)}}
 
 /* «Налаштування файлів cookie»: reads as a footer link */
 .cb-consent-link{display:inline-flex;align-items:center;min-height:24px;padding:0;border:0;background:none;color:var(--ib-dim);font:inherit;font-size:var(--ib-fs-14);cursor:pointer}
