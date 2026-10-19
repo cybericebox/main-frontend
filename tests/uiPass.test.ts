@@ -68,5 +68,5 @@ test("touch: 44px targets and a 16px flag field", () => {
   assert.match(read("src/styles/site.css"), /\.ib-navbar__brand\{min-width:44px;min-height:44px\}/)
   assert.match(read("src/styles/site.css"), /\.ib-navbar__toggle\{width:44px;height:44px\}/)
   assert.match(read("src/components/landing/heroChallenge.css"), /pointer:coarse\)\{\s*\.hc-card__form \.ib-input\{font-size:16px\}\s*\.hc-card__close\{width:44px;height:44px/)
-  assert.match(read("src/styles/consent.css"), /pointer:coarse\)\{\.cb-consent \.ib-btn\{height:44px/)
+  assert.match(read("src/styles/consent.css"), /pointer:coarse\)\{\.cb-consent \.ib-btn\{height:44px/)   // the panel; the banner is 44px everywhere
 })

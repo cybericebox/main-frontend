@@ -5,6 +5,7 @@ import { Button } from "@/components/ib/Button"
 import { t, tRich } from "@/i18n/t"
 import {
   ACCEPT_ALL,
+  NECESSARY_ONLY,
   CONSENT_CHANGE_EVENT,
   CONSENT_OPEN_EVENT,
   POLICY_LINK_ATTRS,
@@ -27,7 +28,8 @@ const snapshot = () => {
 const serverSnapshot = () => "ssr"
 
 // Cookie consent in two layers, fixed to the bottom, non-blocking.
-// 1. Banner: a general line, «Прийняти всі» and «Налаштувати».
+// 1. Banner: a general line with the policy link and «Налаштувати» (opens the panel), then two equal buttons:
+//    «Лише необхідні» and «Прийняти всі» (refusing takes one step, like accepting).
 // 2. Panel: categories (Необхідні — always on; Аналітика — off by default),
 //    «Зберегти вибір» and «Прийняти всі».
 // Shown when GA is configured and no choice exists; «Налаштування файлів cookie» opens the panel.
@@ -73,13 +75,6 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
     </a>
   )
 
-  // phones: one short line; the policy link is its first words
-  const policyLinkShort = (
-    <a href={policyHref} {...POLICY_LINK_ATTRS} aria-label={t("consent.policyLinkShortNewTab")} onClick={(e) => e.stopPropagation()}>
-      {t("consent.policyLinkShort")}
-    </a>
-  )
-
   if (stored === "ssr") return null
   const asking = shouldShowBanner(gaId, stored === "none" ? null : { analytics: stored === "granted" })
   const shown = layer ?? (asking ? "banner" : null)
@@ -94,11 +89,16 @@ export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref:
   if (shown === "banner") {
     return (
       <div ref={rootRef} className="cb-consent" role="dialog" aria-modal="false" aria-label={t("consent.label")} aria-live="polite" tabIndex={-1}>
-        <p className="cb-consent__text cb-consent__text--full">{tRich("consent.text", { link: policyLink })}</p>
-        <p className="cb-consent__text cb-consent__text--short">{tRich("consent.textShort", { link: policyLinkShort })}</p>
+        <p className="cb-consent__text">
+          {tRich("consent.text", { link: policyLink })}
+          <span className="cb-consent__sep" aria-hidden="true">·</span>
+          <button type="button" className="cb-consent__more" onClick={() => setLayer("panel")}>
+            {t("consent.customize")}
+          </button>
+        </p>
         <div className="cb-consent__actions">
-          <Button size="sm" onClick={() => setLayer("panel")}>{t("consent.customize")}</Button>
-          <Button size="sm" variant="primary" onClick={() => choose(ACCEPT_ALL)}>{t("consent.acceptAll")}</Button>
+          <Button variant="primary" onClick={() => choose(NECESSARY_ONLY)}>{t("consent.necessaryOnly")}</Button>
+          <Button variant="primary" onClick={() => choose(ACCEPT_ALL)}>{t("consent.acceptAll")}</Button>
         </div>
       </div>
     )

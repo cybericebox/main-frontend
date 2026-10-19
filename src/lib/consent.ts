@@ -27,6 +27,8 @@ export const CONSENT_OPEN_EVENT = "cib:consent-open"
 export const CONSENT_CHANGE_EVENT = "cib:consent-change"
 
 export const ACCEPT_ALL: ConsentPrefs = { analytics: true }
+// «Лише необхідні»: the same choice as saving the panel with every optional category off.
+export const NECESSARY_ONLY: ConsentPrefs = { analytics: false }
 
 export const CONSENT_DEFAULTS: ConsentState = {
   analytics_storage: "denied",
