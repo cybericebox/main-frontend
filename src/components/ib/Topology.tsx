@@ -63,8 +63,10 @@ export function Topology() {
         <b>lab-07</b>
         <span className="ib-num">10.10.0.0/16</span>
       </figcaption>
-      <div className="ib-topo__canvas" role="region" tabIndex={0} aria-label={t("landing.labs.topoRegion")}>
-        <svg viewBox="0 0 720 440" role="img" aria-label={t("landing.labs.topoAria")}>
+      {/* the canvas never scrolls: wide layout from 641px (scales down with its column), a column of the same
+          hosts below that (.ib-topo__wide / .ib-topo__tall, landing.css) */}
+      <div className="ib-topo__canvas">
+        <svg className="ib-topo__wide" viewBox="0 0 720 440" role="img" aria-label={t("landing.labs.topoAria")}>
           <g data-ib-b="" style={step(0)}>
             <rect className="ib-topo__zone" x="168.5" y="16.5" width="535" height="407" rx="8" strokeDasharray="5 4" />
             <text className="ib-topo__note" x="184" y="38">
@@ -190,11 +192,90 @@ export function Topology() {
             </text>
           </g>
         </svg>
+        <TallScheme />
       </div>
       <pre className="ib-topo__term" role="region" tabIndex={0} aria-label={t("landing.labs.termRegion")}>
         <b>$ sudo wg-quick up ./lab-07.conf</b>
         {"\ninterface: wg0   address: 10.66.0.7/32\npeer: vpn-gw     allowed ips: 10.10.0.0/16"}
       </pre>
     </figure>
+  )
+}
+
+// Phones: PC → vpn-gw → r1 → subnets in a column (browser → proxy beside them), same steps and roles as the wide one.
+const TALL_LINKS = ["M249 64V116", "M249 164V224H230", "M200 248V262H320V446H294", "M320 446V510H294"]
+const TALL_ROUTE = "M90 64V116M90 164V224H110M150 248V308"
+const TALL_DELAY = ["-1.5s", "-2.5s", "-3.5s", "-3.5s"]
+
+function TallNode({ x, y, w, h = 48, name, addr, port, on, you, b }: { x: number; y: number; w: number; h?: number; name: string; addr: string; port?: string; on?: boolean; you?: boolean; b: number }) {
+  const top = h > 48 ? 22 : 20
+  return (
+    <g data-ib-b="" style={step(b)}>
+      <rect className={you ? "ib-topo__you" : "ib-topo__node" + (on ? " ib-topo__node--on" : "")} x={x + 0.5} y={y + 0.5} width={w} height={h} rx="6" />
+      <text className={"ib-topo__name" + (you ? " ib-topo__on-brand" : "")} x={x + 14} y={y + top}>
+        {name}
+      </text>
+      <text className={you ? "ib-topo__on-brand-2" : undefined} x={x + 14} y={y + top + 18}>
+        {addr}
+      </text>
+      {port ? (
+        <text className="ib-topo__note" x={x + w - 14} y={y + top} textAnchor="end">
+          {port}
+        </text>
+      ) : null}
+    </g>
+  )
+}
+
+function TallScheme() {
+  return (
+    <svg className="ib-topo__tall" viewBox="0 0 340 584" role="img" aria-label={t("landing.labs.topoAria")}>
+      <g data-ib-b="" style={step(0)}>
+        <rect className="ib-topo__zone" x="8.5" y="84.5" width="323" height="484" rx="8" strokeDasharray="5 4" />
+        <text className="ib-topo__note" x="22" y="104">
+          {t("landing.labs.topoPerimeter")}
+        </text>
+        <rect className="ib-topo__subnet" x="32.5" y="276.5" width="275" height="96" rx="6" strokeDasharray="3 3" />
+        <text className="ib-topo__note" x="46" y="296">
+          {t("landing.labs.topoDmz", { cidr: "10.10.1.0/24" })}
+        </text>
+        <rect className="ib-topo__subnet" x="32.5" y="388.5" width="275" height="164" rx="6" strokeDasharray="3 3" />
+        <text className="ib-topo__note" x="46" y="408">
+          {t("landing.labs.topoInternal", { cidr: "10.10.2.0/24" })}
+        </text>
+      </g>
+      <g data-ib-b="" style={step(LINKS_STEP)}>
+        <g className="ib-topo__link">
+          {TALL_LINKS.map((d) => (
+            <path key={d} d={d} />
+          ))}
+        </g>
+        <g className="ib-topo__route">
+          <path className="ib-topo__draw" d={TALL_ROUTE} />
+        </g>
+        <text className="ib-topo__note" x="98" y="196">
+          wg0
+        </text>
+        <text className="ib-topo__note" x="238" y="258">
+          http
+        </text>
+      </g>
+      <g className="ib-topo__flow ib-topo__flow--link" aria-hidden="true">
+        {TALL_LINKS.map((d, i) => (
+          <path key={d} d={d} style={{ "--ib-flow-delay": TALL_DELAY[i] } as CSSProperties} />
+        ))}
+      </g>
+      <g className="ib-topo__flow ib-topo__flow--route" aria-hidden="true">
+        <path d={TALL_ROUTE} />
+      </g>
+      <TallNode b={1} you x={16} y={16} w={148} name={t("landing.labs.topoYou")} addr="10.66.0.7" />
+      <TallNode b={2} on x={16} y={116} w={148} name="vpn-gw" addr="udp 51820" />
+      <TallNode b={3} on x={110} y={200} w={119} name="r1" addr="10.10.0.1" />
+      <TallNode b={4} on x={46} y={308} w={247} h={52} name="web" addr="10.10.1.10" port=":80 :443" />
+      <TallNode b={5} x={46} y={420} w={247} h={52} name="db" addr="10.10.2.20" port=":5432" />
+      <TallNode b={6} x={46} y={484} w={247} h={52} name="files" addr="10.10.2.31" port=":445" />
+      <TallNode b={7} x={175} y={16} w={148} name={t("landing.labs.topoBrowser")} addr="https" />
+      <TallNode b={8} x={175} y={116} w={148} name="proxy" addr="tcp 443" />
+    </svg>
   )
 }

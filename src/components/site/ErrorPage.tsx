@@ -83,7 +83,8 @@ export function NotFoundPage({ mode }: { mode?: "page" | "block" }) {
       actions={
         <>
           <Button variant="primary" href="/">{t("error.goHome")}</Button>
-          <a className="ib-link" href="#back" onClick={(e) => { e.preventDefault(); goBack() }}>{t("error.page.back")}</a>
+          {/* a ghost button beside the primary one: same height, quieter weight */}
+          <Button variant="ghost" href="#back" onClick={(e) => { e.preventDefault(); goBack() }}>{t("error.page.back")}</Button>
         </>
       }
     />

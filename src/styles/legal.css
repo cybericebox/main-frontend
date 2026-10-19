@@ -1,46 +1,63 @@
 /* Legal documents (/privacy, /terms, /cookies): one reading column on the ds type scale;
-   ≥1024 px a sticky section list on the left (.ib-toc), below it a collapsed list above the text. Tokens only. */
+   ≥1024 px a sticky section list on the left (.ib-toc); below that the title and date, then the collapsed list, then the text. Tokens only. */
 .lg-doc{padding:var(--ib-16) var(--pl-gut) 96px}
 .lg-doc__grid{display:block}
-.lg-doc .ib-toc{position:static;margin-bottom:var(--ib-8);padding:var(--ib-3);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg)}
+.lg-doc .ib-toc{position:static;margin:var(--ib-8) 0;padding:var(--ib-3);border:1px solid var(--ib-line);border-radius:var(--ib-r-lg)}
 .lg-doc .ib-toc summary{margin:0;cursor:pointer}
 .lg-doc .ib-toc details[open] summary{margin-bottom:var(--ib-2)}
-.lg-doc__body{min-width:0;max-width:68ch;overflow-wrap:anywhere}
+/* touch: 44px section links */
+@media (pointer:coarse){.lg-doc .ib-toc__link{display:flex;align-items:center;min-height:44px}}
+.lg-doc__head,.lg-doc__body{min-width:0;max-width:68ch;overflow-wrap:anywhere}
 .lg-doc h1{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
 .lg-doc__updated{margin-top:var(--ib-3);font-size:var(--ib-fs-14);color:var(--ib-faint)}
 .lg-doc__intro{margin-top:var(--ib-8);font-size:18px;line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__body>.lg-doc__intro:first-child{margin-top:0}
 .lg-doc__sec{margin-top:var(--ib-10);padding-top:var(--ib-8);border-top:1px solid var(--ib-line)}
 .lg-doc__sec h2{display:flex;gap:var(--ib-3);font-size:var(--ib-fs-20);letter-spacing:-.015em}
 .lg-doc__sec h2 .ib-num{color:var(--ib-faint);font-weight:var(--ib-w-medium)}
-.lg-doc__sec p{margin-top:var(--ib-3);font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
+.lg-doc__sec p{margin-top:var(--ib-3);font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body);text-wrap:pretty}
 .lg-doc__intro a,.lg-doc__sec a{color:var(--ib-ink);text-decoration:underline;text-underline-offset:3px}
 .lg-doc__items{margin-top:var(--ib-3);padding:0;list-style:none;font-size:var(--ib-fs-16);line-height:var(--ib-lh-body);color:var(--ib-body)}
-.lg-doc__items li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:var(--ib-2)}
+.lg-doc__items li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:var(--ib-2);text-wrap:pretty}
 .lg-doc__items li+li{margin-top:var(--ib-2)}
 .lg-doc__items .ib-num{color:var(--ib-faint);font-variant-numeric:tabular-nums}
+/* cookie table (≥1024): names wrap between <code>s, never inside a word; every column keeps a readable width */
 .lg-doc__table{margin-top:var(--ib-4);overflow-x:auto;border:1px solid var(--ib-line);border-radius:var(--ib-r)}
 .lg-doc__table table{width:100%;border-collapse:collapse;font-size:var(--ib-fs-14);line-height:1.45}
-.lg-doc__table th,.lg-doc__table td{padding:var(--ib-3);text-align:left;vertical-align:top;border-top:1px solid var(--ib-line);color:var(--ib-body)}
+.lg-doc__table th,.lg-doc__table td{padding:var(--ib-3);text-align:left;vertical-align:top;border-top:1px solid var(--ib-line);color:var(--ib-body);overflow-wrap:normal}
 .lg-doc__table thead th{border-top:0;color:var(--ib-dim);font-weight:var(--ib-w-medium);white-space:nowrap}
-.lg-doc__table tbody th{font-weight:var(--ib-w-regular)}
+.lg-doc__table tbody th{min-width:8em;font-weight:var(--ib-w-regular)}
+.lg-doc__table td:nth-of-type(1){min-width:11em}   /* purpose */
+.lg-doc__table td:nth-of-type(3){min-width:7em}    /* duration */
 .lg-doc__table code{font-family:var(--ib-mono);font-size:var(--ib-fs-13);color:var(--ib-ink);white-space:nowrap}
 .lg-doc__table:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 .lg-doc__contact{margin-top:var(--ib-12);padding-top:var(--ib-6);border-top:1px solid var(--ib-line);color:var(--ib-dim);font-size:var(--ib-fs-14)}
 @media (min-width:1024px){
-  .lg-doc__grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:72px;align-items:start}
-  .lg-doc .ib-toc{position:sticky;margin:0;padding:0;border:0;--ib-toc-top:calc(var(--ib-16) + var(--ib-6))}
+  /* the list spans both rows on the left: title + date, then the text */
+  .lg-doc__grid{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:72px;align-items:start}
+  .lg-doc .ib-toc{grid-column:1;grid-row:1/span 2;position:sticky;margin:0;padding:0;border:0;--ib-toc-top:calc(var(--ib-16) + var(--ib-6))}
+  .lg-doc__head,.lg-doc__body{grid-column:2}
+  .lg-doc__body>.lg-doc__intro:first-child{margin-top:var(--ib-8)}
   .lg-doc .ib-toc summary{pointer-events:none;list-style:none}
   .lg-doc .ib-toc summary::-webkit-details-marker{display:none}
+}
+/* below 1024: the cookie table as one card per row, column names as labels */
+@media (max-width:1023px){
+  .lg-doc__table{border:0;overflow:visible}
+  .lg-doc__table thead{display:none}
+  .lg-doc__table tr{display:block;padding:var(--ib-3) 0;border-top:1px solid var(--ib-line)}
+  .lg-doc__table th,.lg-doc__table td{display:block;min-width:0;padding:var(--ib-1) 0;border:0}
+  .lg-doc__table tbody th{min-width:0}
+  .lg-doc__table td::before{content:attr(data-label);display:block;color:var(--ib-faint);font-size:var(--ib-fs-13)}
 }
 @media (max-width:640px){
   .lg-doc{padding:var(--ib-10) var(--pl-gut) 72px}
   .lg-doc h1{font-size:36px}
   .lg-doc__intro{font-size:var(--ib-fs-16)}
-  /* cookie table: one card per row, column names as labels */
-  .lg-doc__table{border:0;overflow:visible}
-  .lg-doc__table thead{display:none}
-  .lg-doc__table tr{display:block;padding:var(--ib-3) 0;border-top:1px solid var(--ib-line)}
-  .lg-doc__table th,.lg-doc__table td{display:block;padding:var(--ib-1) 0;border:0}
   .lg-doc__table code{white-space:normal;overflow-wrap:anywhere}
-  .lg-doc__table td::before{content:attr(data-label);display:block;color:var(--ib-faint);font-size:var(--ib-fs-13)}
+}
+/* narrow phones: a narrower number column, so the text gets the width */
+@media (max-width:430px){
+  .lg-doc__items li{grid-template-columns:2.7em minmax(0,1fr);gap:var(--ib-1)}
+  .lg-doc__items .ib-num{font-size:var(--ib-fs-14)}
 }

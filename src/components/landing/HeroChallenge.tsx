@@ -39,12 +39,13 @@ const SOLVED_BEFORE = 3
 const COMPACT_QUERY = "(max-width: 640px), (pointer: coarse)"
 
 /* display text of the window address: this year's event on the event domain (not a link) */
-const eventHost = (year: number, host: string) => "ctf" + year + "." + host + "/challenges"
+const eventHost = (year: number, host: string) => "ctf" + year + "." + host
+const URL_PATH = "/challenges"
 const SSR_URL = eventHost(new Date().getFullYear(), EVENT_DOMAIN)
 
 /* category and tile texts: landing.ch.cats.<cat>, landing.ch.tiles.<name> */
 const CATS = ["web", "pwn", "crypto", "forensics"]
-/* 8 tiles (2 rows); the warm-up tile (`warm`) is a real button and takes the warm-up texts; ≤640px shows the first 6 */
+/* 8 tiles (2 rows); the warm-up tile (`warm`) is a real button and takes the warm-up texts; ≤640px shows the first 4 */
 const TILES: { cat: string; name: string; points: number; solved?: boolean; warm?: boolean }[] = [
   { cat: "web", name: "jwt", points: 250, solved: true },
   { cat: "", name: "warm", points: 100, warm: true }, // 2nd: never cut off when the window bleeds off the right edge
@@ -250,9 +251,15 @@ export function HeroChallenge() {
           />
           {error && <p id="warmup-error" className="hc-card__field-error" role="alert">{error}</p>}
           </div>
-          <Button type="submit" variant="primary" disabled={done || checking} aria-busy={checking || undefined}>
-            {checking ? <BrandLoading inline label={t("common.loading")} /> : null}
-            {t("landing.warmup.submit")}
+          <Button type="submit" variant="primary" disabled={done} aria-disabled={checking || undefined} aria-busy={checking || undefined}>
+            {/* both labels share one cell, so the button keeps the width of the longer one */}
+            <span className="hc-card__submit">
+              <span className={checking ? "is-off" : undefined}>{t("landing.warmup.submit")}</span>
+              <span className={checking ? undefined : "is-off"}>
+                {checking ? <BrandLoading inline label={t("landing.warmup.checking")} /> : null}
+                {t("landing.warmup.checking")}
+              </span>
+            </span>
           </Button>
         </form>
         <p id="warmup-msg" className={"hc-card__msg" + (done ? " ib-status ib-status--ok" : "")} role="status">
@@ -294,14 +301,21 @@ export function HeroChallenge() {
             }}
           >
             <div className="hc-win__bar" aria-hidden="true">
-              <span>{url}</span>
+              {/* phones drop the path, so the host is never cut */}
+              <span>
+                {url}
+                <span className="hc-win__path">{URL_PATH}</span>
+              </span>
             </div>
             <div className="hc-board">
               <div className="hc-board__head" aria-hidden="true">
                 <h3>{t("landing.ch.board")}</h3>
                 <span>
                   {tRich("landing.ch.solvedOf", {
-                    count: <span className="ib-num">{t("landing.ch.count", { solved: SOLVED_BEFORE + (done ? 1 : 0), total: TOTAL })}</span>,
+                    count: tRich("landing.ch.count", {
+                      solved: <span className="ib-num">{SOLVED_BEFORE + (done ? 1 : 0)}</span>,
+                      total: <span className="ib-num">{TOTAL}</span>,
+                    }),
                   })}
                 </span>
               </div>

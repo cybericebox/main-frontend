@@ -65,7 +65,7 @@ test.describe("static landing — API down", () => {
     await expect(input).toBeFocused()
     await input.fill("ICE{nope}")
     await page.getByRole("button", { name: "Здати" }).click()
-    await expect(page.locator("#warmup-msg")).toContainText("Прапор не прийнято")
+    await expect(page.locator("#warmup-error")).toContainText("Прапор не прийнято") // the error sits under the field
 
     await input.fill(FLAG)
     await page.getByRole("button", { name: "Здати" }).click()
@@ -148,6 +148,32 @@ test.describe("static landing — API down", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Політика конфіденційності")
     await expect(page.locator("#s1")).toHaveCount(1)
     await expect(page.locator(".ib-navbar__tabs a").first()).toHaveAttribute("href", "/#labs")
+  })
+
+  test("FAQ keeps one answer open", async ({ page }) => {
+    await page.goto("/")
+    const questions = page.locator("#faq summary")
+    await questions.nth(0).click()
+    await questions.nth(2).click()
+    await expect(page.locator("#faq details[open]")).toHaveCount(1)
+    await expect(page.locator("#faq details").nth(2)).toHaveAttribute("open", "")
+  })
+
+  test("legal TOC marks the section being read", async ({ page }) => {
+    await page.goto("/privacy")
+    await page.evaluate(() => window.scrollTo({ top: document.getElementById("s4")!.getBoundingClientRect().top + window.scrollY - 80, behavior: "instant" }))
+    await expect(page.locator('.ib-toc__link[aria-current="location"]')).toHaveAttribute("href", "#s4")
+  })
+
+  test.describe("phone", () => {
+    test.use({ viewport: { width: 320, height: 700 } })
+    test("the lab scheme never scrolls sideways", async ({ page }) => {
+      await page.goto("/")
+      const canvas = page.locator(".ib-topo__canvas")
+      await expect(page.locator(".ib-topo__tall")).toBeVisible()
+      await expect(page.locator(".ib-topo__wide")).toBeHidden()
+      expect(await canvas.evaluate((el) => el.scrollWidth - el.clientWidth)).toBe(0)
+    })
   })
 })
 

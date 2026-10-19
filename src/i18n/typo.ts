@@ -11,3 +11,12 @@ const BEFORE_DASH = / —/g
 export function nbsp(text: string): string {
   return text.replace(AFTER_SHORT, `$1${NB}`).replace(BEFORE_DASH, `${NB}—`)
 }
+
+// Legal pages read in a narrow column: there only 1–2-letter prepositions and single letters stay glued
+// (the dash glue stays too), so long lines are not pushed down and the right edge is smoother.
+const LEGAL_GLUE = new Set(["і", "й", "в", "у", "з", "а", "о", "із", "зі", "до", "на", "по", "за"])
+const GLUED = new RegExp(`(?<![\\p{L}\\p{N}'’ʼ\\-])(${SHORT.join("|")})${NB}`, "giu")
+
+export function legalNbsp(text: string): string {
+  return text.replace(GLUED, (m, word: string) => (LEGAL_GLUE.has(word.toLowerCase()) ? m : word + " "))
+}

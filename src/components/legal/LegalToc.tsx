@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { currentSection } from "./tocSpy"
 
 const WIDE = "(min-width: 1024px)"
 // a section is current once its top has passed this line (below the sticky navbar)
@@ -8,7 +9,7 @@ const LINE = 120
 
 // Section list of a legal document. From 1024px it is the sticky list on the left; below that it collapses into a
 // <details> above the text (open in the static HTML, closed on mount, so the desktop list never depends on JS).
-// The section being read gets aria-current="location".
+// The section being read gets aria-current="location" (tocSpy.ts), updated on scroll.
 export function LegalToc({ title, items }: { title: string; items: { id: string; label: string }[] }) {
   const detailsRef = useRef<HTMLDetailsElement>(null)
   const [current, setCurrent] = useState("")
@@ -28,12 +29,10 @@ export function LegalToc({ title, items }: { title: string; items: { id: string;
     let frame = 0
     const update = () => {
       frame = 0
-      let id = ""
-      for (const item of items) {
-        const sec = document.getElementById(item.id)
-        if (sec && sec.getBoundingClientRect().top <= LINE) id = item.id
-      }
-      setCurrent(id)
+      const tops = items.map((item) => document.getElementById(item.id)?.getBoundingClientRect().top ?? Infinity)
+      const root = document.documentElement
+      const atEnd = window.scrollY > 0 && window.innerHeight + window.scrollY >= root.scrollHeight - 2
+      setCurrent(items[currentSection(tops, LINE, window.innerHeight, atEnd)]?.id ?? "")
     }
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update)

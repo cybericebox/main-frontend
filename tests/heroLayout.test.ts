@@ -10,7 +10,7 @@ test("the warm-up card offset never goes negative", () => {
 })
 
 test("the bleeding hero window fades out instead of clipping mid-word", () => {
-  assert.match(hero, /@media \(min-width:981px\) and \(max-width:1359px\)\{\s*\.hc\{[^}]*mask-image:linear-gradient/)
+  assert.match(hero, /@media \(min-width:981px\) and \(max-width:1359px\)\{\s*\.hc-win\{[^}]*mask-image:linear-gradient/)
 })
 
 test("the cookie settings link keeps a 24px target (44px on touch)", () => {
