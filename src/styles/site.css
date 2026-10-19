@@ -62,3 +62,9 @@ main:focus{outline:none}
   .site-nav-slot>.ib-dropdown{position:static}
   .site-nav-slot>.ib-dropdown.ib-dropdown--end>.account-menu{top:60px;right:16px;left:auto}
 }
+
+/* Phone menu: always an overlay under the header (never pushes the page), with a scrim below it; one behaviour at the top and when scrolled */
+@container ib-navbar (max-width:760px){
+  .ib-navbar__panel{position:absolute;top:calc(100% + 1px);left:0;right:0;max-height:calc(100dvh - 100% - 1px);border-top:0;overflow-y:auto;overscroll-behavior:contain;background:var(--ib-surface);border-bottom:1px solid var(--ib-line)}
+}
+.ib-navbar.is-open::after{content:"";position:absolute;top:calc(100% + 1px);left:0;right:0;height:100vh;z-index:-1;background:color-mix(in srgb,var(--ib-ink) 40%,transparent)}
