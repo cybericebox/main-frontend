@@ -3,6 +3,7 @@
 import "@/app/globals.css"
 import "@/styles/site.css"
 import { useEffect } from "react"
+import { installChunkRecovery } from "@/lib/chunkRecovery"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { ServerErrorPage } from "@/components/site/ErrorPage"
@@ -13,6 +14,7 @@ import { t } from "@/i18n/t"
 // global styles and the saved theme (cib_theme cookie).
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
+    installChunkRecovery(window).recover(error)
     // hydration keeps a server-rendered data-theme; set the saved theme after mount
     applyTheme(readThemeChoice())
     if (process.env.NODE_ENV !== "production") console.error(error)
@@ -28,7 +30,7 @@ export default function GlobalError({ error, retry }: { error: Error & { digest?
         <title>{t("error.page.title")}</title>
       </head>
       <body suppressHydrationWarning>
-        <ServerErrorPage onRetry={retry} error={error} />
+        <ServerErrorPage onRetry={() => installChunkRecovery(window).retry(error, retry)} error={error} />
       </body>
     </html>
   )

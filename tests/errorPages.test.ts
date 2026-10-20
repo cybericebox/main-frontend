@@ -64,7 +64,8 @@ test("error and global-error use the error page, retry the segment and log only 
   for (const file of ["src/app/error.tsx", "src/app/global-error.tsx"]) {
     const code = source(file)
     assert.match(code, /^"use client"/, `${file} must be a client component`)
-    assert.match(code, /<ServerErrorPage onRetry=\{retry\} error=\{error\} \/>/)
+    assert.match(code, /<ServerErrorPage onRetry=\{\(\) => installChunkRecovery\(window\)\.retry\(error, retry\)\} error=\{error\} \/>/)
+    assert.match(code, /installChunkRecovery\(window\)\.recover\(error\)/)
     assert.match(code, /process\.env\.NODE_ENV !== "production"\) console\.error\(error\)/)
     assert.doesNotMatch(code, /error\.(message|stack)/, `${file} must not show error details`)
   }
