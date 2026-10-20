@@ -394,7 +394,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
                 </span>}
                 actions={href || unreadItem || canResolve(item) ? <>
                   {href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline after:absolute after:inset-0 after:content-['']">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : null}
-                  {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
+                  {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="relative z-10 inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
                     {resolving === item.ID ? <BrandLoading compact label={t("common.loading")} /> : <Icon name="check" />}{t("inbox.resolve")}
                   </button>}
                 </> : undefined}
