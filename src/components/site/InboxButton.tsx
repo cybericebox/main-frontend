@@ -22,7 +22,7 @@ import { NotificationMessageCard } from "./NotificationMessageCard"
 import { NotificationPopIn, popInDuration } from "./NotificationPopIn"
 import {
   INBOX_TABS, canResolve, countsAfterRead, countsAfterReadAll, countsAfterResolve, formatInboxTime, inTab, inboxQuery, isUnread, orderForTab,
-  bellCount, bellLabel, needsAction, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
+  bellCount, bellLabel, safeHref, needsAction, parseCounts, parseOtherEvents, resolutionKey, resolveDefaultTab, resolverName,
   type InboxCounts, type InboxDefaultTab, type InboxMessage as Message, type InboxTab,
 } from "./inboxModel"
 import { keepBrand } from "@/i18n/brand"
@@ -47,13 +47,6 @@ export type InboxButtonProps = {
 function EventLabel({ name }: { name?: string | null }) {
   if (!name) return null
   return <span className="max-w-[60%] shrink-0 truncate rounded bg-soft px-1.5 py-0.5 text-xs font-medium text-dim">{name}</span>
-}
-
-function safeHref(value: string): string | null {
-  const href = value.trim()
-  if (href.startsWith("/") && !href.startsWith("//")) return href
-  if (href.startsWith("#") || /^https?:\/\/|^mailto:/i.test(href)) return href
-  return null
 }
 
 function resolvedLine(item: Message): string {
@@ -388,7 +381,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
             const href = safeHref(item.Link ?? "")
             const resolved = !!item.ResolvedAt
             const unreadItem = isUnread(item)
-            return <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined} className={`px-4 py-3 hover:bg-hover ${resolved ? "opacity-60" : ""}`}>
+            return <li key={item.ID} ref={index === items.length - 1 ? lastItemRef : undefined} className={`relative px-4 py-3 hover:bg-hover ${resolved ? "opacity-60" : ""} ${href ? "cursor-pointer" : ""}`}>
               <NotificationMessageCard
                 icon={item.Icon} tone={item.Tone} accentColor={item.AccentColor} title={item.Title}
                 body={item.Body ? <span dangerouslySetInnerHTML={{ __html: keepBrand(DOMPurify.sanitize(item.Body, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })) }} /> : undefined}
@@ -400,7 +393,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
                   {!event && <EventLabel name={item.EventName} />}
                 </span>}
                 actions={href || unreadItem || canResolve(item) ? <>
-                  {href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : null}
+                  {href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline after:absolute after:inset-0 after:content-['']">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : null}
                   {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
                     {resolving === item.ID ? <BrandLoading compact label={t("common.loading")} /> : <Icon name="check" />}{t("inbox.resolve")}
                   </button>}
