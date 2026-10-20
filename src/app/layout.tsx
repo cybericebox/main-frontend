@@ -7,6 +7,8 @@ import { GeistMono } from "geist/font/mono"
 import { ApiProvider } from "@/components/ApiProvider"
 import { Analytics } from "@/components/site/Analytics"
 import { TooltipClamp } from "@/components/ib/TooltipClamp"
+import { ChunkRecovery } from "@/components/ChunkRecovery"
+import { CHUNK_RECOVERY_BOOT_SCRIPT } from "@/lib/chunkRecovery"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 import { pageMetadata } from "@/lib/metadata"
 import { t } from "@/i18n/t"
@@ -28,12 +30,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         // data-theme is set by the boot script before hydration — hence suppressHydrationWarning.
         <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
             <head>
+                {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
+                <script dangerouslySetInnerHTML={{ __html: CHUNK_RECOVERY_BOOT_SCRIPT }} />
                 {/* static constant, no user input — runs before paint to avoid a light flash */}
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
             </head>
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
+                <ChunkRecovery />
                 {/* first in the tab order: jumps over the navbar to <main id="main"> */}
                 <a className="ib-skip" href="#main">{t("a11y.skip")}</a>
                 <ApiProvider>{children}</ApiProvider>
