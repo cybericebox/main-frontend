@@ -14,11 +14,11 @@ async function mockApi(page: Page, signedIn: boolean) {
     if (path === "/api/auth/me") {
       status = signedIn ? 200 : 401
       data = signedIn ? { FirstName: "Local", LastName: "Fixture", Email: "fixture@example.com", Role: "user" } : null
-    } else if (path === "/api/notifications/inbox/poll") {
-      data = { Cursor: null, NewInbox: [], UnreadCount: 1 }
+    } else if (path === "/api/notifications/pulse") {
+      data = { Banners: "v1", Inbox: signedIn ? { Cursor: "c1", Unread: 1 } : null }
     } else if (path === "/api/notifications/inbox") {
-      data = { Items: [message], NextCursor: null }
-    } else if (path === "/api/banners") {
+      data = new URL(route.request().url()).searchParams.has("since") ? { Cursor: "c1", Items: [], Unread: 1, Counts: { All: 1, Requests: 0, Personal: 1, Activity: 0 }, OtherEventsCount: 0 } : { Items: [message], NextCursor: null }
+    } else if (path === "/api/notifications/banners") {
       data = []
     }
     await route.fulfill({ status, contentType: "application/json", json: { Status: { Code: 0 }, Data: data } })

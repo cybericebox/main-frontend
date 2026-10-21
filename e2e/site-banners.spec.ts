@@ -9,11 +9,12 @@ for (const width of [1440, 390]) test(`announcements stay bounded above navigati
   let recovering = false
   await page.route("**/api/**", async (route) => {
     const url = new URL(route.request().url())
-    const isBanner = url.pathname === "/api/banners"
+    const isBanner = url.pathname === "/api/notifications/banners"
     if (isBanner) bannerQueries.push(url.search)
+    const isPulse = url.pathname === "/api/notifications/pulse"
     await route.fulfill({
       status: url.pathname === "/api/auth/me" ? 401 : 200,
-      json: { Data: isBanner ? [banner("one", recovering ? "Updated announcement" : firstText, recovering ? 2 : 1), ...Array.from({ length: 9 }, (_, index) => banner(`other${index}`, `Other announcement ${index}: ${"Long announcement text ".repeat(8)}`))] : null },
+      json: { Data: isPulse ? { Banners: recovering ? "v2" : "v1", Inbox: null } : isBanner ? [banner("one", recovering ? "Updated announcement" : firstText, recovering ? 2 : 1), ...Array.from({ length: 9 }, (_, index) => banner(`other${index}`, `Other announcement ${index}: ${"Long announcement text ".repeat(8)}`))] : null },
     })
   })
   await page.goto("/")
@@ -47,6 +48,7 @@ for (const width of [1440, 390]) test(`announcements stay bounded above navigati
   await expect(announcements.getByText(firstText)).toHaveCount(0)
   await expect(announcements.getByText(/Other announcement 1:/)).toBeVisible()
   recovering = true
+  await page.waitForTimeout(5_100) // wake pulses are debounced to one per 5 s
   await page.evaluate(() => window.dispatchEvent(new Event("online")))
   await expect(announcements.getByText("Updated announcement")).toBeVisible()
   expect(bannerQueries.length).toBeGreaterThan(1)

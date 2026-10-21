@@ -3,10 +3,12 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import * as Popover from "@radix-ui/react-popover"
 import { X } from "lucide-react"
-import { apiGet } from "@/api/client"
+import { apiGet, apiPatch } from "@/api/client"
+import { createBannerSync } from "@/lib/pulseLoop"
+import { getPulseLoop, pulseScope } from "@/lib/pulse"
 import { t } from "@/i18n/t"
 import { Tooltip } from "@/components/ib/Tooltip"
-import { BANNER_POLL_MS, bannerHref, bannerLevel, dismissKey, isDismissed, parseBanners, rememberDismissed, type SiteBanner } from "./bannerModel"
+import { bannerHref, bannerLevel, dismissKey, isDismissed, parseBanners, rememberDismissed, type SiteBanner } from "./bannerModel"
 import "@/styles/site-banner.css"
 import { keepBrand } from "@/i18n/brand"
 
@@ -62,7 +64,7 @@ export function SiteBannerList({ banners, onDismiss }: { banners: SiteBanner[]; 
   )
 }
 
-// Site banners: public GET /api/banners (session optional), polled every minute and on tab focus.
+// Site banners: public GET /api/notifications/banners, refetched only when the shared pulse reports a new Banners version.
 // A banner outage never blocks the page: errors are ignored and nothing renders until data arrives.
 export function SiteBanners() {
   const [banners, setBanners] = useState<SiteBanner[]>([])
@@ -70,29 +72,21 @@ export function SiteBanners() {
 
   useEffect(() => {
     let active = true
-    const refresh = () => {
-      if (document.visibilityState === "hidden") return
-      apiGet<unknown>("/api/banners?site=main", undefined, { required: false })
-        .then((data) => { if (active) setBanners(parseBanners(data)) })
-        .catch(() => { /* ignored on purpose */ })
-    }
-    refresh()
-    const timer = window.setInterval(refresh, BANNER_POLL_MS)
-    document.addEventListener("visibilitychange", refresh)
-    window.addEventListener("focus", refresh)
-    window.addEventListener("online", refresh)
-    return () => {
-      active = false
-      window.clearInterval(timer)
-      document.removeEventListener("visibilitychange", refresh)
-      window.removeEventListener("focus", refresh)
-      window.removeEventListener("online", refresh)
-    }
+    const onPulse = createBannerSync(
+      () => apiGet<unknown>(`/api/notifications/banners${pulseScope()}`, undefined, { required: false }),
+      (data) => { if (active) setBanners(parseBanners(data)) },
+    )
+    const unsubscribe = getPulseLoop().subscribe(onPulse)
+    return () => { active = false; unsubscribe() }
   }, [])
 
   const visible = banners.filter((banner) => !dismissed.has(dismissKey(banner)) && !isDismissed(banner))
   const dismiss = (banner: SiteBanner) => {
-    rememberDismissed(banner)
+    if (banner.Kind === "personal") {
+      apiPatch(`/api/notifications/banners/${encodeURIComponent(banner.ID)}/dismiss`, {}, undefined, { required: false })
+        .then(() => getPulseLoop().trigger())
+        .catch(() => { /* the banner returns with the next pulse */ })
+    } else rememberDismissed(banner)
     setDismissed((current) => new Set(current).add(dismissKey(banner)))
   }
   return <SiteBannerList banners={visible} onDismiss={dismiss} />
