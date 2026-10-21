@@ -143,7 +143,7 @@ test("queries carry the category and the event scope", () => {
   assert.equal(inbox.inboxQuery("all"), "")
   assert.equal(inbox.inboxQuery("requests"), "?category=requests")
   assert.equal(inbox.inboxQuery("personal", "ev1"), "?category=personal&event=ev1")
-  assert.equal(inbox.inboxQuery("all", undefined, { since_id: "a" }), "?since_id=a")
+  assert.equal(inbox.inboxQuery("all", undefined, { site: "main", since: "a" }), "?site=main&since=a")
 })
 
 test("resolved line keys exist in both catalogs", () => {
