@@ -203,3 +203,15 @@ test("banners: no fetch before the first pulse; the first pulse fetches and its 
   sync(pulse("v8"))
   assert.equal(calls, 2)
 })
+
+test("inbox: an empty baseline cursor is held as the epoch, so the next round is not another baseline", async () => {
+  const asked: string[] = []
+  const cursor = await mod.drainInbox({
+    target: "c1",
+    cursor: "",
+    fetchSince: async (since) => { asked.push(since); return since === "" ? { Cursor: "", Items: [] as string[] } : { Cursor: "c1", Items: ["new"] } },
+    apply: () => {},
+  })
+  assert.deepEqual(asked, ["", mod.EPOCH_CURSOR])
+  assert.equal(cursor, "c1")
+})

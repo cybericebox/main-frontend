@@ -27,7 +27,7 @@ import {
 } from "./inboxModel"
 import { keepBrand } from "@/i18n/brand"
 import { getPulseLoop, PULSE_SITE } from "@/lib/pulse"
-import { drainInbox, inboxChanged, type Pulse } from "@/lib/pulseLoop"
+import { drainInbox, EPOCH_CURSOR, inboxChanged, type Pulse } from "@/lib/pulseLoop"
 import { STORAGE_INBOX_READ } from "@/lib/storageKeys"
 
 // Dropdown height cap, the same in every app: tune it here.
@@ -182,7 +182,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
           fetchSince: (since) => apiGet<InboxFeed>(`/api/notifications/inbox${scopedSince(eventId, since)}`, undefined, { required: false }),
           apply: async (result) => {
             if (!active) return
-            cursorRef.current = result.Cursor
+            cursorRef.current = result.Cursor || EPOCH_CURSOR
             unreadNow = result.Unread
             const incoming = result.Items ?? []
             const fresh = incoming.filter(isUnread)
