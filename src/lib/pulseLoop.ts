@@ -103,6 +103,9 @@ export function createBannerSync<T>(fetchBanners: () => Promise<T>, apply: (bann
   }
 }
 
+/** Held when the baseline cursor is empty (empty inbox): only the very first request may send an empty since. */
+export const EPOCH_CURSOR = "1970-01-01T00:00:00Z_00000000-0000-0000-0000-000000000000"
+
 export type InboxFeed = { Cursor: string }
 
 /** Asks `since=<cursor>` (empty = baseline) until the returned Cursor equals the pulse cursor; at least one round, bounded. */
@@ -114,10 +117,12 @@ export async function drainInbox<R extends InboxFeed>(opts: {
   maxRounds?: number
 }): Promise<string> {
   let cursor = opts.cursor
+  let since = opts.cursor
   for (let round = 0; round < (opts.maxRounds ?? 5); round++) {
-    const result = await opts.fetchSince(cursor)
+    const result = await opts.fetchSince(since)
     await opts.apply(result)
     cursor = result.Cursor
+    since = cursor || EPOCH_CURSOR
     if (cursor === opts.target) break
   }
   return cursor

@@ -74,8 +74,15 @@ export function rememberDismissed(banner: SiteBanner, storage: StorageLike | nul
   }
 }
 
-/** Tolerant parse of the response: anything that is not a list of banners with text yields nothing. */
+/** Tolerant parse of the response: anything that is not a list of banners with text yields nothing.
+ *  A personal banner with an empty Text falls back to its Title. */
 export function parseBanners(data: unknown): SiteBanner[] {
   if (!Array.isArray(data)) return []
-  return data.filter((item): item is SiteBanner => !!item && typeof item === "object" && typeof item.ID === "string" && typeof item.Text === "string" && item.Text !== "")
+  const out: SiteBanner[] = []
+  for (const item of data) {
+    if (!item || typeof item !== "object" || typeof item.ID !== "string" || typeof item.Text !== "string") continue
+    if (item.Text !== "") out.push(item as SiteBanner)
+    else if (item.Kind === "personal" && typeof item.Title === "string" && item.Title !== "") out.push({ ...item, Text: item.Title } as SiteBanner)
+  }
+  return out
 }
