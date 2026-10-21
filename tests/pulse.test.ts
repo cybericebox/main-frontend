@@ -191,3 +191,15 @@ test("inbox since-loop: one round when already current, bounded when the cursor 
   assert.equal(calls, 3)
   assert.equal(cursor, "n3")
 })
+
+test("banners: no fetch before the first pulse; the first pulse fetches and its version is the stored one", async () => {
+  let calls = 0
+  const sync = mod.createBannerSync(async () => { calls++; return [] }, () => {})
+  await new Promise((resolve) => setImmediate(resolve))
+  assert.equal(calls, 0)
+  sync(pulse("v7"))
+  sync(pulse("v7", "c9"))
+  assert.equal(calls, 1)
+  sync(pulse("v8"))
+  assert.equal(calls, 2)
+})
