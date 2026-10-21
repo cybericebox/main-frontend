@@ -26,14 +26,25 @@ import {
   type InboxCounts, type InboxDefaultTab, type InboxMessage as Message, type InboxTab,
 } from "./inboxModel"
 import { keepBrand } from "@/i18n/brand"
+import { getPulseLoop, PULSE_SITE } from "@/lib/pulse"
+import { drainInbox, EPOCH_CURSOR, inboxChanged, type Pulse } from "@/lib/pulseLoop"
 import { STORAGE_INBOX_READ } from "@/lib/storageKeys"
 
 // Dropdown height cap, the same in every app: tune it here.
 const panelMaxHeight = "max-h-[min(28rem,calc(100vh-6rem))]"
 
-type InboxCursor = { ID: string; CreatedAt: string }
-type InboxPoll = { Cursor: InboxCursor | null; NewInbox: Message[]; UnreadCount: number; Counts?: unknown; OtherEventsCount?: unknown }
-type InboxPage = { Items: Message[]; NextCursor: InboxCursor | null }
+// Cursors are opaque strings now. `since` feed: new items oldest first; `before` list: a page and the next cursor.
+type InboxFeed = { Cursor: string; Items: Message[]; Unread: number; Counts?: unknown; OtherEventsCount?: unknown }
+type InboxPage = { Items: Message[]; NextCursor: string | null }
+
+/** Every inbox request carries the site (and the event on event sites). */
+function scoped(tab: InboxTab, eventId: string | undefined, extra: Record<string, string> = {}): string {
+  return inboxQuery(tab, eventId, { site: PULSE_SITE, ...extra })
+}
+
+function scopedSince(eventId: string | undefined, since: string): string {
+  return scoped("all", eventId, { since })
+}
 // A link here with ?inbox opens the dropdown on arrival (the event site's «Ще N в інших заходах»).
 const OPEN_PARAM = "inbox"
 
@@ -62,7 +73,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   const [popIns, setPopIns] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingOlder, setLoadingOlder] = useState(false)
-  const [olderCursor, setOlderCursor] = useState<InboxCursor | null>(null)
+  const [olderCursor, setOlderCursor] = useState<string | null>(null)
   const [unread, setUnread] = useState(0)
   // null = the backend has no categories yet: the dropdown shows only «Усі».
   const [counts, setCounts] = useState<InboxCounts | null>(null)
@@ -71,11 +82,13 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   // A failed data load (list / poll): shown as the shared LoadError in the list area, never as a bar. `error` above is for actions only.
   const [loadFailure, setLoadFailure] = useState<{ error: unknown } | null>(null)
   const [resolving, setResolving] = useState<string | null>(null)
-  const cursorRef = useRef<InboxCursor | null>(null)
+  const cursorRef = useRef("")
+  // Last synced inbox state; null until the first baseline arrived.
+  const knownRef = useRef<{ cursor: string; unread: number } | null>(null)
   const unreadCountRef = useRef(0)
   const countsRef = useRef<InboxCounts | null>(null)
   const tabRef = useRef<InboxTab>("all")
-  const olderCursorRef = useRef<InboxCursor | null>(null)
+  const olderCursorRef = useRef<string | null>(null)
   const loadingOlderRef = useRef(false)
   const listRevisionRef = useRef(0)
   const openRef = useRef(false)
@@ -97,7 +110,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     loadingOlderRef.current = true
     setLoadingOlder(true)
     try {
-      const query = inboxQuery(current, eventId, { before_id: before.ID, before_at: before.CreatedAt })
+      const query = scoped(current, eventId, { before })
       const page = await apiGet<InboxPage>(`/api/notifications/inbox${query}`, undefined, { required: false })
       if (revision !== listRevisionRef.current) return
       olderCursorRef.current = page.NextCursor
@@ -125,7 +138,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   const refresh = useCallback((): Promise<Message[] | null> => {
     const revision = ++listRevisionRef.current
     const current = tabRef.current
-    return apiGet<InboxPage>(`/api/notifications/inbox${inboxQuery(current, eventId)}`, undefined, { required: false })
+    return apiGet<InboxPage>(`/api/notifications/inbox${scoped(current, eventId)}`, undefined, { required: false })
       .then((page) => {
         if (revision !== listRevisionRef.current) return null
         const list = page?.Items ?? []
@@ -145,78 +158,78 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
       .finally(() => { if (revision === listRevisionRef.current) setLoading(false) })
   }, [eventId])
 
+  const setUnreadCount = useCallback((value: number) => {
+    unreadCountRef.current = value
+    setUnread(value)
+    if (knownRef.current) knownRef.current = { ...knownRef.current, unread: value }
+  }, [])
+
+  // The shared pulse says when the inbox moved (cursor or unread); then `since=<cursor>` fetches only the news.
   useEffect(() => {
     let active = true
-    let initialized = false
-    let polling = false
-    let pending = false
-    const scope = eventId ? { event: eventId } : undefined
-    const poll = async () => {
-      if (!active) return
-      if (polling) { pending = true; return }
-      polling = true
+    let running = false
+    let queued: NonNullable<Pulse["Inbox"]> | null = null
+    knownRef.current = null
+    cursorRef.current = ""
+    const sync = async (target: NonNullable<Pulse["Inbox"]>) => {
+      if (running) { queued = target; return }
+      running = true
       try {
-        if (!initialized) {
-          const baseline = await apiGet<InboxPoll>(`/api/notifications/inbox/poll${inboxQuery("all", undefined, scope)}`, undefined, { required: false })
-          if (!active) return
-          cursorRef.current = baseline.Cursor ?? { ID: "00000000-0000-0000-0000-000000000000", CreatedAt: "1970-01-01T00:00:00Z" }
-          unreadCountRef.current = baseline.UnreadCount
-          setUnread(baseline.UnreadCount)
-          applyCounts(parseCounts(baseline.Counts))
-          setOtherEvents(parseOtherEvents(baseline.OtherEventsCount))
-          initialized = true
-          await refresh()
-          return
-        }
-        const since = cursorRef.current!
-        const query = inboxQuery("all", undefined, { ...scope, since_id: since.ID, since_at: since.CreatedAt })
-        const result = await apiGet<InboxPoll>(`/api/notifications/inbox/poll${query}`, undefined, { required: false })
-        if (!active) return
-        cursorRef.current = result.Cursor ?? since
-        const fresh = (result.NewInbox ?? []).filter(isUnread)
-        if (openRef.current && result.NewInbox?.length) {
-          const current = tabRef.current
-          setItems((previous) => {
-            const known = new Set(previous.map((item) => item.ID))
-            const added = result.NewInbox.filter((item) => !known.has(item.ID) && inTab(item, current)).reverse()
-            return added.length ? orderForTab([...added, ...previous], current) : previous
-          })
-        }
-        let poppable = fresh.filter((item) => popInDuration(item.AutoDismissMs) > 0)
-        if (result.UnreadCount !== unreadCountRef.current + fresh.length) {
-          const latest = await refresh()
-          poppable = latest ? poppable.filter((item) => latest.some((entry) => entry.ID === item.ID && isUnread(entry))) : []
-        } else {
-          setLoadFailure(null)
-        }
-        unreadCountRef.current = result.UnreadCount
-        setUnread(result.UnreadCount)
-        // Older backends send Counts only on some polls: keep the last known ones.
-        const nextCounts = parseCounts(result.Counts)
-        if (nextCounts) applyCounts(nextCounts)
-        if (result.OtherEventsCount !== undefined) setOtherEvents(parseOtherEvents(result.OtherEventsCount))
-        if (active && poppable.length) setPopIns((previous) => [...previous, ...poppable.filter((item) => !previous.some((entry) => entry.ID === item.ID))])
+        let unreadNow = target.Unread
+        const cursor = await drainInbox({
+          target: target.Cursor,
+          cursor: cursorRef.current,
+          fetchSince: (since) => apiGet<InboxFeed>(`/api/notifications/inbox${scopedSince(eventId, since)}`, undefined, { required: false }),
+          apply: async (result) => {
+            if (!active) return
+            cursorRef.current = result.Cursor || EPOCH_CURSOR
+            unreadNow = result.Unread
+            const incoming = result.Items ?? []
+            const fresh = incoming.filter(isUnread)
+            if (openRef.current && incoming.length) {
+              const current = tabRef.current
+              setItems((previous) => {
+                const known = new Set(previous.map((item) => item.ID))
+                const added = incoming.filter((item) => !known.has(item.ID) && inTab(item, current)).reverse()
+                return added.length ? orderForTab([...added, ...previous], current) : previous
+              })
+            }
+            let poppable = fresh.filter((item) => popInDuration(item.AutoDismissMs) > 0)
+            if (result.Unread !== unreadCountRef.current + fresh.length && openRef.current) {
+              const latest = await refresh()
+              poppable = latest ? poppable.filter((item) => latest.some((entry) => entry.ID === item.ID && isUnread(entry))) : []
+            }
+            if (!active) return
+            unreadCountRef.current = result.Unread
+            setUnread(result.Unread)
+            const nextCounts = parseCounts(result.Counts)
+            if (nextCounts) applyCounts(nextCounts)
+            setOtherEvents(parseOtherEvents(result.OtherEventsCount))
+            if (poppable.length) setPopIns((previous) => [...previous, ...poppable.filter((item) => !previous.some((entry) => entry.ID === item.ID))])
+          },
+        })
+        if (active) { knownRef.current = { cursor, unread: unreadNow }; if (openRef.current) setLoadFailure(null) }
       } catch (err) {
-        if (active) { setLoadFailure({ error: err }); setLoading(false) }
+        if (active && openRef.current) { setLoadFailure({ error: err }); setLoading(false) }
       } finally {
-        polling = false
-        if (pending && active) { pending = false; queueMicrotask(() => { void poll() }) }
+        running = false
+        const next = queued
+        queued = null
+        if (next && active && inboxChanged(next, knownRef.current)) void sync(next)
       }
     }
-    const pollWhenVisible = () => { if (document.visibilityState !== "hidden") void poll() }
-    pollNowRef.current = () => { void poll() }
-    void poll()
-    const timer = window.setInterval(pollWhenVisible, 8_000)
-    document.addEventListener("visibilitychange", pollWhenVisible)
-    window.addEventListener("focus", pollWhenVisible)
-    const onStorage = (event: StorageEvent) => { if (event.key === STORAGE_INBOX_READ) { void pollWhenVisible(); if (openRef.current) void refresh() } }
+    const onPulse = (pulse: Pulse) => {
+      if (pulse.Inbox && inboxChanged(pulse.Inbox, knownRef.current)) void sync(pulse.Inbox)
+    }
+    const loop = getPulseLoop(eventId)
+    pollNowRef.current = () => loop.trigger()
+    const unsubscribe = loop.subscribe(onPulse)
+    const onStorage = (event: StorageEvent) => { if (event.key === STORAGE_INBOX_READ) { loop.trigger(); if (openRef.current) void refresh() } }
     window.addEventListener("storage", onStorage)
     return () => {
       active = false
       pollNowRef.current = () => {}
-      window.clearInterval(timer)
-      document.removeEventListener("visibilitychange", pollWhenVisible)
-      window.removeEventListener("focus", pollWhenVisible)
+      unsubscribe()
       window.removeEventListener("storage", onStorage)
     }
   }, [refresh, applyCounts, eventId])
@@ -267,8 +280,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     if (!isUnread(item)) return true
     try {
       await apiPatch(`/api/notifications/inbox/${encodeURIComponent(item.ID)}/read`, {})
-      unreadCountRef.current = Math.max(0, unreadCountRef.current - 1)
-      setUnread(unreadCountRef.current)
+      setUnreadCount(Math.max(0, unreadCountRef.current - 1))
       if (countsRef.current) applyCounts(countsAfterRead(countsRef.current, item))
       setItems((current) => current.map((entry) => entry.ID === item.ID ? { ...entry, ReadAt: new Date().toISOString() } : entry))
       setPopIns((current) => current.filter((entry) => entry.ID !== item.ID))
@@ -295,8 +307,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
       await apiPost(`/api/notifications/inbox/${encodeURIComponent(item.ID)}/resolve`, {})
       if (countsRef.current) applyCounts(countsAfterResolve(countsRef.current, item))
       if (isUnread(item)) {
-        unreadCountRef.current = Math.max(0, unreadCountRef.current - 1)
-        setUnread(unreadCountRef.current)
+        setUnreadCount(Math.max(0, unreadCountRef.current - 1))
       }
       announceRead()
     } catch (err) {
@@ -314,11 +325,10 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     setError("")
     const current = tab
     try {
-      await apiPatch(`/api/notifications/inbox/read-all${inboxQuery(current, eventId)}`, {})
+      await apiPatch(`/api/notifications/inbox/read-all${scoped(current, eventId)}`, {})
       const now = new Date().toISOString()
       if (current === "all") {
-        unreadCountRef.current = 0
-        setUnread(0)
+        setUnreadCount(0)
         setPopIns([])
       }
       if (countsRef.current) applyCounts(countsAfterReadAll(countsRef.current, current))
@@ -394,7 +404,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
                 </span>}
                 actions={href || unreadItem || canResolve(item) ? <>
                   {href ? <a href={href} onClick={(clickEvent) => { clickEvent.preventDefault(); void followLink(item, href) }} className="text-sm font-medium text-action underline-offset-2 hover:underline after:absolute after:inset-0 after:content-['']">{t("inbox.open")}</a> : unreadItem ? <button type="button" onClick={() => void markRead(item)} className="text-xs font-medium text-action hover:underline">{t("inbox.markRead")}</button> : null}
-                  {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
+                  {canResolve(item) && <button type="button" disabled={resolving !== null} aria-busy={resolving === item.ID} onClick={() => void resolve(item)} className="relative z-10 inline-flex items-center gap-1 text-xs font-medium text-action hover:underline disabled:cursor-not-allowed disabled:opacity-60 [&_.site-loading]:w-4 [&_.site-loading]:p-0 [&_.site-loading__logo]:h-4 [&_.site-loading__logo]:w-4">
                     {resolving === item.ID ? <BrandLoading compact label={t("common.loading")} /> : <Icon name="check" />}{t("inbox.resolve")}
                   </button>}
                 </> : undefined}

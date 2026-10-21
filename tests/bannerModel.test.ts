@@ -70,3 +70,8 @@ test("banner strings exist in uk and en", () => {
     for (const key of ["siteBanner.label", "siteBanner.dismiss", "siteBanner.more"]) assert.ok(m[key], `${lang}:${key}`)
   }
 })
+
+test("a personal banner with empty Text falls back to its Title; others are dropped", () => {
+  const out = model.parseBanners([banner({ ID: "p", Kind: "personal", Text: "", Title: "Лист" }), banner({ ID: "s", Kind: "site", Text: "", Title: "T" }), banner({ ID: "q", Kind: "personal", Text: "", Title: "" })])
+  assert.deepEqual(out.map((b) => [b.ID, b.Text]), [["p", "Лист"]])
+})
