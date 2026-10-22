@@ -92,14 +92,45 @@ export function createPulseLoop(env: PulseEnv): PulseLoop {
   }
 }
 
-/** Refetches banners only when the pulse Banners version differs from the last fetched one (and once on load). */
-export function createBannerSync<T>(fetchBanners: () => Promise<T>, apply: (banners: T) => void): (pulse: Pulse) => void {
-  let fetched: string | null = null
+/** The Banners version of an empty list (the first 16 hex of sha256 of nothing); a newer backend may send "". */
+export const EMPTY_BANNERS_VERSION = "e3b0c44298fc1c14"
+
+/** Whether a pulse Banners version stands for a non-empty list: only then is the list worth a request. */
+export function hasBanners(version: string): boolean {
+  return version !== "" && version !== EMPTY_BANNERS_VERSION
+}
+
+/** The list last fetched and the pulse version it stands for; a module-level hold survives a remount. */
+export type BannerHold<T> = { current: { version: string; banners: T } | null }
+
+/**
+ * Refetches banners only when the pulse Banners version differs from the held one (and once on load).
+ * A version of an empty list is never fetched: `empty` (default []) is applied instead.
+ */
+export function createBannerSync<T>(
+  fetchBanners: () => Promise<T>,
+  apply: (banners: T) => void,
+  { hold = { current: null }, empty = [] as unknown as T }: { hold?: BannerHold<T>; empty?: T } = {},
+): (pulse: Pulse) => void {
+  let pending: string | null = null
   return (pulse) => {
-    if (pulse.Banners === fetched) return
     const version = pulse.Banners
-    fetched = version
-    fetchBanners().then(apply).catch(() => { if (fetched === version) fetched = null })
+    if (version === pending || (pending === null && version === hold.current?.version)) return
+    if (!hasBanners(version)) {
+      pending = null
+      hold.current = { version, banners: empty }
+      apply(empty)
+      return
+    }
+    pending = version
+    fetchBanners()
+      .then((banners) => {
+        if (pending !== version) return // a newer version is on its way
+        pending = null
+        hold.current = { version, banners }
+        apply(banners)
+      })
+      .catch(() => { if (pending === version) pending = null })
   }
 }
 
