@@ -215,3 +215,45 @@ test("inbox: an empty baseline cursor is held as the epoch, so the next round is
   assert.deepEqual(asked, ["", mod.EPOCH_CURSOR])
   assert.equal(cursor, "c1")
 })
+
+test("banners: a version of an empty list is never fetched; the list is cleared instead", async () => {
+  let calls = 0
+  const applied: unknown[] = []
+  const sync = mod.createBannerSync(async () => { calls++; return ["b"] }, (list) => applied.push(list))
+  sync(pulse(mod.EMPTY_BANNERS_VERSION))
+  sync(pulse(""))
+  assert.equal(calls, 0)
+  assert.deepEqual(applied, [[], []])
+  sync(pulse("v1"))
+  await new Promise((resolve) => setImmediate(resolve))
+  assert.equal(calls, 1)
+  sync(pulse(mod.EMPTY_BANNERS_VERSION))
+  assert.equal(calls, 1)
+  assert.deepEqual(applied.at(-1), [])
+})
+
+test("banners: a shared hold lets a remounted sync skip the version already fetched", async () => {
+  let calls = 0
+  const hold: { current: { version: string; banners: string[] } | null } = { current: null }
+  const first = mod.createBannerSync(async () => { calls++; return ["b"] }, () => {}, { hold })
+  first(pulse("v1"))
+  await new Promise((resolve) => setImmediate(resolve))
+  assert.deepEqual(hold.current, { version: "v1", banners: ["b"] })
+  const second = mod.createBannerSync(async () => { calls++; return ["b"] }, () => {}, { hold })
+  second(pulse("v1"))
+  assert.equal(calls, 1)
+  second(pulse("v2"))
+  assert.equal(calls, 2)
+})
+
+test("banners: an answer for an older version never overwrites a newer one", async () => {
+  const answers: Array<(list: string[]) => void> = []
+  const applied: string[][] = []
+  const sync = mod.createBannerSync(() => new Promise<string[]>((resolve) => { answers.push(resolve) }), (list) => applied.push(list))
+  sync(pulse("v1"))
+  sync(pulse("v2"))
+  answers[1](["new"])
+  answers[0](["old"])
+  await new Promise((resolve) => setImmediate(resolve))
+  assert.deepEqual(applied, [["new"]])
+})
