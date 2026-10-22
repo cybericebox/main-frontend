@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import * as Popover from "@radix-ui/react-popover"
 import { X } from "lucide-react"
 import { apiGet, apiPatch } from "@/api/client"
-import { createBannerSync } from "@/lib/pulseLoop"
+import { createBannerSync, type BannerHold } from "@/lib/pulseLoop"
 import { getPulseLoop, pulseScope } from "@/lib/pulse"
 import { t } from "@/i18n/t"
 import { Tooltip } from "@/components/ib/Tooltip"
@@ -64,10 +64,14 @@ export function SiteBannerList({ banners, onDismiss }: { banners: SiteBanner[]; 
   )
 }
 
-// Site banners: public GET /api/notifications/banners, refetched only when the shared pulse reports a new Banners version.
+// Site banners: public GET /api/notifications/banners, refetched only when the shared pulse reports a new Banners version
+// (never for the version of an empty list).
 // A banner outage never blocks the page: errors are ignored and nothing renders until data arrives.
+// The list last fetched in this tab and its version: a remount (another layout) reuses it without a request.
+const held: BannerHold<unknown> = { current: null }
+
 export function SiteBanners() {
-  const [banners, setBanners] = useState<SiteBanner[]>([])
+  const [banners, setBanners] = useState<SiteBanner[]>(() => parseBanners(held.current?.banners))
   const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => new Set())
 
   useEffect(() => {
@@ -75,6 +79,7 @@ export function SiteBanners() {
     const onPulse = createBannerSync(
       () => apiGet<unknown>(`/api/notifications/banners${pulseScope()}`, undefined, { required: false }),
       (data) => { if (active) setBanners(parseBanners(data)) },
+      { hold: held },
     )
     const unsubscribe = getPulseLoop().subscribe(onPulse)
     return () => { active = false; unsubscribe() }
