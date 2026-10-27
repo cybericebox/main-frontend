@@ -20,9 +20,14 @@
     "kind": "upTo"
   },
   "LabTelemetry": {
+    "value": 1,
+    "unit": "years",
+    "kind": "plus"
+  },
+  "LabTelemetryParticipants": {
     "value": 90,
     "unit": "days",
-    "kind": "upTo"
+    "kind": "plus"
   },
   "DeliveryLog": {
     "value": 180,

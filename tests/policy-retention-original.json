@@ -2,17 +2,21 @@
   "uk": {
     "legal.privacy.s6.heading": "Строки зберігання",
     "legal.privacy.s6.items.1": "Обліковий запис — поки він активний. Незавершену реєстрацію (запрошення або самостійну реєстрацію без підтвердження) видаляємо через 30 днів після створення або після останнього надісланого запрошення, залежно від того, що настало пізніше. Після запиту на видалення — не довше 30 днів; облікові записи, неактивні понад 3 роки, видаляються після попередження.",
-    "legal.privacy.s6.items.2": "Журнали входу, доступу до лабораторій і VPN — до 90 днів; журнали доставки листів — до 180 днів; резервні копії — до 30 днів.",
-    "legal.privacy.s6.items.3": "Відповіді на реєстраційні форми та журнал активності на заході (відкриття завдань, завантаження файлів, відхилені спроби, зміни в командах, стан стендів і VPN, лічильники звернень до лабораторій завдань) — до завершення заходу та ще 1 рік; історія службових подій (реєстрації, запрошення) — 1 рік, а після видалення облікового запису вона знеособлюється.",
-    "legal.privacy.s6.items.4": "Результати змагань — зберігаються як частина історії заходу; після видалення облікового запису вони знеособлюються.",
-    "legal.privacy.s6.items.5": "Файли cookie — див. [Політику файлів cookie](/cookies); дані аналітики — 14 місяців."
+    "legal.privacy.s6.items.2": "Журнали входу та автентифікації VPN, журнали доступу до лабораторій — до 90 днів; журнали доставки листів — до 180 днів; резервні копії — до 30 днів.",
+    "legal.privacy.s6.items.3": "Відповіді на реєстраційні форми та журнал активності на заході (відкриття завдань, завантаження файлів, відхилені спроби, зміни в командах, VPN-сесії, лічильники звернень до лабораторій завдань) — до завершення заходу та ще 1 рік; історія службових подій (реєстрації, запрошення) — 1 рік.",
+    "legal.privacy.s6.items.4": "Телеметрія стендів: навантаження й стан лабораторій — до завершення заходу та ще 1 рік; дані VPN-підключень окремих учасників і архівні копії телеметрії — до завершення заходу та ще 90 днів. Для постійних заходів ці строки рахуються з моменту запису.",
+    "legal.privacy.s6.items.5": "Результати змагань — зберігаються як частина історії заходу.",
+    "legal.privacy.s6.items.6": "Після видалення облікового запису ваше імʼя та пошту в історії службових подій, результатах і телеметрії замінює псевдонім; решта цих даних зберігається до кінця зазначених строків, бо без неї історія та статистика заходу втрачають сенс. Такі дані можуть і далі вважатися персональними; ви можете заперечити проти їх зберігання — тоді ми видалимо дані, повʼязані з вами.",
+    "legal.privacy.s6.items.7": "Файли cookie — див. [Політику файлів cookie](/cookies); дані аналітики — 14 місяців."
   },
   "en": {
     "legal.privacy.s6.heading": "Retention",
     "legal.privacy.s6.items.1": "Account — while it is active. An unfinished registration (an invitation or a self sign-up that was never confirmed) is deleted 30 days after it was created or after the last invitation was sent, whichever is later. After a deletion request — no longer than 30 days; accounts inactive for over 3 years are deleted after a warning.",
-    "legal.privacy.s6.items.2": "Sign-in, lab and VPN access logs — up to 90 days; email delivery logs — up to 180 days; backups — up to 30 days.",
-    "legal.privacy.s6.items.3": "Registration form answers and the event activity log (task opens, file downloads, rejected attempts, team changes, stand and VPN status, lab access counters) — until the event ends plus 1 year; the history of service events (registrations, invitations) — 1 year, and it is anonymized when the account is deleted.",
-    "legal.privacy.s6.items.4": "Competition results — kept as part of the event history; they are anonymized when the account is deleted.",
-    "legal.privacy.s6.items.5": "Cookies — see the [Cookie Policy](/cookies); analytics data — 14 months."
+    "legal.privacy.s6.items.2": "Sign-in and VPN authentication logs, lab access logs — up to 90 days; email delivery logs — up to 180 days; backups — up to 30 days.",
+    "legal.privacy.s6.items.3": "Registration form answers and the event activity log (task opens, file downloads, rejected attempts, team changes, VPN sessions, lab access counters) — until the event ends plus 1 year; the history of service events (registrations, invitations) — 1 year.",
+    "legal.privacy.s6.items.4": "Stand telemetry: lab load and state — until the event ends plus 1 year; VPN connection data of individual participants and archived copies of the telemetry — until the event ends plus 90 days. For permanent events these periods run from the moment of recording.",
+    "legal.privacy.s6.items.5": "Competition results — kept as part of the event history.",
+    "legal.privacy.s6.items.6": "After the account is deleted, your name and email in the service event history, results and telemetry are replaced by a pseudonym; the rest of this data is kept until the end of the stated periods, because the event history and statistics are meaningless without it. Such data may still count as personal data; you can object to keeping it, and we will then delete the data linked to you.",
+    "legal.privacy.s6.items.7": "Cookies — see the [Cookie Policy](/cookies); analytics data — 14 months."
   }
 }

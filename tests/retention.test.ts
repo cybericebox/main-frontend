@@ -17,7 +17,7 @@ const rendered = () => plain(policyKeys(uk).map((k) => fillRetention(t(k))).join
 
 test("every period of the file is stated in the Policy, in both languages", () => {
   // two settings can share one sentence of the Policy: one placeholder stands for both and they must agree
-  const shared = [["SessionAfterExpiry", "LabTelemetry"], ["FormAnswersAfterEventEnd", "EventAnalyticsAfterEnd"]]
+  const shared = [["FormAnswersAfterEventEnd", "EventAnalyticsAfterEnd"]]
   const covered = new Set(shared.flatMap(([, other]) => other))
   for (const group of shared) assert.deepEqual(RETENTION[group[0]], RETENTION[group[1]], group.join(" = "))
   for (const catalog of [uk, en] as Record<string, string>[]) {
