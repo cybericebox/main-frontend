@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import { MessageSquare } from "lucide-react"
@@ -50,6 +51,9 @@ export function SiteHeader({ home }: { home: boolean }) {
   const up = status === "up"
   const catalog = useCatalogAccess(me)
   const pathname = usePathname() || "/"
+  // «Увійти» is in the static HTML, which cannot know the page address: the return_to joins the link after mount.
+  const [signInHref, setSignInHref] = useState(() => new URL(SIGN_IN_URI, ID_ORIGIN).toString())
+  useEffect(() => { setSignInHref(idUrl(SIGN_IN_URI)) }, [pathname])
   const entries = accountMenu(
     "main",
     { adminTier: Boolean(me && isAdminTier(me)), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
@@ -63,7 +67,7 @@ export function SiteHeader({ home }: { home: boolean }) {
       {!me ? (
         <>
           <span className="site-signin">
-            <Button variant="primary" href={idUrl(SIGN_IN_URI)}>
+            <Button variant="primary" href={signInHref}>
               {t("common.signIn")}
             </Button>
           </span>
