@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import { usePathname } from "next/navigation"
 import { MessageSquare } from "lucide-react"
@@ -11,10 +12,11 @@ import { Icon } from "@/components/ib/Icon"
 import { t } from "@/i18n/t"
 import { useApi } from "@/lib/useApi"
 import { idUrl, isAdminTier } from "@/lib/auth"
-import { ADMIN_ORIGIN, EXERCISES_ORIGIN, ID_ORIGIN, SIGN_IN_URI, SIGN_OUT_URI } from "@/lib/links"
+import { ADMIN_ORIGIN, EXERCISES_ORIGIN, ID_ORIGIN, SIGN_IN_URI } from "@/lib/links"
 import { ACCOUNT_MENU_ICON_PROPS, ACCOUNT_MENU_ICONS, ACCOUNT_MENU_LABELS, accountMenu, type AccountMenuEntry } from "@/lib/accountMenu"
 import { useCatalogAccess } from "@/lib/useCatalogAccess"
 import { openConsentSettings } from "@/lib/consent"
+import { signOutNow } from "@/lib/signOut"
 import { mediaUrl } from "@/api/client"
 import { feedbackHref } from "@/lib/feedback"
 import { landingLinks } from "./sections"
@@ -39,7 +41,9 @@ function avatarEntry(entry: AccountMenuEntry): AvatarMenuEntry {
   if (entry.kind === "cookies") {
     return { href: "/cookies/", label: t(ACCOUNT_MENU_LABELS.cookies), ariaLabel: t(ACCOUNT_MENU_LABELS.cookiesAria), icon, onSelect: openConsentSettings }
   }
-  return { href: entry.kind === "link" ? entry.href : idUrl(SIGN_OUT_URI), label: t(ACCOUNT_MENU_LABELS[key]), icon }
+  // «Вийти» calls the API directly (no confirmation page, no hop to the ID site); the notice shows on this page.
+  if (entry.kind === "signOut") return { href: "#", label: t(ACCOUNT_MENU_LABELS[key]), icon, onSelect: () => { void signOutNow() } }
+  return { href: entry.kind === "link" ? entry.href : "#", label: t(ACCOUNT_MENU_LABELS[key]), icon }
 }
 
 export function SiteHeader({ home }: { home: boolean }) {
@@ -47,6 +51,9 @@ export function SiteHeader({ home }: { home: boolean }) {
   const up = status === "up"
   const catalog = useCatalogAccess(me)
   const pathname = usePathname() || "/"
+  // «Увійти» is in the static HTML, which cannot know the page address: the return_to joins the link after mount.
+  const [signInHref, setSignInHref] = useState(() => new URL(SIGN_IN_URI, ID_ORIGIN).toString())
+  useEffect(() => { setSignInHref(idUrl(SIGN_IN_URI)) }, [pathname])
   const entries = accountMenu(
     "main",
     { adminTier: Boolean(me && isAdminTier(me)), catalog, returnTo: typeof window !== "undefined" ? window.location.href : "" },
@@ -55,10 +62,19 @@ export function SiteHeader({ home }: { home: boolean }) {
 
   const actions = (
     <div className="site-nav-slot">
-      {up && !me ? (
-        <Button variant="primary" href={idUrl(SIGN_IN_URI)}>
-          {t("common.signIn")}
-        </Button>
+      {/* No session: «Увійти» is there at once (also while /auth/me is pending or the API is down). With the sign-in
+          hint cookie the generic avatar stands in its place until /auth/me answers (html[data-signed-hint], site.css). */}
+      {!me ? (
+        <>
+          <span className="site-signin">
+            <Button variant="primary" href={signInHref}>
+              {t("common.signIn")}
+            </Button>
+          </span>
+          <span className="site-avatar-hint" aria-hidden="true">
+            <span className="ib-avatar"><Icon name="user" /></span>
+          </span>
+        </>
       ) : null}
       {up && me ? (
         <>

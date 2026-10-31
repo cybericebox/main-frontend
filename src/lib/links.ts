@@ -25,12 +25,6 @@ export const ID_ORIGIN = `https://${hosts().id}`
 // Sign-in page on the identity app (landing primary CTA targets this).
 export const SIGN_IN_URI = "/sign-in/"
 
-// Sign-up (get-started) page on the identity app.
-export const SIGN_UP_URI = "/sign-up/"
-
-// Sign-out page on the identity app.
-export const SIGN_OUT_URI = "/sign-out/"
-
 export const PROFILE_URI = "/profile/"
 
 // Admin app — landing CTA target for admin-tier users.
