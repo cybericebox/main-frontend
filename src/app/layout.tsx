@@ -10,6 +10,8 @@ import { TooltipClamp } from "@/components/ib/TooltipClamp"
 import { ChunkRecovery } from "@/components/ChunkRecovery"
 import { CHUNK_RECOVERY_BOOT_SCRIPT } from "@/lib/chunkRecovery"
 import { THEME_BOOT_SCRIPT } from "@/lib/theme"
+import { SIGNED_HINT_BOOT_SCRIPT } from "@/lib/signedHint"
+import { SignedOutNotice } from "@/components/site/SignedOutNotice"
 import { pageMetadata } from "@/lib/metadata"
 import { t } from "@/i18n/t"
 
@@ -35,6 +37,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 {/* static constant, no user input — runs before paint to avoid a light flash */}
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+                {/* static constant: picks the avatar placeholder or «Увійти» in the navbar before first paint */}
+                {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
+                <script dangerouslySetInnerHTML={{ __html: SIGNED_HINT_BOOT_SCRIPT }} />
             </head>
             {/* Browser extensions can add attributes to body before React hydrates. */}
             <body suppressHydrationWarning>
@@ -42,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 {/* first in the tab order: jumps over the navbar to <main id="main"> */}
                 <a className="ib-skip" href="#main">{t("a11y.skip")}</a>
                 <ApiProvider>{children}</ApiProvider>
+                <SignedOutNotice />
                 {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
                 <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
                 {/* keeps ds tooltips inside the viewport on narrow screens */}

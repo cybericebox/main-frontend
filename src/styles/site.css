@@ -68,3 +68,14 @@ main:focus{outline:none}
   .ib-navbar__panel{position:absolute;top:calc(100% + 1px);left:0;right:0;max-height:calc(100dvh - 100% - 1px);border-top:0;overflow-y:auto;overscroll-behavior:contain;background:var(--ib-surface);border-bottom:1px solid var(--ib-line)}
 }
 .ib-navbar.is-open::after{content:"";position:absolute;top:calc(100% + 1px);left:0;right:0;height:100vh;z-index:-1;background:color-mix(in srgb,var(--ib-ink) 40%,transparent)}
+
+/* sign-in hint: the generic avatar stands in for «Увійти» until /auth/me answers (html[data-signed-hint] comes from the boot script) */
+.site-avatar-hint{display:none;padding:4px}
+html[data-signed-hint] .site-signin{display:none}
+html[data-signed-hint] .site-avatar-hint{display:inline-flex}
+.site-avatar-hint .ib-icon{width:18px;height:18px}
+
+/* «Ви вийшли»: a short status line under the navbar */
+.site-notice-region{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:200;max-width:calc(100vw - 32px);pointer-events:none}
+.site-notice{margin:0;padding:10px 16px;border:1px solid var(--ib-line);border-radius:var(--ib-r);background:var(--ib-surface);color:var(--ib-ink);font-size:var(--ib-fs-14)}
+.site-notice--danger{border-color:var(--ib-danger);color:var(--ib-danger)}
