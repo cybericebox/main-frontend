@@ -19,11 +19,6 @@
     "unit": "days",
     "kind": "upTo"
   },
-  "LabConnectionLog": {
-    "value": 30,
-    "unit": "days",
-    "kind": "upTo"
-  },
   "LabTelemetry": {
     "value": 1,
     "unit": "years",
