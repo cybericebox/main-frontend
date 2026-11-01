@@ -473,7 +473,7 @@
   "consent.customize": "Customize",
   "consent.panelTitle": "Cookie settings",
   "consent.necessary.title": "Necessary",
-  "consent.necessary.text": "Needed for sign-in, security and remembering your choice.",
+  "consent.necessary.text": "Needed for sign-in, security and carrying out your own actions (the theme you chose, a notice you closed), and for remembering your choice.",
   "consent.necessary.switch": "Necessary cookies are always on",
   "consent.analytics.title": "Analytics",
   "consent.analytics.text": "Helps us understand how to improve the site.",
@@ -503,5 +503,5 @@
   "signOut.done": "You have signed out",
   "signOut.failed": "Could not sign out. Try again.",
   "consent.functional.title": "Functional",
-  "consent.functional.text": "Remember conveniences: that you are signed in, your last email address, read messages."
+  "consent.functional.text": "Remember conveniences: that you are signed in, your last email address, read messages, form drafts, table layouts."
 }
