@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useSyncExternalStore } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 import Script from "next/script"
 import { usePathname } from "next/navigation"
 import { ACCEPT_ALL, analyticsPageLocation, analyticsScripts, CONSENT_CHANGE_EVENT, gaDisableKey, readConsent, shouldLoadAnalytics } from "@/lib/consent"
@@ -25,14 +25,14 @@ export function Analytics({ gaId }: { gaId?: string }) {
   const consent = useSyncExternalStore(subscribe, consentSnapshot, () => "ssr")
   const allowed = consent !== "ssr" && shouldLoadAnalytics(gaId, readConsent())
   // Once loaded, gtag.js stays in the page: a later «no» switches it off with GA's own opt-out flag.
-  const loadedRef = useRef(false)
-  if (allowed) loadedRef.current = true
+  const [loaded, setLoaded] = useState(false)
+  if (allowed && !loaded) setLoaded(true)
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!gaId || !loadedRef.current) return
+    if (!gaId || !loaded) return
     ;(window as unknown as Record<string, unknown>)[gaDisableKey(gaId)] = !allowed
-  }, [gaId, allowed])
+  }, [gaId, allowed, loaded])
 
   // A client-side navigation: GA's history page views read the address set here (origin + path only).
   useEffect(() => {
@@ -41,7 +41,7 @@ export function Analytics({ gaId }: { gaId?: string }) {
 
   return (
     <>
-      {analyticsScripts(gaId, loadedRef.current ? ACCEPT_ALL : null).map((script) => (
+      {analyticsScripts(gaId, loaded ? ACCEPT_ALL : null).map((script) => (
         <Script key={script.id} id={script.id} strategy="lazyOnload" src={script.src}>
           {script.inline}
         </Script>
