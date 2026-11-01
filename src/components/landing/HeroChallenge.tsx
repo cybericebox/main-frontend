@@ -1,5 +1,6 @@
 "use client"
 
+import { functionalAllowed } from "@/lib/consent"
 import { useEffect, useRef, useState, type FormEvent } from "react"
 import { Button, buttonClass } from "@/components/ib/Button"
 import { Icon } from "@/components/ib/Icon"
@@ -171,7 +172,8 @@ export function HeroChallenge() {
     setError("")
     setDone(true)
     try {
-      sessionStorage.setItem(STORAGE_WARMUP_SOLVED, "1")
+      // functional storage: the solved state is kept only with functional consent
+      if (functionalAllowed()) sessionStorage.setItem(STORAGE_WARMUP_SOLVED, "1")
     } catch {
       // storage blocked — the solved state just won't survive a reload
     }

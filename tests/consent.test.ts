@@ -13,6 +13,7 @@ const consent = await import(source) as typeof import("../src/lib/consent")
 function fakeBrowser(protocol = "https:") {
   const writes: string[] = []
   const calls: unknown[][] = []
+  const fetched: string[] = []
   const jar = new Map<string, string>()
   const g = globalThis as Record<string, unknown>
   g.document = {
@@ -26,8 +27,9 @@ function fakeBrowser(protocol = "https:") {
     },
   }
   g.location = { protocol }
+  g.fetch = (url: string, init: { method?: string }) => { fetched.push(`${init.method} ${url}`); return Promise.resolve(new Response()) }
   g.window = { gtag: (...args: unknown[]) => calls.push(args), dispatchEvent: () => true }
-  return { writes, calls, jar }
+  return { writes, calls, jar, fetched }
 }
 
 test("every Consent Mode signal defaults to denied", () => {
@@ -60,19 +62,19 @@ test("accept all grants analytics_storage only", () => {
   const { calls } = fakeBrowser()
   consent.saveConsent(consent.ACCEPT_ALL)
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "granted" }]])
-  assert.deepEqual(consent.readConsent(), { analytics: true })
+  assert.deepEqual(consent.readConsent(), { analytics: true, functional: true })
 })
 
 test("«Лише необхідні» stores the same choice as saving the panel with analytics off", () => {
-  assert.deepEqual(consent.NECESSARY_ONLY, { analytics: false })
+  assert.deepEqual(consent.NECESSARY_ONLY, { analytics: false, functional: false })
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
   consent.saveConsent(consent.NECESSARY_ONLY)
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "denied" }]])
-  assert.deepEqual(consent.readConsent(), { analytics: false })
+  assert.deepEqual(consent.readConsent(), { analytics: false, functional: false })
   assert.ok(!jar.has("_ga"))
   // a stored choice: the banner is gone, for good
-  assert.equal(consent.shouldShowBanner("G-TEST", consent.readConsent()), false)
+  assert.equal(consent.shouldShowBanner(consent.readConsent()), false)
 })
 
 test("banner (variant B): text link «Налаштувати» opens the panel, then «Лише необхідні» and «Прийняти всі»", async () => {
@@ -100,17 +102,17 @@ test("banner (variant B): text link «Налаштувати» opens the panel, 
 
 test("customize: save choice with analytics on grants it", () => {
   const { calls } = fakeBrowser()
-  consent.saveConsent({ analytics: true })
+  consent.saveConsent({ analytics: true, functional: false })
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "granted" }]])
-  assert.deepEqual(consent.readConsent(), { analytics: true })
+  assert.deepEqual(consent.readConsent(), { analytics: true, functional: false })
 })
 
 test("customize: save choice with analytics off keeps everything denied", () => {
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
-  consent.saveConsent({ analytics: false })
+  consent.saveConsent({ analytics: false, functional: false })
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "denied" }]])
-  assert.deepEqual(consent.readConsent(), { analytics: false })
+  assert.deepEqual(consent.readConsent(), { analytics: false, functional: false })
   assert.ok(!jar.has("_ga"))
 })
 
@@ -118,37 +120,60 @@ test("save choice with analytics off after accepting drops GA cookies", () => {
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
   jar.set("_ga_TEST", "GS1.1")
-  consent.saveConsent({ analytics: false })
+  consent.saveConsent({ analytics: false, functional: false })
   assert.deepEqual(calls, [["consent", "update", { analytics_storage: "denied" }]])
-  assert.deepEqual(consent.readConsent(), { analytics: false })
+  assert.deepEqual(consent.readConsent(), { analytics: false, functional: false })
   assert.ok(!jar.has("_ga") && !jar.has("_ga_TEST"))
 })
 
 test("the choice is written per category to one cookie on the parent domain", () => {
   assert.equal(
     consent.consentCookie(consent.ACCEPT_ALL, { domain: "cybericebox.com", secure: true }),
-    "cib_consent=analytics:granted; path=/; max-age=31536000; SameSite=Lax; domain=.cybericebox.com; Secure",
+    "cib_consent=analytics:granted,functional:granted; path=/; max-age=31536000; SameSite=Lax; domain=.cybericebox.com; Secure",
   )
-  assert.equal(consent.consentCookie({ analytics: false }, { secure: false }), "cib_consent=analytics:denied; path=/; max-age=31536000; SameSite=Lax")
+  assert.equal(consent.consentCookie({ analytics: false, functional: false }, { secure: false }), "cib_consent=analytics:denied,functional:denied; path=/; max-age=31536000; SameSite=Lax")
   const { writes } = fakeBrowser()
   consent.saveConsent(consent.ACCEPT_ALL)
-  assert.match(writes[0], /^cib_consent=analytics:granted; .*domain=\.cookies\.example\.test; Secure$/)
+  assert.match(writes[0], /^cib_consent=analytics:granted,functional:granted; .*domain=\.cookies\.example\.test; Secure$/)
 })
 
 test("the stored choice is read back from the cookie string", () => {
-  assert.deepEqual(consent.parseConsent("cib_theme=dark; cib_consent=analytics:granted"), { analytics: true })
-  assert.deepEqual(consent.parseConsent("cib_consent=analytics:denied"), { analytics: false })
-  assert.equal(consent.parseConsent("xcib_consent=analytics:granted"), null)
+  assert.deepEqual(consent.parseConsent("cib_theme=dark; cib_consent=analytics:granted,functional:denied"), { analytics: true, functional: false })
+  assert.deepEqual(consent.parseConsent("cib_consent=analytics:denied,functional:granted"), { analytics: false, functional: true })
+  assert.equal(consent.parseConsent("xcib_consent=analytics:granted,functional:granted"), null)
+  // the older format (analytics only) counts as no choice: the visitor is asked again
+  assert.equal(consent.parseConsent("cib_consent=analytics:granted"), null)
   assert.equal(consent.parseConsent("cib_consent=granted"), null)
   assert.equal(consent.parseConsent(""), null)
 })
 
-test("the banner shows only when GA is configured and no choice exists", () => {
-  assert.equal(consent.shouldShowBanner("G-TEST", null), true)
-  assert.equal(consent.shouldShowBanner("G-TEST", { analytics: true }), false)
-  assert.equal(consent.shouldShowBanner("G-TEST", { analytics: false }), false)
-  assert.equal(consent.shouldShowBanner(undefined, null), false)
-  assert.equal(consent.shouldShowBanner("", null), false)
+test("the banner shows until a choice exists", () => {
+  assert.equal(consent.shouldShowBanner(null), true)
+  assert.equal(consent.shouldShowBanner({ analytics: true, functional: false }), false)
+  assert.equal(consent.shouldShowBanner({ analytics: false, functional: false }), false)
+})
+
+test("functional data is written only with functional consent and goes when it is withdrawn", () => {
+  const { jar, fetched } = fakeBrowser()
+  assert.equal(consent.functionalAllowed(), false)
+  consent.saveConsent({ analytics: false, functional: true })
+  assert.equal(consent.functionalAllowed(), true)
+  assert.deepEqual(fetched, [])
+  const removed: string[] = []
+  const store = (keys: string[]) => ({ length: keys.length, key: (i: number) => keys[i] ?? null, removeItem: (k: string) => { removed.push(k) } })
+  ;(globalThis as Record<string, unknown>).window = {
+    gtag: () => {}, dispatchEvent: () => true,
+    localStorage: store(["cib_inbox_read", "cib_site_banner_dismissed_1_"]),
+    sessionStorage: store(["cib_warmup"]),
+  }
+  jar.set("cib_signed_in", "1")
+  consent.saveConsent({ analytics: false, functional: false })
+  assert.equal(consent.functionalAllowed(), false)
+  assert.ok(removed.includes("cib_inbox_read") && removed.includes("cib_warmup"))
+  // the necessary «user's explicit choice» key stays
+  assert.ok(!removed.includes("cib_site_banner_dismissed_1_"))
+  assert.ok(!jar.has("cib_signed_in"))
+  assert.deepEqual(fetched, ["DELETE https://api.cookies.example.test/api/auth/last-email"])
 })
 
 test("the policy link opens in a new tab, so the panel and its toggles stay", () => {
