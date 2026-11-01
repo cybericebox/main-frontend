@@ -26,7 +26,10 @@ test("every period of the file is stated in the Policy, in both languages", () =
       if (covered.has(key)) continue
       assert.match(text, new RegExp(`\\{${key}(_gen)?\\}`), key)
     }
-    assert.doesNotMatch(text, /\d+ (days|months|years|днів|місяців|років)/, "no period is typed into the text")
+    // The lab connection log lives in the laboratory, not in a platform setting: its 30 days is the one period typed into the text.
+    const typed = text.replace(/(інтернет-зʼєднань лабораторій|internet connection log) — (до|up to) 30 (днів|days)/g, "")
+    assert.notEqual(typed, text, "the lab connection log term is stated")
+    assert.doesNotMatch(typed, /\d+ (days|months|years|днів|місяців|років)/, "no period is typed into the text")
   }
 })
 
