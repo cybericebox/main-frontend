@@ -241,3 +241,17 @@ test("saveConsent fails without NEXT_PUBLIC_DOMAIN", () => {
     process.env.NEXT_PUBLIC_DOMAIN = saved
   }
 })
+
+test("no Google Analytics script or request before analytics consent; it loads after", () => {
+  assert.deepEqual(consent.analyticsScripts("G-TEST", null), [])
+  assert.deepEqual(consent.analyticsScripts("G-TEST", { analytics: false, functional: true }), [])
+  assert.deepEqual(consent.analyticsScripts(undefined, { analytics: true, functional: true }), [])
+  const scripts = consent.analyticsScripts("G-TEST", { analytics: true, functional: false })
+  assert.deepEqual(scripts.map((s) => s.id), ["ga-init", "ga"])
+  assert.match(scripts[1].src ?? "", /^https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-TEST$/)
+})
+
+test("a withdrawn consent switches a loaded gtag off with GA's own flag", () => {
+  assert.equal(consent.gaDisableKey("G-TEST"), "ga-disable-G-TEST")
+  assert.equal(consent.shouldLoadAnalytics("G-TEST", { analytics: false, functional: false }), false)
+})
