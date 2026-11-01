@@ -80,15 +80,15 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
                   {COLUMNS.map((c) =>
                     c === "name" ? (
                       <th key={c} scope="row">
-                        {/* one <code> per cookie name: the list wraps between names, never inside one */}
-                        {t(`${k}.rows.${r}.${c}`)
-                          .split(", ")
-                          .map((name, j) => (
-                            <React.Fragment key={name}>
-                              {j > 0 && ", "}
-                              <code>{name}</code>
-                            </React.Fragment>
-                          ))}
+                        {/* one <code> per cookie name: the list wraps between names, never inside one; a trailing
+                            «(сховище браузера)» marks a browser-storage entry and stays plain text */}
+                        {cookieName(t(`${k}.rows.${r}.${c}`)).names.map((name, j) => (
+                          <React.Fragment key={name}>
+                            {j > 0 && ", "}
+                            <code>{name}</code>
+                          </React.Fragment>
+                        ))}
+                        {cookieName(t(`${k}.rows.${r}.${c}`)).note && <span className="lg-doc__store"> ({cookieName(t(`${k}.rows.${r}.${c}`)).note})</span>}
                       </th>
                     ) : (
                       <td key={c} data-label={t(`legal.cookies.col.${c}`)}>
@@ -111,6 +111,12 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
 // intro, numbered sections with anchor ids; a section list (sticky on the left from 1024 px; below that collapsed
 // under the title and the date, before the text).
 // Navbar/Footer come from the (legal) route-group layout.
+// «a, b (сховище браузера)» → the names and the trailing parenthetical note, if any.
+function cookieName(text: string): { names: string[]; note: string | null } {
+  const match = /^(.*?)(?: \(([^()]+)\))?$/.exec(text)
+  return { names: (match?.[1] ?? text).split(", "), note: match?.[2] ?? null }
+}
+
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   const sections = count((i) => `legal.${doc}.s${i}.heading`)
   return (
