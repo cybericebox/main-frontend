@@ -7,6 +7,7 @@ import { apiGet, apiPatch } from "@/api/client"
 import { createBannerSync, type BannerHold } from "@/lib/pulseLoop"
 import { getPulseLoop, pulseScope } from "@/lib/pulse"
 import { t } from "@/i18n/t"
+import { useApi } from "@/lib/useApi"
 import { Tooltip } from "@/components/ib/Tooltip"
 import { bannerHref, bannerLevel, dismissKey, isDismissed, parseBanners, rememberDismissed, type SiteBanner } from "./bannerModel"
 import "@/styles/site-banner.css"
@@ -67,14 +68,18 @@ export function SiteBannerList({ banners, onDismiss }: { banners: SiteBanner[]; 
 // Site banners: public GET /api/notifications/banners, refetched only when the shared pulse reports a new Banners version
 // (never for the version of an empty list).
 // A banner outage never blocks the page: errors are ignored and nothing renders until data arrives.
+// The pulse starts only once the API probe answered (lib/useApi): while the platform is down or switched off, nothing is
+// asked, so a visitor never collects a failed request every 30 seconds.
 // The list last fetched in this tab and its version: a remount (another layout) reuses it without a request.
 const held: BannerHold<unknown> = { current: null }
 
 export function SiteBanners() {
   const [banners, setBanners] = useState<SiteBanner[]>(() => parseBanners(held.current?.banners))
   const [dismissed, setDismissed] = useState<ReadonlySet<string>>(() => new Set())
+  const up = useApi().status === "up"
 
   useEffect(() => {
+    if (!up) return
     let active = true
     const onPulse = createBannerSync(
       () => apiGet<unknown>(`/api/notifications/banners${pulseScope()}`, undefined, { required: false }),
@@ -83,7 +88,7 @@ export function SiteBanners() {
     )
     const unsubscribe = getPulseLoop().subscribe(onPulse)
     return () => { active = false; unsubscribe() }
-  }, [])
+  }, [up])
 
   const visible = banners.filter((banner) => !dismissed.has(dismissKey(banner)) && !isDismissed(banner))
   const dismiss = (banner: SiteBanner) => {

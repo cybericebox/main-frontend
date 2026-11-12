@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import { clearSignedHint, hideSignedHint } from "@/lib/signedHint"
 import { SIGNED_OUT_EVENT } from "@/lib/signOut"
-import { API_PENDING, ApiContext, probeApi, type ApiState } from "@/lib/useApi"
+import { API_PENDING, ApiContext, apiEnabled, probeApi, type ApiState } from "@/lib/useApi"
 
 // Runs the one API probe on load and shares the result (see lib/useApi).
 // The settled status is mirrored to <html data-api="up|down"> (e2e / debugging hook).
@@ -11,6 +11,13 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ApiState>(API_PENDING)
 
   useEffect(() => {
+    // the platform is switched off for this copy of the site: no request is sent, the API counts as down
+    if (!apiEnabled()) {
+      document.documentElement.dataset.api = "down"
+      hideSignedHint() // nobody will answer: no avatar placeholder either (the whole slot is hidden, see site.css)
+      setState({ status: "down", me: null })
+      return
+    }
     let cancelled = false
     const refresh = () => { void probeApi().then((s) => {
       if (cancelled) return

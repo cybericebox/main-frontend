@@ -1,0 +1,101 @@
+/* LabDemo — the landing lab card: tabs, a terminal that drives the scheme, the outcome of each mode.
+   Builds on the DS topology (.ib-topo: card, head, canvas, zone / link / node strokes); everything here is ld-*.
+   DS tokens only, no shadows. Order inside the card: head (tabs) → terminal → scheme → outcome. */
+
+.ld .ib-topo__canvas{position:relative;overflow:visible}
+/* the DS rule sizes every svg in the card as the scheme: the small icons below are not schemes */
+.ib-topo.ld svg.ld-check{display:block;width:16px;min-width:0;height:16px}
+
+/* head: lab name, range, start status, mode tabs */
+.ld-head{flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:var(--ib-2) var(--ib-4);padding-top:var(--ib-3);padding-bottom:var(--ib-3)}
+.ld-st{display:inline-flex;align-items:center;gap:6px;font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-ok)}
+.ib-topo__head .ld-st{font-size:var(--ib-fs-12);color:var(--ib-ok)}
+.ib-topo__head .ld-st.is-boot{color:var(--ib-dim)}
+.ld-st .site-loading__logo{width:14px;height:14px}
+.ld-tabs{display:flex;margin-left:auto;padding:2px;border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);background:var(--ib-paper)}
+.ld-tabs button{height:30px;padding:0 14px;border:0;border-radius:var(--ib-r);background:transparent;font:var(--ib-w-medium) var(--ib-fs-13)/1 var(--ib-font);color:var(--ib-dim);cursor:pointer;
+  transition:background-color var(--ib-dur) var(--ib-ease),color var(--ib-dur) var(--ib-ease)}
+.ld-tabs button[aria-selected="true"]{background:var(--ib-action);color:var(--ib-on-action)}
+
+/* terminal: a fixed number of rows, so the card never changes height while lines arrive */
+.ld-term{--ld-rows:4;height:calc(var(--ld-rows) * 1.7em + 24px);padding:12px var(--ib-5);overflow:hidden;border-top:0;border-bottom:1px solid var(--ib-line)}
+.ld-ln{display:block;overflow:hidden;text-overflow:ellipsis;white-space:pre}
+.ld-ln.is-cmd{color:var(--ib-ink);font-weight:var(--ib-w-medium)}
+.ld-ln.is-ok{color:var(--ib-ok);font-weight:var(--ib-w-semibold)}
+.ld-ln.is-caret::after{content:"";display:inline-block;width:.55em;height:1.05em;margin-left:2px;vertical-align:-.18em;background:var(--ib-ink);animation:ld-blink 1s steps(1) infinite}
+@keyframes ld-blink{50%{opacity:0}}
+
+/* scheme parts: a part of the other mode fades out and steps down; the shared base never moves */
+.ld [data-k]{transition:opacity .4s var(--ib-ease),transform .5s var(--ib-ease),stroke-dashoffset .7s var(--ib-ease)}
+.ld.is-focus [data-k]{opacity:.25}
+.ld.is-focus [data-k].is-lit{opacity:1}
+.ld[data-mode="ctf"] [data-m="learn"],.ld[data-mode="learn"] [data-m="ctf"]{opacity:0!important;transform:translateY(14px);pointer-events:none}
+.ld .ld-seg{fill:none;stroke:var(--ib-action);stroke-width:2.25;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.ld .ld-seg.is-drawn{stroke-dashoffset:0}
+.ld .ld-pkp{fill:none;stroke:none}
+.ld .ld-pk{fill:var(--ib-surface);stroke:var(--ib-action);stroke-width:2;opacity:0}
+.ld .ld-node{cursor:help}
+.ld .ld-node .ib-topo__node{transition:fill .4s var(--ib-ease),stroke .4s var(--ib-ease)}
+.ld .ld-node.is-on .ib-topo__node{stroke:var(--ib-action);stroke-width:1.5}
+.ld .ld-node.is-own .ib-topo__node{fill:var(--ib-soft)}
+.ld .ld-node.is-boot .ib-topo__node{fill:var(--ib-paper);stroke-dasharray:4 3}
+.ld .ld-node.is-boot text{opacity:.35}
+.ld .ld-node.is-bad .ib-topo__node{stroke:var(--ib-danger);stroke-width:1.5}
+.ld .ld-node.is-good .ib-topo__node{stroke:var(--ib-ok);stroke-width:1.5}
+.ld .ld-node.is-ping .ib-topo__node{animation:ld-ping 1.2s var(--ib-ease)}
+@keyframes ld-ping{40%{stroke:var(--ib-action);stroke-width:3.5}}
+.ld .ld-mark{fill:none;stroke:var(--ib-ok);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset .5s var(--ib-ease),opacity .2s var(--ib-ease)}   /* opacity: a round cap leaves a dot at offset 1 */
+.ld .ld-node.is-own .ld-mark{stroke-dashoffset:0;opacity:1}
+.ld text.ld-good{fill:var(--ib-ok)}
+.ld text.ld-bad{fill:var(--ib-danger)}
+.ld-tip{position:absolute;z-index:1;width:max-content;max-width:230px;margin:0;padding:6px 10px;border:1px solid var(--ib-control);border-radius:var(--ib-r);background:var(--ib-raised);color:var(--ib-ink);
+  font-size:var(--ib-fs-12);line-height:1.35;transform:translate(-50%,calc(-100% - 6px));pointer-events:none}
+
+/* outcome: both modes share one cell, so the card keeps its height when the tab changes */
+.ld-out{display:grid;border-top:1px solid var(--ib-line)}
+.ld-out>div{grid-area:1/1;min-width:0;padding:var(--ib-4) var(--ib-5);transition:opacity .3s var(--ib-ease)}
+.ld[data-mode="ctf"] .ld-out__learn,.ld[data-mode="learn"] .ld-out__ctf{opacity:0;visibility:hidden}
+.ld-stats dd{min-height:22px;font-size:20px}
+.ld-stats dd.ld-stats__flag{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--ib-fs-14);line-height:22px}
+.ld-rk{--ld-h:28px;position:relative;height:calc(3 * var(--ld-h));margin-top:14px;border-top:1px solid var(--ib-line)}
+.ld-rk__row{position:absolute;inset:0 0 auto 0;display:grid;grid-template-columns:20px auto minmax(0,1fr) auto;gap:10px;align-items:center;height:var(--ld-h);padding:0 8px;border-radius:var(--ib-r);
+  font-size:var(--ib-fs-13);transform:translateY(calc(var(--ld-i) * var(--ld-h)));transition:transform .6s var(--ib-ease),background-color .4s var(--ib-ease)}
+.ld-rk__row b{font-weight:600;color:var(--ib-ink)}
+.ld-rk__row.is-own b{color:var(--ib-action)}
+.ld-rk__place{font-size:var(--ib-fs-12);color:var(--ib-faint)}
+.ld-rk__note{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--ib-fs-12);color:var(--ib-dim)}
+.ld-rk__pts{font-weight:600;color:var(--ib-ink)}
+.ld-rk__row.is-new{background:var(--ib-soft)}
+.ld-out__cap{margin:10px 0 0;font-size:var(--ib-fs-13);color:var(--ib-dim)}
+.ld-out__cap b{font-weight:600;color:var(--ib-ink)}
+
+.ld-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--ib-2) var(--ib-5);margin:0;padding:0;list-style:none}
+.ld-steps li{display:flex;align-items:flex-start;gap:var(--ib-2);font-size:var(--ib-fs-13);line-height:1.4;color:var(--ib-faint);transition:color .3s var(--ib-ease)}
+.ld-steps li.is-done{color:var(--ib-ink)}
+.ld-check{flex:none;margin-top:1px;fill:none;stroke:var(--ib-control);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ld-check path{stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset .5s var(--ib-ease),opacity .2s var(--ib-ease)}
+.ld-steps li.is-done .ld-check{stroke:var(--ib-ok)}
+.ld-steps li.is-done .ld-check path{stroke-dashoffset:0;opacity:1}
+.ld-prog{display:flex;align-items:center;gap:var(--ib-3);margin:14px 0 0;font-size:var(--ib-fs-12);color:var(--ib-dim)}
+.ld-prog i{flex:1;height:6px;border-radius:3px;background:var(--ib-line);overflow:hidden}
+.ld-prog i::after{content:"";display:block;height:100%;background:var(--ib-action);transform:scaleX(var(--ld-p,0));transform-origin:left;transition:transform .6s var(--ib-ease)}
+.ld-hint{margin:10px 0 0;font-size:var(--ib-fs-13);color:var(--ib-dim);opacity:0;transition:opacity .4s var(--ib-ease)}
+.ld-hint.is-on{opacity:1}
+
+@media (max-width:640px){
+  .ld-head,.ld-out>div{padding-left:14px;padding-right:14px}
+  .ld-tabs{width:100%;margin-left:0}
+  .ld-tabs button{flex:1}
+  .ld-term{--ld-rows:3;padding:10px 14px;font-size:var(--ib-fs-12)}
+  .ld-ln:nth-last-child(n+4){display:none}   /* three rows on a phone: the oldest of the four lines is dropped */
+  /* the flag takes its own row, so it is never cut; points and place share the next one */
+  .ld-stats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:var(--ib-3)}
+  .ld-stats>div:first-child{grid-column:1/-1}
+  .ld-stats>div:nth-child(2){padding-left:0;border-left:0}
+  .ld-steps{grid-template-columns:1fr}
+}
+@media (pointer:coarse){.ld-tabs button{height:40px}}
+@media (prefers-reduced-motion:reduce){
+  .ld [data-k],.ld .ld-mark,.ld-check path,.ld-prog i::after,.ld-hint,.ld-rk__row,.ld-out>div{transition:none}
+  .ld-ln.is-caret::after,.ld .ld-node.is-ping .ib-topo__node{animation:none}
+}

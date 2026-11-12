@@ -23,13 +23,13 @@
 .lg-doc__items .ib-num{color:var(--ib-faint);font-variant-numeric:tabular-nums}
 /* cookie table (≥1024): names wrap between <code>s, never inside a word; every column keeps a readable width */
 .lg-doc__table{margin-top:var(--ib-4);overflow-x:auto;border:1px solid var(--ib-line);border-radius:var(--ib-r)}
-.lg-doc__table table{width:100%;border-collapse:collapse;font-size:var(--ib-fs-14);line-height:1.45}
-.lg-doc__table th,.lg-doc__table td{padding:var(--ib-3);text-align:left;vertical-align:top;border-top:1px solid var(--ib-line);color:var(--ib-body);overflow-wrap:normal}
+.lg-doc__table table{width:100%;border-collapse:collapse;font-size:var(--ib-fs-13);line-height:1.45}
+.lg-doc__table th,.lg-doc__table td{padding:var(--ib-3) var(--ib-2);text-align:left;vertical-align:top;border-top:1px solid var(--ib-line);color:var(--ib-body);overflow-wrap:normal}
 .lg-doc__table thead th{border-top:0;color:var(--ib-dim);font-weight:var(--ib-w-medium);white-space:nowrap}
-.lg-doc__table tbody th{min-width:8em;font-weight:var(--ib-w-regular)}
-.lg-doc__table td:nth-of-type(1){min-width:11em}   /* purpose */
+.lg-doc__table tbody th{min-width:7em;font-weight:var(--ib-w-regular)}
+.lg-doc__table td:nth-of-type(1){min-width:9em}   /* purpose */
 .lg-doc__table td:nth-of-type(3){min-width:7em}    /* duration */
-.lg-doc__table code{font-family:var(--ib-mono);font-size:var(--ib-fs-13);color:var(--ib-ink);white-space:nowrap}
+.lg-doc__table code{font-family:var(--ib-mono);font-size:var(--ib-fs-12);color:var(--ib-ink);white-space:nowrap}
 .lg-doc__table:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
 .lg-doc__contact{margin-top:var(--ib-12);padding-top:var(--ib-6);border-top:1px solid var(--ib-line);color:var(--ib-dim);font-size:var(--ib-fs-14)}
 @media (min-width:1024px){
@@ -61,3 +61,4 @@
   .lg-doc__items li{grid-template-columns:2.7em minmax(0,1fr);gap:var(--ib-1)}
   .lg-doc__items .ib-num{font-size:var(--ib-fs-14)}
 }
+.lg-doc__store{display:block;color:var(--ib-dim);font-size:var(--ib-fs-13)}

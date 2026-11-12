@@ -26,7 +26,10 @@ test("every period of the file is stated in the Policy, in both languages", () =
       if (covered.has(key)) continue
       assert.match(text, new RegExp(`\\{${key}(_gen)?\\}`), key)
     }
-    assert.doesNotMatch(text, /\d+ (days|months|years|днів|місяців|років)/, "no period is typed into the text")
+    // The lab connection log lives in the laboratory, not in a platform setting: its 30 days is the one period typed into the text.
+    const typed = text.replace(/(інтернет-зʼєднань лабораторій|internet connection log) — (до|up to) 30 (днів|days)/g, "")
+    assert.notEqual(typed, text, "the lab connection log term is stated")
+    assert.doesNotMatch(typed, /\d+ (days|months|years|днів|місяців|років)/, "no period is typed into the text")
   }
 })
 
@@ -35,7 +38,7 @@ test("the Policy renders the values of the file", () => {
   assert.match(text, /видаляємо через 30 днів після створення/)
   assert.match(text, /не довше 30 днів/)
   assert.match(text, /неактивні понад 3 роки/)
-  assert.match(text, /до 90 днів; журнали доставки листів — до 180 днів; резервні копії — до 30 днів/)
+  assert.match(text, /до 90 днів; журнал інтернет-зʼєднань лабораторій — до 30 днів; журнали доставки листів — до 180 днів; резервні копії — до 30 днів/)
   assert.match(text, /до завершення заходу та ще 1 рік/)
   assert.match(text, /\(реєстрації, запрошення\) — 1 рік/)
   assert.match(text, /дані аналітики — 14 місяців/)
