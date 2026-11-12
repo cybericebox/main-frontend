@@ -1,0 +1,5 @@
+Це ще не прапор 🙂
+Підказка в умові: шукайте в коді сторінки, а не у вкладці Network.
+
+Not the flag yet 🙂
+The hint is in the task: look in the page code, not in the Network tab.

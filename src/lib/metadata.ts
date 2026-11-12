@@ -15,9 +15,12 @@ export function pageMetadata({ title, description, path = "/" }: { title: string
       title,
       description,
       type: "website",
+      siteName: t("meta.brand"),
+      locale: "uk_UA",
       url: `${origin}${path}`,
       images: [{ url: `${origin}/assets/crest.png`, alt: t("meta.brand") }],
     },
+    twitter: { card: "summary", title, description, images: [`${origin}/assets/crest.png`] },
   }
 }
 

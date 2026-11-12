@@ -67,6 +67,8 @@ jobs:
           NEXT_PUBLIC_SECURITY_EMAIL: ${{ vars.NEXT_PUBLIC_SECURITY_EMAIL }}
           NEXT_PUBLIC_SOURCE_URL: ${{ vars.NEXT_PUBLIC_SOURCE_URL }}
           NEXT_PUBLIC_SHOW_PARTNERS: ${{ vars.NEXT_PUBLIC_SHOW_PARTNERS }}
+          # "false" while the platform is switched off: this static copy then sends no request to the API (unset = it does)
+          NEXT_PUBLIC_API_ENABLED: ${{ vars.NEXT_PUBLIC_API_ENABLED }}
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
           # warm-up flag (secret NEXT_PUBLIC_WARMUP_FLAG, format ICE{…})
           NEXT_PUBLIC_WARMUP_FLAG: ${{ secrets.NEXT_PUBLIC_WARMUP_FLAG }}

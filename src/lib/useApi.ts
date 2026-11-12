@@ -7,6 +7,7 @@
  *   200 → user, 401 (or another 4xx) → anonymous; both mean the API is up.
  *   Network error / 5xx / timeout (~4 s) → down, except an overload answer (503 with
  * Retry-After), which is up (the API answered). The probe is not retried: its 4 s budget is the wait.
+ * With the API switched off (apiEnabled() false) there is no probe at all: the state goes straight to `down`.
  * The landing is static by nature: `pending` and `down` render the same (API-driven
  * controls absent), nothing overlays the page. No 401 redirect from here.
  */
@@ -31,6 +32,11 @@ export function useApi(): ApiState {
 }
 
 const PROBE_TIMEOUT_MS = 4000
+
+/** False when the build or the container says the platform is switched off (NEXT_PUBLIC_API_ENABLED=false, see lib/links). */
+export function apiEnabled(): boolean {
+  return typeof document === "undefined" || document.documentElement.dataset.apiEnabled !== "false"
+}
 
 export async function probeApi(): Promise<ApiState> {
   const ctrl = new AbortController()

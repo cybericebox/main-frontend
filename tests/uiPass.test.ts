@@ -60,7 +60,8 @@ test("lab scheme: no 600px floor, and phones get the column layout", () => {
   const css = read("src/styles/landing.css")
   assert.match(css, /\.ib-topo \.ib-topo__wide\{min-width:0\}/)
   assert.match(css, /@media \(max-width:640px\)\{\s*\.ib-topo \.ib-topo__wide\{display:none\}\s*\.ib-topo \.ib-topo__tall\{display:block\}/)
-  assert.match(read("src/components/ib/Topology.tsx"), /className="ib-topo__tall"/)
+  assert.match(read("src/components/landing/LabDemo.tsx"), /className=\{`ib-topo__\$\{spec\.id\}`\}/)
+  assert.match(read("src/components/landing/labScene.ts"), /export const TALL: Scheme = \{\s*id: "tall"/)
 })
 
 test("touch: 44px targets and a 16px flag field", () => {

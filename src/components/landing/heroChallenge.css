@@ -1,87 +1,140 @@
 /* HeroChallenge — the event app window (challenges board) and the «Розминка» challenge card that opens
-   over it (closed by default). DS tokens only (light = light surfaces,
-   dark = dark surfaces), no shadows. */
+   over it (closed by default). DS tokens only (light = light surfaces, dark = dark surfaces), no shadows.
+   The board, the tiles and the card mirror the participant UI of the event app, so the landing shows the real thing:
+   event-frontend styles/challenge-tile.css, challenge-board.css, challenge-modal.css, segmented.css, tag.css.
+   They are copies under hc-* names (this app does not ship the event styles); keep them in step by hand. */
 
-.hc{--hc-tile:var(--ib-surface);--hc-chip:var(--ib-paper);--hc-card-line:color-mix(in srgb,var(--ib-brand) 22%,var(--ib-line));
+.hc{--hc-chip:var(--ib-paper);--hc-card-line:color-mix(in srgb,var(--ib-brand) 22%,var(--ib-line));
   position:relative;min-width:0}
-[data-theme="dark"] .hc{--hc-tile:var(--ib-raised);--hc-chip:var(--ib-raised);--hc-card-line:var(--ib-control)}
+[data-theme="dark"] .hc{--hc-chip:var(--ib-raised);--hc-card-line:var(--ib-control)}
 
 /* window: 80px into the column, 820px wide (bleeds off the right edge on narrower screens, never stretches);
-   FIXED height: bar + board head + chips + exactly 2 rows of tiles. --hc-rows-top = where the first tile row starts. */
-.hc{--hc-rows-top:136px;--hc-tile-h:92px;--hc-rows:2;--hc-feed-h:44px}
+   FIXED height: bar + board head + filters + exactly 2 rows of tiles + the mini rating (--hc-feed-h).
+   --hc-rows-top = where the first tile row starts. */
+.hc{--hc-rows-top:146px;--hc-tile-h:100px;--hc-tile-gap:8px;--hc-rows:2;--hc-rk-rows:4;--hc-rk-h:28px;--hc-feed-h:calc(40px + (var(--hc-rk-rows) + 1) * var(--hc-rk-h) + 9px)}
 .hc-win{display:grid;grid-template-rows:34px 1fr;width:820px;margin-left:80px;overflow:hidden;
-  height:calc(var(--hc-rows-top) + var(--hc-rows) * var(--hc-tile-h) + (var(--hc-rows) - 1) * 10px + 20px + 14px + var(--hc-feed-h));
+  height:calc(var(--hc-rows-top) + var(--hc-rows) * var(--hc-tile-h) + (var(--hc-rows) - 1) * var(--hc-tile-gap) + 20px + 14px + var(--hc-feed-h));
   border:1px solid var(--ib-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink)}
 .hc-win__bar{display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--ib-paper);border-bottom:1px solid var(--ib-line)}
 .hc-win__bar span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:12px var(--ib-mono);color:var(--ib-faint)}
 
-.hc-board{display:grid;grid-template-rows:28px 26px auto var(--hc-feed-h);align-content:start;gap:14px;padding:20px 22px}   /* 34 + 20 + 28 + 14 + 26 + 14 = --hc-rows-top */
+.hc-board{display:grid;grid-template-rows:28px 36px auto var(--hc-feed-h);align-content:start;gap:14px;padding:20px 22px}   /* 34 + 20 + 28 + 14 + 36 + 14 = --hc-rows-top */
 .hc-board__head{display:flex;align-items:baseline;gap:16px;height:28px}   /* counter next to the title: the window bleeds off the right edge */
 .hc-board__head h3{margin:0;font-size:20px;font-weight:650;letter-spacing:-.02em}
 .hc-board__head>span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
-.hc-board__cats{display:flex;gap:6px;height:26px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
-.hc-board__cats::-webkit-scrollbar{display:none}
-.hc-board__cats b{flex:none;white-space:nowrap;display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--ib-r);background:var(--hc-chip);font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
-.hc-board__cats b.is-on{background:var(--ib-action);color:var(--ib-on-action)}
 
-.hc-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.hc-tile{display:flex;flex-direction:column;justify-content:space-between;min-width:0;height:var(--hc-tile-h);padding:12px;
-  border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);background:var(--hc-tile)}
-.hc-tile small{font-size:var(--ib-fs-12);color:var(--ib-faint)}
-.hc-tile b{font-size:var(--ib-fs-13);font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-tile .ib-num{display:inline-flex;align-items:center;gap:4px;font-size:var(--ib-fs-13);font-weight:600}
-.hc-tile svg{width:13px;height:13px;flex:none;fill:none;stroke:var(--ib-ok);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.hc-tile.is-solved{background:var(--ib-solved);color:var(--ib-dim)}
-.hc-tile.is-warm{border:2px solid var(--ib-action);padding:11px}
+/* filter bar of the event board (segmented status + group select): an illustration, nothing is pressed */
+.hc-board__filters{display:flex;align-items:center;gap:8px;height:36px;min-width:0}
+.hc-seg{display:inline-flex;flex:none;gap:2px;padding:3px;border:1px solid var(--ib-line);border-radius:var(--ib-r-lg);background:var(--ib-paper)}
+.hc-seg b{display:inline-flex;align-items:center;height:28px;padding:0 10px;border:1px solid transparent;border-radius:var(--ib-r);font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-dim);white-space:nowrap}
+.hc-seg b.is-on{background:var(--ib-raised);border-color:var(--ib-line);color:var(--ib-ink);font-weight:var(--ib-w-semibold)}
+.hc-select{display:flex;align-items:center;gap:8px;flex:none;height:36px;min-width:180px;padding:0 10px;border:1px solid var(--ib-line);border-radius:var(--ib-r);background:var(--ib-raised);font-size:var(--ib-fs-13);color:var(--ib-ink)}
+.hc-select>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-select small{font-size:inherit;color:var(--ib-faint)}
+.hc-select svg{flex:none;width:14px;height:14px;color:var(--ib-dim)}
 
-/* another team solved a task (the demo feed below): the tile lights up softly for a moment */
-.hc-tile{transition:background-color .3s var(--ib-ease),border-color .3s var(--ib-ease)}
-.hc-tile.is-hit{background:var(--ib-soft);border-color:var(--ib-brand)}
+/* tile: name + difficulty on the left, points behind a hairline on the right, a lab mark in the corner.
+   Open = brand mass, solved = green with the points earned. */
+.hc-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--hc-tile-gap)}
+.hc-tile{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 58px;align-items:stretch;gap:8px;min-width:0;width:100%;height:var(--hc-tile-h);padding:9px 11px;
+  border:1px solid var(--ib-brand);border-radius:var(--ib-r-lg);background:var(--ib-brand);color:var(--ib-on-brand);font:inherit;text-align:left;
+  transition:background-color .3s var(--ib-ease),border-color .3s var(--ib-ease),color .3s var(--ib-ease)}
+.hc-tile__main{position:relative;display:flex;align-items:center;min-width:0;min-height:0}
+/* three lines of 14px, not the event's two of 15px: four tiles share this window, so a tile is narrower than the event's 208px */
+.hc-tile__name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;max-height:51px;margin-bottom:14px;overflow:hidden;overflow-wrap:anywhere;font-size:14px;font-weight:var(--ib-w-semibold);line-height:17px}
+.hc-tile__diff{position:absolute;left:0;bottom:0;max-width:100%;height:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--ib-fs-12);line-height:14px;color:var(--ib-on-brand-3)}
+.hc-tile__score{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding-left:3px;border-left:1px solid var(--ib-brand-line)}
+.hc-tile__pts{font:var(--ib-w-medium) 24px/1 var(--ib-mono);font-variant-numeric:tabular-nums;letter-spacing:-.5px;color:var(--ib-brand-points);white-space:nowrap}
+.hc-tile__lab{position:absolute;top:0;right:0;width:14px;height:14px}
+.hc-tile.is-solved{background:var(--ib-ok-bg);border-color:var(--ib-ok);color:var(--ib-ink)}
+.hc-tile.is-solved .hc-tile__name{font-weight:var(--ib-w-medium)}
+.hc-tile.is-solved .hc-tile__diff{color:var(--ib-dim)}
+.hc-tile.is-solved .hc-tile__pts{color:var(--ib-ok);font-weight:var(--ib-w-semibold);font-size:22px}
+.hc-tile.is-solved .hc-tile__score{border-left-color:color-mix(in srgb,var(--ib-ok),transparent 68%)}
+/* another team solved a task (the demo rating below): the tile lights up softly for a moment */
+.hc-tile.is-hit{background:var(--ib-brand-active);border-color:var(--ib-brand-points)}
+/* …a tile we solved too stays green (dark text on the brand fill would be unreadable): only the green deepens */
+.hc-tile.is-solved.is-hit{background:color-mix(in srgb,var(--ib-ok-bg),var(--ib-ok) 16%);border-color:var(--ib-ok)}
+/* the «Розминка» tile is a real button: it opens the card. A ring sets it apart from the illustration around it. */
+button.hc-tile{cursor:pointer}
+.hc-tile.is-warm{outline:2px solid var(--ib-action);outline-offset:2px}
+.hc-tile.is-warm.is-solved{outline-color:var(--ib-ok)}
+button.hc-tile:hover{border-color:var(--ib-control)}
+button.hc-tile.is-solved:hover{border-color:var(--ib-ok)}
+button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:3px}
 
-/* the demo feed: two lines, fixed height (nothing shifts); the newest slides in (opacity + 14px) */
-.hc-feed{height:var(--hc-feed-h);overflow:hidden;border-top:1px solid var(--ib-line);padding-top:6px;font-size:var(--ib-fs-12);color:var(--ib-dim)}
-.hc-feed p{margin:0;height:18px;line-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hc-feed p.is-new{animation:hc-feed-in .6s var(--ib-ease)}
-@keyframes hc-feed-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.hc-feed p.is-new{animation:none}.hc-tile{transition:none}}
-
-/* the «Розминка» tile is a real button: it opens the card */
-button.hc-tile{font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color var(--ib-dur-fast) var(--ib-ease)}
-button.hc-tile:hover{border-color:var(--ib-action-hover)}
-button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px}
+/* the mini rating: a caption and a fixed stack of rows (nothing shifts). A row keeps its DOM place and travels to
+   its rank (--hc-i); the own team sits below a dashed hairline. Kept 520px wide: the window bleeds off the right edge. */
+.hc-rk{height:var(--hc-feed-h);max-width:520px;border-top:1px solid var(--ib-line);padding-top:10px}
+.hc-rk__cap{margin:0;height:18px;line-height:18px;font-size:var(--ib-fs-12);color:var(--ib-faint)}
+.hc-rk__list{position:relative;height:calc((var(--hc-rk-rows) + 1) * var(--hc-rk-h) + 9px);margin-top:4px}
+.hc-rk__row{position:absolute;inset:0 0 auto 0;display:grid;grid-template-columns:20px auto minmax(0,1fr) auto;gap:10px;align-items:center;height:var(--hc-rk-h);padding:0 8px;
+  border-radius:var(--ib-r);font-size:var(--ib-fs-13);transform:translateY(calc(var(--hc-i) * var(--hc-rk-h)));
+  transition:transform .6s var(--ib-ease),background-color .4s var(--ib-ease),opacity .3s var(--ib-ease)}
+.hc-rk__row b{font-weight:600}
+.hc-rk__place{font-size:var(--ib-fs-12);color:var(--ib-faint)}
+.hc-rk__note{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--ib-fs-12);color:var(--ib-dim);opacity:0;transition:opacity .4s var(--ib-ease)}
+.hc-rk__pts{font-weight:600}
+.hc-rk__row.is-new{background:var(--ib-soft)}
+.hc-rk__row.is-new .hc-rk__note{opacity:1}
+.hc-rk__row--own{transform:translateY(calc(var(--hc-rk-rows) * var(--hc-rk-h) + 8px));color:var(--ib-faint)}
+.hc-rk__row--own::before{content:"";position:absolute;left:0;right:0;top:-5px;border-top:1px dashed var(--ib-line)}
+.hc-rk__row--own b{font-weight:var(--ib-w-medium)}
+.hc-rk__row--own.is-in{color:var(--ib-ink)}
+.hc-rk__row--own.is-in b{font-weight:600}
+/* «+N» on its way from a tile to a team row (heroRating.fly): a demo solve passes under the open card, the visitor's
+   own reward flies over it */
+.hc-fly{position:absolute;z-index:0;padding:2px 8px;border:1px solid var(--ib-on-action);border-radius:var(--ib-r);background:var(--ib-action);color:var(--ib-on-action);font-size:var(--ib-fs-12);font-weight:600;white-space:nowrap;pointer-events:none}
+.hc-fly--top{z-index:2}
+/* the warm-up reward: the screen dims and the ice box opens in its middle, the flag rises out of it (heroRating.burst,
+   drawn on a canvas), above everything and before the result dialog; the tile answers with a beat, the solved counter
+   steps up. The canvas takes its colours from here: the ice of the crest, the same in both themes (the layer is dark). */
+.hc-burst{position:fixed;inset:0;z-index:1200;overflow:hidden;background:var(--ib-backdrop);pointer-events:none;font-family:var(--ib-mono);animation:hc-burst-in .25s var(--ib-ease) both;
+  --hc-edge:#CFEBFF;--hc-white:#FFFFFF;--hc-flag:#7CE7AC;--hc-inside:#0A1D36;--hc-beam:rgba(207,235,255,.45);--hc-beam-0:rgba(207,235,255,0);
+  --hc-left-1:#4FA6E6;--hc-left-2:#2468B0;--hc-right-1:#2F7FC8;--hc-right-2:#184E8E;--hc-lid-1:#BFE8FF;--hc-lid-2:#7FD0FA}
+[data-theme="light"] .hc-burst{background:rgba(22,21,43,.72)}   /* the light page needs a deeper dim for the white marks to read */
+@keyframes hc-burst-in{from{opacity:0}to{opacity:1}}
+.hc-burst canvas{display:block;width:100%;height:100%}
+.hc-tile.is-just{animation:hc-beat .6s var(--ib-ease)}
+@keyframes hc-beat{40%{scale:1.05}}
+.hc-roll{display:inline-block;animation:hc-roll .45s var(--ib-ease)}
+@keyframes hc-roll{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hc-rk__row,.hc-rk__note,.hc-tile{transition:none}.hc-tile.is-just,.hc-roll{animation:none}}
 
 /* the opened challenge: a non-blocking card OVER the window (never in the flow), centred over the tiles,
-   its top on the first tile row; it may extend below the window */
+   its top on the first tile row; it may extend below the window. Inside it is the event app challenge dialog:
+   title, a meta line (points, difficulty, state), the task, then the answer block on paper. */
 .hc-card{position:absolute;top:var(--hc-rows-top);left:max(0px,min(230px,calc(100% - 568px)));z-index:1;width:520px;overflow:hidden;
-  border:1px solid var(--hc-card-line);border-radius:12px;background:var(--ib-surface);color:var(--ib-ink);
+  border:1px solid var(--hc-card-line);border-radius:var(--ib-r-lg);background:var(--ib-raised);color:var(--ib-body);
   animation:hc-in 150ms var(--ib-ease)}
 @keyframes hc-in{from{opacity:0;scale:.98}to{opacity:1;scale:1}}   /* `scale`, not transform: the stacked layout centres with translate */
 .hc-card:focus{outline:none}
-.hc-card__head{display:flex;align-items:flex-start;gap:12px;padding:20px 14px 0 22px}
-.hc-card__head>div{flex:1;min-width:0}
-.hc-card__head small{display:block;font-size:var(--ib-fs-12);color:var(--ib-faint)}
-.hc-card__head h2{margin:2px 0 0;font-size:22px;font-weight:650;letter-spacing:-.02em;line-height:1.2}
-.hc-card__pts{flex:none;margin:0;text-align:right}
-.hc-card__pts b{display:block;font-size:22px;font-weight:600}
-.hc-card__pts span{font-size:var(--ib-fs-12);color:var(--ib-faint)}
-.hc-card__pts,.hc-card__done{min-height:52px}   /* same height in both states */
-.hc-card__done{display:inline-flex;align-items:flex-start;gap:6px;flex:none;margin:4px 0 0;font-size:var(--ib-fs-14);font-weight:600;color:var(--ib-ok)}
-.hc-card__done svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.hc-card__close{flex:none;margin-top:-4px}
+.hc-card__head{position:relative;padding:20px 24px 0}
+.hc-card__head h2{margin:0 0 10px;padding-right:44px;overflow-wrap:anywhere;font-size:var(--ib-fs-20);font-weight:var(--ib-w-semibold);letter-spacing:-.02em;line-height:var(--ib-lh-tight);color:var(--ib-ink)}
+.hc-card__meta{display:flex;align-items:center;gap:var(--ib-2);margin:0;overflow-x:auto;white-space:nowrap;font-size:var(--ib-fs-13);color:var(--ib-dim)}
+.hc-card__meta>*{flex:none}
+.hc-card__meta .ib-num{color:var(--ib-ink)}
+.hc-tag{display:inline-flex;align-items:center;gap:var(--ib-1);height:24px;padding:0 var(--ib-2);border:1px solid var(--ib-line);border-radius:var(--ib-r-sm);background:var(--ib-paper);
+  font:var(--ib-w-medium) var(--ib-fs-13)/1 var(--ib-font);color:var(--ib-dim);white-space:nowrap}
+.hc-tag--ok{background:var(--ib-ok-bg);border-color:transparent;color:var(--ib-ok)}
+.hc-tag svg,.hc-card__ok svg{flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hc-tag svg{width:14px;height:14px}
+.hc-card__close{position:absolute;top:14px;right:14px}
 
-.hc-card__body{display:grid;gap:14px;padding:14px 22px 18px;font-size:var(--ib-fs-14)}
-.hc-card__body>p:first-child{margin:0;color:var(--ib-dim);line-height:var(--ib-lh-body)}
+.hc-card__body{padding:16px 24px 20px;font-size:var(--ib-fs-14)}
+.hc-card__body p{max-width:66ch;margin:0;color:var(--ib-body);line-height:var(--ib-lh-body)}
+.hc-card__body p span{display:block}
 .hc-card__body code{padding:1px 6px;border-radius:var(--ib-r-sm);background:var(--hc-chip);font:13px var(--ib-mono);color:var(--ib-ink)}
-.hc-card__kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;padding-top:12px;border-top:1px solid var(--ib-line);font-size:var(--ib-fs-13)}
-.hc-card__kv dt{color:var(--ib-faint)}
-.hc-card__kv dd{margin:0}
-.hc-card__form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px}
-.hc-card__label{grid-column:1/-1;font-size:var(--ib-fs-12);font-weight:var(--ib-w-medium);color:var(--ib-dim)}
+
+/* answer block: the label, the field with its error, then the full-width action */
+.hc-card__flag{margin:0;padding:16px 24px;background:var(--ib-paper)}
+.hc-card__form{display:flex;flex-direction:column;gap:var(--ib-2)}
+.hc-card__label{font-size:var(--ib-fs-13);font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
 .hc-card__field{min-width:0}
 .hc-card__field-error{margin:6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-danger)}
-.hc-card__form .ib-input{min-width:0;height:44px;font-size:var(--ib-fs-15)}
-.hc-card__form .ib-btn{height:44px;padding:0 18px}
-/* «Здати» / «Перевіряємо…» stacked in one cell: the busy label never resizes the button */
+.hc-card__form .ib-input{width:100%;min-width:0;height:40px;font-size:var(--ib-fs-15)}
+.hc-card__form .ib-btn{width:100%;height:40px}
+/* «Надіслати» / «Перевіряємо…» stacked in one cell: the busy label never resizes the button */
 .hc-card__submit{display:grid}
 .hc-card__submit>span{grid-area:1/1;display:inline-flex;align-items:center;justify-content:center;gap:var(--ib-2)}
 .hc-card__submit>.is-off{visibility:hidden}
@@ -89,9 +142,13 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
 /* touch: 16px stops iOS zooming into the field; 44px close target */
 @media (pointer:coarse){
   .hc-card__form .ib-input{font-size:16px}
-  .hc-card__close{width:44px;height:44px;margin:-8px -6px 0 0}
+  .hc-card__close{width:44px;height:44px;top:8px;right:8px}
 }
-.hc-card__msg{min-height:20px;margin:-6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-faint)}
+/* solved: the green result of the event dialog stands where the form was */
+.hc-card__ok{display:flex;align-items:center;gap:10px;margin:0;padding:var(--ib-3) 14px;border-radius:var(--ib-r-lg);background:var(--ib-ok-bg);color:var(--ib-ok);font-weight:var(--ib-w-semibold)}
+.hc-card__ok svg{width:18px;height:18px}
+.hc-card__ok .ib-num{margin-left:auto;font-weight:var(--ib-w-medium)}
+.hc-card__msg{margin:var(--ib-2) 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-dim)}
 
 /* stacked: the window sits in the page gutter (no bleed); the card is centred over it */
 /* the window bleeds off the right edge: fade it out instead of clipping mid-word (the card keeps 48px clear of the fade).
@@ -103,24 +160,27 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
   .hc-win{width:100%;margin:0}
   .hc-card{left:50%;width:min(520px,calc(100% - 24px));transform:translateX(-50%)}
 }
-/* phone: 2 columns × 4 rows — the window is tall enough to hold the card over it */
-/* phone: a short window — 2 columns × 2 rows, no demo feed (the card opens as a bottom sheet there) */
+/* phone: a short window — 2 columns × 2 rows, a three-team rating, the status filter only
+   (the card opens as a bottom sheet there) */
 @media (max-width:640px){
-  .hc{--hc-rows-top:132px;--hc-tile-h:100px}
+  .hc{--hc-rows-top:142px;--hc-tile-h:88px;--hc-rk-rows:3}
   .hc-win{height:auto}
-  .hc-feed,.hc-tile:nth-child(n+5){display:none}
+  .hc-select,.hc-tile:nth-child(n+5){display:none}
+  .hc-rk__row[data-rank="3"]{opacity:0}
   .hc-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .hc-tile b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal}   /* two lines instead of «…» */
+  .hc-tile{grid-template-columns:minmax(0,1fr) 56px;gap:6px;padding:8px 9px}
+  .hc-tile__pts{font-size:22px}
+  .hc-tile.is-solved .hc-tile__pts{font-size:20px}
   .hc-board{padding:16px 14px 18px}
-  .hc-card__head{padding-left:16px}
-  .hc-card__body{padding-left:16px;padding-right:16px}
+  .hc-card__head{padding:16px 16px 0}
+  .hc-card__body,.hc-card__flag{padding:16px}
 }
 
 /* phones / touch screens: the card as a bottom sheet (native modal <dialog>, DS modal look). It rests on the
    on-screen keyboard: --hc-kb = the keyboard height from visualViewport (set in HeroChallenge). */
-/* narrow phones: the host only (no path) and the categories that fit */
+/* narrow phones: the host only (no path) */
 @media (max-width:430px){
-  .hc-win__path,.hc-board__cats b:nth-child(n+4){display:none}
+  .hc-win__path{display:none}
 }
 
 .hc-card.hc-card--sheet{position:fixed;inset:auto 0 var(--hc-kb,0px) 0;left:0;transform:none;width:100%;max-width:none;margin:0;padding:0 0 env(safe-area-inset-bottom);
@@ -128,5 +188,5 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:2
   animation:hc-sheet-in var(--ib-dur-move) var(--ib-ease)}
 .hc-card--sheet::backdrop{background:var(--ib-backdrop)}
 @keyframes hc-sheet-in{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
-.hc-card--sheet .hc-card__head{padding-left:16px}
-.hc-card--sheet .hc-card__body{padding:14px 16px 18px}
+.hc-card--sheet .hc-card__head{padding:16px 16px 0}
+.hc-card--sheet .hc-card__body,.hc-card--sheet .hc-card__flag{padding:16px}
