@@ -20,7 +20,6 @@ const SKIP_DIRS = ["src/i18n"]
 // Files allowed to keep literal Latin JSX text, with the reason. Cyrillic is never allowed.
 const LATIN_JSX_ALLOW: Record<string, string> = {
   "src/components/ib/Wordmark.tsx": "the «Cyber ICE Box» wordmark is the logo itself",
-  "src/components/ib/Topology.tsx": "lab diagram data: host names, ports, addresses and terminal output",
   "src/components/landing/HeroChallenge.tsx": "«view-source» is the browser command the warm-up hints at",
 }
 

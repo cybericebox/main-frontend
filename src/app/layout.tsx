@@ -1,6 +1,12 @@
 import type React from "react"
 import "@/app/globals.css"
 import "@/styles/site.css"
+// The error boundary (app/error.tsx → ErrorPage) is a segment of every route: left to itself, its stylesheet is only
+// preloaded and the browser reports it as «preloaded but not used». Loaded here it is an ordinary stylesheet.
+import "@/styles/ds/components/error-page.css"
+import "@/styles/ds/components/link.css"
+import "@/styles/wordmark.css"
+import "@/components/feedback-link.css"
 import type { Metadata, Viewport } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
@@ -13,6 +19,7 @@ import { THEME_BOOT_SCRIPT } from "@/lib/theme"
 import { SIGNED_HINT_BOOT_SCRIPT } from "@/lib/signedHint"
 import { SignedOutNotice } from "@/components/site/SignedOutNotice"
 import { pageMetadata } from "@/lib/metadata"
+import { API_ENABLED } from "@/lib/links"
 import { t } from "@/i18n/t"
 
 export const metadata: Metadata = pageMetadata({ title: t("meta.home.title"), description: t("meta.home.description") })
@@ -30,7 +37,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         // data-theme is set by the boot script before hydration — hence suppressHydrationWarning.
-        <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+        <html lang="uk" className={`${GeistSans.variable} ${GeistMono.variable}`} data-scroll-behavior="smooth" data-api-enabled={API_ENABLED} suppressHydrationWarning>
             <head>
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: CHUNK_RECOVERY_BOOT_SCRIPT }} />

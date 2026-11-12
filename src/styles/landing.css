@@ -25,30 +25,40 @@
 .pl-main h1{font-size:min(70px,12.4cqi);line-height:1.04;letter-spacing:-.04em;font-weight:650}   /* .pl-nowrap keeps «CTF-змагань» on one line (7.8em) */
 .pl-nowrap{white-space:nowrap}
 .pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:34ch}   /* ≥ 7:1 on the page tone and on the dark pool */
+.pl-sub span{display:block}
 .pl-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
 .pl-actions .ib-btn{height:48px;padding:0 22px;font-size:var(--ib-fs-16)}
 .pl-actions .ib-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* warm-up done: a quiet, still clickable button (opens the solved card read-only) */
-.pl-actions .ib-btn--primary.is-done{background:transparent;border-color:var(--ib-control);color:var(--ib-ink)}
+.pl-actions .ib-btn--primary.is-done{--_hover:color-mix(in srgb,var(--ib-ok-bg),var(--ib-ok) 16%);background:var(--ib-ok-bg);border-color:var(--ib-ok);color:var(--ib-ink)}
+.pl-actions .ib-btn--primary.is-done:hover{background:var(--_hover);border-color:var(--ib-ok)}
 .pl-actions .ib-btn--primary.is-done svg{color:var(--ib-ok)}
+.pl-actions .ib-btn--primary.is-done .ib-num{margin-left:var(--ib-1);font-weight:var(--ib-w-semibold);color:var(--ib-ok)}
 .pl-side{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 0 var(--pl-fade)}
 
-/* warm-up success dialog: result row — big mono numbers, dim labels, hairline separators */
+/* warm-up success dialog: a larger title, the accepted flag, then the result row — big mono numbers, dim labels, hairline separators */
+dialog:has(.pl-won) .ib-modal__title{font-size:var(--ib-fs-24);letter-spacing:-.02em}
+dialog:has(.pl-won) .ib-modal__desc span{display:block}
+.pl-won{display:grid;gap:var(--ib-4)}
+.pl-won__flag{margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--ib-fs-15);font-weight:var(--ib-w-medium);color:var(--ib-ok)}
 .pl-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0}
 .pl-stats>div{display:flex;flex-direction:column;gap:2px;padding:var(--ib-1) var(--ib-4)}
 .pl-stats>div:first-child{padding-left:0}
 .pl-stats>div+div{border-left:1px solid var(--ib-line)}
 .pl-stats dt{font-size:var(--ib-fs-12);color:var(--ib-dim)}
-.pl-stats dd{margin:0;font-size:28px;line-height:1.1;font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
+.pl-stats dd{margin:auto 0 0;font-size:28px;line-height:1.1;font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
 
 /* sections */
 .pl-sec{padding:80px 0}
 /* rhythm: hero → tone (Labs) → paper (FAQ); no borders between sections.
+   Anchor links travel instead of jumping (the stop below the sticky bar is html scroll-padding-top, ds base).
    --pl-tone: page-level tone (ds dark has --ib-hero = --ib-paper, so dark uses surface). The theme boot
    script always resolves «system» to data-theme="light|dark" on <html>, so these two cover every case. */
 :root,[data-theme="light"]{--pl-tone:var(--ib-hero)}
 [data-theme="dark"]{--pl-tone:var(--ib-surface)}
 #labs{background:var(--pl-tone)}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* dark: Labs tone = surface, so lift the topology card one step */
 [data-theme="dark"] #labs .ib-topo{background:var(--ib-raised)}
 .pl-sec h2{font-size:var(--ib-fs-48);line-height:1.04;letter-spacing:-.035em}
@@ -65,14 +75,24 @@
   .ib-topo .ib-topo__tall{display:block}
   .ib-topo .ib-topo__term{white-space:pre-wrap;font-size:var(--ib-fs-12)}   /* the second column wraps under the first */
 }
-.pl-labs h2{max-width:10ch}
 .pl-feat{margin:var(--ib-10) 0 0;border-top:1px solid var(--ib-line)}
-.pl-feat div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--ib-4);padding:var(--ib-4) 0;border-bottom:1px solid var(--ib-line)}
-.pl-feat dt{font:var(--ib-w-medium) var(--ib-fs-14)/1.6 var(--ib-mono);color:var(--ib-action)}
-.pl-feat dd{margin:0;font-size:var(--ib-fs-15);color:var(--ib-body)}
+/* a feature row is a button: it lights up its part of the lab scheme (hover, focus, or held after a tap) */
+.pl-feat button{display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--ib-4);width:100%;padding:var(--ib-4) var(--ib-2);border:0;border-bottom:1px solid var(--ib-line);
+  background:transparent;font:inherit;text-align:left;cursor:pointer;transition:background-color var(--ib-dur) var(--ib-ease)}
+.pl-feat button:hover,.pl-feat button[aria-pressed="true"]{background:var(--ib-soft)}
+.pl-feat button:focus-visible{outline-offset:-2px}
+.pl-feat b{font:var(--ib-w-medium) var(--ib-fs-14)/1.6 var(--ib-mono);color:var(--ib-action)}
+.pl-feat span{font-size:var(--ib-fs-15);color:var(--ib-body)}
+.pl-feat-hint{margin-top:10px;font-size:var(--ib-fs-12);color:var(--ib-faint)}
 
 /* faq */
 .pl-faq{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:72px}
+/* hairlines only between the questions: none above the first or under the last, so the list starts level with the heading */
+#faq .ib-accordion{border-top:0}
+#faq .ib-accordion__item:last-child{border-bottom:0}
+#faq .ib-accordion__item:first-child .ib-accordion__q{padding-top:var(--ib-3)}
+/* an answer: running text, its key phrase in ink */
+#faq .ib-accordion__a b{font-weight:var(--ib-w-semibold);color:var(--ib-ink)}
 
 /* responsive */
 @media (max-width:1180px){
@@ -97,5 +117,5 @@
   .pl-sec{padding:56px 0}
   .pl-sec h2{font-size:36px}
   .pl-lead{font-size:var(--ib-fs-16)}
-  .pl-feat div{grid-template-columns:96px minmax(0,1fr)}
+  .pl-feat button{grid-template-columns:112px minmax(0,1fr)}
 }

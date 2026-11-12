@@ -13,6 +13,8 @@
  */
 
 import { test, expect } from "@playwright/test"
+
+const DEMO_FLAG = "ICE{p1v0t_thr0ugh_dmz}" // src/components/landing/labScene.ts FLAG
 import { nbsp } from "../src/i18n/typo"
 
 test("typography: no dangling short words (nbsp)", () => {
@@ -27,14 +29,14 @@ test("typography: no dangling short words (nbsp)", () => {
 test.describe("static landing — API down", () => {
   test("renders every section and no API-driven controls", async ({ page }) => {
     await page.goto("/")
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("і\u00a0лабораторій")
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Кіберполігон")
     for (const id of ["labs", "faq"]) {
       await expect(page.locator(`#${id}`)).toHaveCount(1)
     }
-    // the probe settles to "down": no sign-in / avatar in the navbar
+    // the probe settles to "down": «Увійти» is there at once (also with the API down), no avatar in the navbar
     await expect(page.locator("html")).toHaveAttribute("data-api", "down", { timeout: 10_000 })
     const nav = page.locator(".ib-navbar")
-    await expect(nav.getByRole("link", { name: "Увійти" })).toHaveCount(0)
+    await expect(nav.getByRole("link", { name: "Увійти" })).toHaveCount(1)
     await expect(nav.locator(".ib-avatar-btn")).toHaveCount(0)
     // hero: «Спробувати розминку» + «Лабораторії»; the warm-up card is closed until opened
     await expect(page.locator(".pl-hero a:not(dialog a)")).toHaveCount(1)
@@ -47,7 +49,9 @@ test.describe("static landing — API down", () => {
     // HTML comment → robots.txt → /.well-known/ice/… (base64). The plaintext is never in the page.
     const html = await (await request.get("/")).text()
     expect(html).toContain("<!-- розминка: robots.txt -->")
-    expect(html).not.toMatch(/ICE\{(?!…)[^}]+\}/)
+    // the only flag-shaped text in the page is the demo flag of the lab card (labScene.FLAG): the form knows it and teases
+    expect(html).toContain(DEMO_FLAG)
+    expect(html.replaceAll(DEMO_FLAG, "")).not.toMatch(/ICE\{(?!…)[^}]+\}/)
     const robots = await (await request.get("/robots.txt")).text()
     const hintPath = robots.match(/(\/\.well-known\/ice\/\S+)/)?.[1] // hint line: "# Warm-up: /.well-known/ice/…"
     expect(hintPath).toBeTruthy()
@@ -64,12 +68,11 @@ test.describe("static landing — API down", () => {
     const input = page.locator("#warmup-flag")
     await expect(input).toBeFocused()
     await input.fill("ICE{nope}")
-    await page.getByRole("button", { name: "Здати" }).click()
+    await page.getByRole("button", { name: "Надіслати" }).click()
     await expect(page.locator("#warmup-error")).toContainText("Прапор не прийнято") // the error sits under the field
 
     await input.fill(FLAG)
-    await page.getByRole("button", { name: "Здати" }).click()
-    await expect(page.locator("#warmup-msg")).toContainText("Розвʼязано")
+    await page.getByRole("button", { name: "Надіслати" }).click()
     await expect(page.locator(".hc-tile.is-warm")).toHaveClass(/is-solved/)
     const dialog = page.getByRole("dialog", { name: "Прапор прийнято" })
     await expect(dialog).toBeVisible({ timeout: 5000 }) // opens after a short pause; the card closes
@@ -83,15 +86,18 @@ test.describe("static landing — API down", () => {
     await expect(dialog).toBeHidden()
     await expect(page.getByRole("button", { name: "Розминку пройдено" })).toBeVisible()
 
-    // solved state survives a reload within the session, without the dialog; the card opens read-only
+    // solved: the card opens read-only, the result stands where the form was
+    await page.getByRole("button", { name: "Розминку пройдено" }).click()
+    await expect(page.locator("#warmup-flag")).toHaveCount(0)
+    await expect(page.locator(".hc-card__ok")).toContainText("+100")
+    await expect(page.locator("#warmup-msg")).toContainText("7 місце в демо-рейтингу")
+
+    // The solved state is functional storage: without functional consent nothing is kept, so a reload starts over.
+    // (With consent it survives the reload; the consent cookie cannot be set on the bare IP of this run.)
     await page.reload()
     await expect(page.locator("html")).toHaveAttribute("data-api", "down", { timeout: 10_000 })
-    await expect(page.locator(".hc-tile.is-warm")).toHaveClass(/is-solved/)
-    await expect(dialog).toBeHidden()
-    await page.getByRole("button", { name: "Розминку пройдено" }).click()
-    await expect(page.locator("#warmup-flag")).toBeDisabled()
-    await expect(page.locator("#warmup-flag")).toHaveValue("") // the page doesn't know the flag, only its hash
-    await expect(page.locator("#warmup-msg")).toContainText("13 місце в демо-рейтингу")
+    await expect(page.locator(".hc-tile.is-warm")).not.toHaveClass(/is-solved/)
+    await expect(page.getByRole("button", { name: "Спробувати розминку" })).toBeVisible()
   })
 
   test("warm-up card: opens from the tile, Esc closes and returns focus", async ({ page }) => {

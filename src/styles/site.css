@@ -21,6 +21,8 @@ main:focus{outline:none}
 
 /* navbar actions slot: reserves the «Увійти» width so nothing shifts when the API answers */
 .site-nav-slot{display:flex;align-items:center;justify-content:flex-end;gap:var(--ib-2);min-width:88px;min-height:var(--ib-control-h-lg)}
+/* the platform is switched off for this copy of the site (NEXT_PUBLIC_API_ENABLED=false): nothing will ever arrive, so no room is kept */
+[data-api-enabled="false"] .site-nav-slot{display:none}
 
 /* platform navbar is always a SOLID bar over any hero (no transparency / blur), both themes */
 .ib-navbar.ib-navbar--platform{background:var(--ib-surface);border-bottom:1px solid var(--ib-line);backdrop-filter:none}
