@@ -103,6 +103,9 @@
 }
 @container ib-navbar (max-width: 400px){
   .ib-navbar__sub{display:none}
+}
+/* the platform name stays on phones; it goes only where it no longer fits beside «Увійти» and the menu button (measured: fits from 334px) */
+@container ib-navbar (max-width: 340px){
   .ib-navbar--platform .ib-navbar__name{display:none}
 }
 @media (prefers-reduced-motion:reduce){.ib-navbar__more-btn .ib-icon{transition:none}}
