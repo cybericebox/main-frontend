@@ -7,9 +7,11 @@ const NB = " "
 // not preceded by a letter/digit/apostrophe/hyphen, followed by a plain space
 const AFTER_SHORT = new RegExp(`(?<![\\p{L}\\p{N}'’ʼ\\-])(${SHORT.join("|")}) `, "giu")
 const BEFORE_DASH = / —/g
+// initials never part from each other or from the surname: «В. В. Поповського»
+const AFTER_INITIAL = /(?<![\p{L}\p{N}])(\p{Lu})\. (?=\p{Lu})/gu
 
 export function nbsp(text: string): string {
-  return text.replace(AFTER_SHORT, `$1${NB}`).replace(BEFORE_DASH, `${NB}—`)
+  return text.replace(AFTER_SHORT, `$1${NB}`).replace(BEFORE_DASH, `${NB}—`).replace(AFTER_INITIAL, `$1.${NB}`)
 }
 
 // Legal pages read in a narrow column: there only 1–2-letter prepositions and single letters stay glued

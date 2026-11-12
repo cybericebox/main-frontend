@@ -54,6 +54,10 @@ test("legal text: only 1–2-letter prepositions and single letters stay glued",
   const glued = nbsp("Дані для входу, що зберігаються до 30 днів і не довше")
   assert.equal(legalNbsp(glued), `Дані для входу, що зберігаються до${NB}30 днів і${NB}не довше`)
   assert.equal(legalNbsp(nbsp("слово — далі")), `слово${NB}— далі`)
+  // initials stay with each other and with the surname, on legal pages too
+  assert.equal(nbsp("імені В. В. Поповського"), `імені В.${NB}В.${NB}Поповського`)
+  assert.equal(legalNbsp(nbsp("ім. В. В. Поповського")), `ім. В.${NB}В.${NB}Поповського`)
+  assert.equal(nbsp("V. V. Popovskyi Department. Next"), `V.${NB}V.${NB}Popovskyi Department. Next`)
 })
 
 test("lab scheme: no 600px floor, and phones get the column layout", () => {
