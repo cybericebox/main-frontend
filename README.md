@@ -37,7 +37,6 @@ Production builds are a **static export** (`output: "export"`, written to `out/`
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | yes | Support mailbox of the «Send feedback» `mailto:` link shown on every page (the subject carries the app and page path only). |
 | `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 measurement id. Analytics is off when unset. |
-| `NEXT_PUBLIC_SHOW_PARTNERS` | no | `false` hides the partner credit in the footer; shown by default. |
 | `NEXT_PUBLIC_API_ENABLED` | no | `false` = the site sends no request to the platform API (no probe, no notifications, so no «Увійти» and no failed requests in the console). For a static copy that stays online while the platform is switched off. Default: the API is probed once on load. |
 | `NEXT_PUBLIC_SOURCE_URL` | no | Public source link in the footer. Default `https://github.com/cybericebox`. |
 | `NEXT_PUBLIC_WARMUP_FLAG` | static builds | Flag of the warm-up challenge, read at build time by `scripts/warmup.mjs` (a dev fallback is used in `npm run dev`). In the container: `WARMUP_FLAG`. |

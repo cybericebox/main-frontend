@@ -2,7 +2,7 @@
 # placeholders (= variable names) and substituted at container start by the
 # entrypoint, so env is configurable at RUNTIME without a rebuild.
 # Build with: docker build -f deploy/Dockerfile .
-# Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_{SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] [-e NEXT_PUBLIC_SHOW_PARTNERS=false] [-e NEXT_PUBLIC_SOURCE_URL=…] -e WARMUP_FLAG='ICE{…}'
+# Run with:   -e NEXT_PUBLIC_DOMAIN=… -e NEXT_PUBLIC_{SUPPORT_EMAIL,CONTACT_EMAIL,PRIVACY_EMAIL,SECURITY_EMAIL}=… [-e NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=…] [-e NEXT_PUBLIC_SOURCE_URL=…] -e WARMUP_FLAG='ICE{…}'
 # The only host input is NEXT_PUBLIC_DOMAIN: every host derives from it (main = DOMAIN, api./id./admin./exercises.DOMAIN, events <tag>.DOMAIN, cookies DOMAIN).
 FROM mirror.gcr.io/library/node:26.10.0-alpine@sha256:0b36e8c136b94cd4fcf02188228e76c31ad5872eef3fec8cbd2eee500cfd9e80 AS build
 WORKDIR /app
@@ -16,7 +16,6 @@ ENV NEXT_PUBLIC_CONTACT_EMAIL="__NEXT_PUBLIC_CONTACT_EMAIL__"
 ENV NEXT_PUBLIC_PRIVACY_EMAIL="__NEXT_PUBLIC_PRIVACY_EMAIL__"
 ENV NEXT_PUBLIC_SECURITY_EMAIL="__NEXT_PUBLIC_SECURITY_EMAIL__"
 ENV NEXT_PUBLIC_SOURCE_URL="__NEXT_PUBLIC_SOURCE_URL__"
-ENV NEXT_PUBLIC_SHOW_PARTNERS="__NEXT_PUBLIC_SHOW_PARTNERS__"
 ENV NEXT_PUBLIC_API_ENABLED="__NEXT_PUBLIC_API_ENABLED__"
 ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="__NEXT_PUBLIC_GOOGLE_ANALYTICS_ID__"
 # Warm-up flag is NOT a build input here: the build bakes a hash placeholder and the entrypoint
