@@ -1,91 +1,94 @@
 # main-frontend
 
-The public landing page of the Cyber ICE Box platform. It is the only frontend that works without the backend API.
+The public landing site of the Cyber&nbsp;ICE&nbsp;Box platform. Visitors read what the platform is and find the legal pages. This is our own landing site and is not part of what is distributed with the platform.
 
-## Stack
+## Where it sits
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Radix UI, lucide-react. Tests: Playwright (e2e) and the Node test runner. Lint: ESLint 10.
+| Question | Answer |
+|---|---|
+| Who uses it | Anyone who opens the platform's main domain |
+| Backend | None required. The page renders from a static export. It may probe the platform API once on load to show sign-in and notifications |
+| Build output | Static export in `out/`, served by nginx. No Node server at runtime |
+| Dev port | 3000 |
 
-## Prerequisites
+The landing stays up when the API is down. With `NEXT_PUBLIC_API_ENABLED=false` it sends no request to the API at all,
+which suits a static copy that stays online while the platform is switched off.
+
+## What it shows
+
+| Route | Page |
+|---|---|
+| `/` | Landing: hero with a sample challenge, a lab demo, labs section, FAQ; notification inbox and feedback link in the header |
+| `/terms` | Terms of use |
+| `/privacy` | Privacy policy |
+| `/cookies` | Cookie policy and consent settings |
+| `/security` | Security page |
+
+Text is Ukrainian by default, with English available. The theme and cookie-consent cookies are set on the base domain, so the other platform sites share them.
+
+## Run it locally
 
 Node.js 26 or newer (see `.nvmrc`).
 
-## Commands
-
 ```bash
 npm install
-npm run dev               # dev server on http://localhost:3000
-npm run build             # production build (static export to out/)
-npm run lint
-npm run typecheck
-npm test                  # unit tests (node --test)
-npm run test:e2e          # Playwright
-npm run test:e2e:static   # build, then Playwright against the static export
+cp .env.example .env.local   # then fill in the values
+npm run dev                  # http://localhost:3000
 ```
 
-## Static export
+`npm run dev` and `npm run build` run `scripts/warmup.mjs` first. A dev fallback is used for the warm-up flag.
 
-Production builds are a **static export** (`output: "export"`, written to `out/`) and need no Node server at runtime; `npm run dev` runs the regular Next.js dev server. `npm start` is `next start` and is only meaningful outside the static build. The landing renders entirely from the export, so it stays up when the API is down.
+## Configure
 
-## Configuration
+`NEXT_PUBLIC_*` values are inlined at build time. The container image substitutes them at start, so one image serves
+any environment. A missing required value fails the build or the container start.
 
-`NEXT_PUBLIC_*` values are inlined at build time; the container image substitutes them at start-up, so one image serves any environment. Hosts derive from `NEXT_PUBLIC_DOMAIN`; the mailboxes are explicit values; a missing required value fails the build (`next.config.ts`) or the container start. Dev-only: `DEV_ALLOWED_ORIGINS` (comma list) adds extra allowed dev origins. `.env.example` is the template.
+- `.env.example` is the template. The required values are the base domain and the support, contact, privacy and
+  security mailboxes.
+- `NEXT_PUBLIC_DOMAIN` is the only host input. Every other host (`api.`, `id.`, `admin.`, `exercises.`, event sites)
+  derives from it.
+- Optional values are in the table below.
 
 | Variable | Required | Purpose |
-| --- | --- | --- |
-| `NEXT_PUBLIC_DOMAIN` | yes | The one base domain, a bare lowercase host name (no scheme, port or path). Every host derives from it: `<DOMAIN>` (landing), `api.`, `id.`, `admin.`, `exercises.<DOMAIN>`, event sites `<tag>.<DOMAIN>`, the shared theme and consent cookies on `.<DOMAIN>`. There are no per-host settings. |
-| `NEXT_PUBLIC_SUPPORT_EMAIL` | yes | Support mailbox of the «Send feedback» `mailto:` link shown on every page (the subject carries the app and page path only). |
-| `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_PRIVACY_EMAIL`, `NEXT_PUBLIC_SECURITY_EMAIL` | yes | Footer, legal pages and security.txt mailboxes. |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 measurement id. Analytics is off when unset. |
-| `NEXT_PUBLIC_API_ENABLED` | no | `false` = the site sends no request to the platform API (no probe, no notifications, so no «Увійти» and no failed requests in the console). For a static copy that stays online while the platform is switched off. Default: the API is probed once on load. |
-| `NEXT_PUBLIC_SOURCE_URL` | no | Public source link in the footer. Default `https://github.com/cybericebox`. |
-| `NEXT_PUBLIC_WARMUP_FLAG` | static builds | Flag of the warm-up challenge, read at build time by `scripts/warmup.mjs` (a dev fallback is used in `npm run dev`). In the container: `WARMUP_FLAG`. |
+|---|---|---|
+| `NEXT_PUBLIC_API_ENABLED` | no | `false`: the site sends no request to the platform API. Default: the API is probed once on load. |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | no | Google Analytics 4 id. Analytics is off when unset. |
+| `NEXT_PUBLIC_SOURCE_URL` | no | Public source link in the footer. |
 
-Test-only: `E2E_BASE_URL`, `E2E_STATIC`.
+## Development commands
 
-## i18n
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build, static export to `out/` |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Unit tests (Node test runner) |
+| `npm run test:e2e` | Playwright against the dev server |
+| `npm run test:e2e:static` | Build, then Playwright against the static export |
+| `npm run check:ds` | Fails if a copied design-system file was edited by hand |
+| `npm run sync:errors` | Adds new backend error codes to `messages/errors.*.json` (needs a `daemon` checkout at `../daemon`) |
 
-All user-facing text lives in `messages/uk.json` and `messages/en.json` and is rendered through the translate function `t("key", { vars })`. Ukrainian is the default language. Every key must exist in both files.
+`scripts/test-nginx-tls.sh` checks the container's TLS and client-certificate modes (needs Docker).
 
-## Listeners and TLS (container)
+## Rules for changes
 
-The nginx image needs no listener env: with nothing set it serves plain HTTP on `8080`, the health listener on `8081`, and switches TLS and client certificate validation on when the files are mounted. Everything is overridable by env, read at container start by `deploy/nginx-entrypoint.sh`. The nginx config is in files under `deploy/nginx/` (`nginx.conf`, `server.conf`, and the snippets `listen-http.conf`, `listen-https.conf`, `client-auth.conf`, `health.conf`); the entrypoint only validates the env, renders the active snippets with `envsubst` into `/tmp/nginx-gen` (an empty file for each inactive one), and runs `nginx -t`, so a bad combination stops the container at start.
+- Every user-visible string goes through `messages/uk.json` and `messages/en.json` and `t("key", { vars })`. Add each
+  key to both files.
+- Loading states use the crest loader, never a generic spinner.
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `HTTP_PORT` | `8080` | Plain HTTP listener. Set but empty turns it off. |
-| `HTTPS_PORT` | `8443` | TLS listener (HTTP/2); on only when TLS is in use. |
-| `TLS_CERT_FILE`, `TLS_KEY_FILE` | `/tls/tls.crt`, `/tls/tls.key` | PEM server certificate chain and key. TLS is on when both files exist at the configured paths (default or given); with no files the service runs plain HTTP only. A path set explicitly (non-empty) whose file is missing or unreadable = start error. |
-| `TLS_MIN_VERSION` | `1.2` | `1.2` or `1.3`. |
-| `TLS_CLIENT_CA_FILE` | `/aop/ca.crt` | PEM bundle of the root (and intermediate) CAs that signed the client certificates. Needed by `optional` and `require`; missing = start error. An explicit path that does not exist is a start error. |
-| `TLS_CLIENT_AUTH` | `require` when TLS is on and the default CA file exists, else `off` | `off`, `optional` (verify when presented, the result is `$ssl_client_verify`) or `require`. `optional` and `require` need the CA file and TLS, else start error. A missing or invalid certificate gets the connection dropped (nginx 444). |
-| `HEALTH_PORT` | `8081` | An extra plain-HTTP listener on `HEALTH_BIND` (default `0.0.0.0`) that serves only `/healthz` (everything else 404), for kubelet probes that cannot present a client certificate. Set but empty turns it off. |
-| `TLS_RELOAD_INTERVAL` | `60` | Seconds between checksum checks of the certificate, key and CA files. A change runs `nginx -t` and `nginx -s reload`, no restart; a config that fails the test keeps the running one and logs it. It polls (no inotify) because Kubernetes swaps a Secret mount through the `..data` symlink. |
+## Container
 
-`HTTP_PORT` empty with no TLS is a start error. With TLS on, the plain listener stays on unless `HTTP_PORT` is set empty; with client auth `require` the entrypoint warns about it, because the plain port is not protected by client certificates: set `HTTP_PORT=` and use `HEALTH_PORT` for probes. `scripts/test-nginx-tls.sh` (Docker) tests the whole matrix, including a live certificate replacement.
+The image serves the export with nginx: plain HTTP on 8080, a health listener on 8081 (`/healthz` only), and TLS on
+8443 when `/tls/tls.crt` and `/tls/tls.key` are mounted. Client certificates are required when `/aop/ca.crt` is
+mounted. The config is in `deploy/nginx/`; `deploy/nginx-entrypoint.sh` validates the environment and fails the start
+on a bad combination. At start, `deploy/csp.sh` hashes the inline scripts and writes the Content Security Policy
+header, so the policy stays strict without a per-request nonce.
 
-## Content Security Policy
+## Releases and contributing
 
-The site sends a strict CSP: scripts only from the site itself (no inline script without a hash), `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `frame-ancestors 'none'`. `connect-src` allows the API host (`api.<NEXT_PUBLIC_DOMAIN>`) plus Google Analytics when `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` is set. `style-src` keeps `'unsafe-inline'` (React style attributes cannot be hashed).
-
-The export is static, so a per-request nonce is not possible. Instead, at container start `deploy/csp.sh` (runs after the env substitution) hashes every inline `<script>` in the exported pages, plus the scripts the client creates at runtime (the Google Analytics boot; `scripts/csp-inline.mjs` writes its text at build time), and writes the header to `/tmp/nginx-gen/csp.conf`. `deploy/nginx/server.conf` includes that file in the server block and in every location that sets its own `add_header` (nginx does not inherit `add_header` into a location that defines one). A new inline script needs no manual step; a new runtime-created inline script must be added to `scripts/csp-inline.mjs`.
-
-`next dev` sends the same policy from `headers()` in `next.config.ts`, only when `NODE_ENV=development`, with `'unsafe-inline'` and `'unsafe-eval'` for scripts and websockets for HMR. Check the browser console for `Content Security Policy` violations after adding a script, an iframe or a new external host.
-
-## Deployment
-
-Deployment and cluster configuration: see the infrastructure repository.
+Branches, pull requests and releases: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
-
-Copyright 2024-2026 CyberICEBox
-
-### One base domain
-
-`NEXT_PUBLIC_DOMAIN` is the only host input and every host derives from it: main = `DOMAIN`, `api.DOMAIN`, `id.DOMAIN`, `admin.DOMAIN`, `exercises.DOMAIN`, event sites `<tag>.DOMAIN`, the cookie domain = `DOMAIN`. The code reads the derived hosts through one helper (`src/**/hosts.ts`); `deploy/base-domain.sh` (sourced by the container entrypoint and the Pages workflow) and the domain check in `next.config` reject an unset or malformed domain. `tests/base-domain-vectors.json` holds the shared test vectors that `tests/base-domain.test.ts` runs against all three; `deploy/base-domain.sh` and the vector file are copies kept identical in every frontend repository (the daemon and infrastructure have the same rule and the same vector file).
-
-## Error catalog sync
-
-`messages/errors.en.json` and `messages/errors.uk.json` mirror the backend error catalog (`daemon/error-catalog/`). After the backend adds error codes, run `npm run sync:errors` (daemon checkout expected at `../daemon`, or pass `-- --daemon <path>`). It adds the codes the app does not have yet and keeps the app's existing texts; `-- --check` only lists what is missing (exit 1), `-- --overwrite` also replaces existing texts. Commit the result.
+Apache License 2.0. See [LICENSE](LICENSE).
