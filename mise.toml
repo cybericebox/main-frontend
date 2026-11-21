@@ -7,6 +7,7 @@
 [tools]
 node = "26.10.0"   # the same as the build image of deploy/Dockerfile
 gh = "2.104.0"     # dev-push
+"github:mokevnin/heavy" = "0.1.2"   # a machine-wide semaphore: heavy commands of every checkout and agent take turns (heavy --status)
 
 [tasks.cache-guard]
 hide = true
@@ -24,7 +25,7 @@ run = "npm run dev"
 
 [tasks.build]
 description = "npm run build: next build"
-run = "npm run build"
+run = "heavy -- npm run build"
 
 [tasks.start]
 description = "npm run start: next start -p 3000"
@@ -32,7 +33,7 @@ run = "npm run start"
 
 [tasks.lint]
 description = "npm run lint: eslint ."
-run = "npm run lint"
+run = "heavy -- npm run lint"
 
 [tasks."sync:ds"]
 description = "npm run sync:ds: node scripts/sync-ds.mjs"
@@ -48,19 +49,19 @@ run = "npm run sync:errors"
 
 [tasks."test:e2e"]
 description = "npm run test:e2e: playwright test"
-run = "npm run test:e2e"
+run = "heavy -- npm run test:e2e"
 
 [tasks."test:e2e:static"]
 description = "npm run test:e2e:static: NEXT_PUBLIC_WARMUP_FLAG='ICE{e2e_warmup}' npm run build && E2E_STATIC=1 playwright test"
-run = "npm run test:e2e:static"
+run = "heavy -- npm run test:e2e:static"
 
 [tasks.typecheck]
 description = "npm run typecheck: tsc --noEmit"
-run = "npm run typecheck"
+run = "heavy -- npm run typecheck"
 
 [tasks.test]
 description = "npm test: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/alias-loader.mjs --test 'tests/**/*.test."
-run = "npm test"
+run = "heavy -- npm test"
 
 [tasks.check]
 description = "Everything the CI check runs: lint, check:ds, typecheck, test"
