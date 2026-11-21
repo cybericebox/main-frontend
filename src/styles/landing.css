@@ -22,7 +22,7 @@
 /* both columns centre on the same axis above the fade; the text column never reaches the window —
    h1 scales with the column (container units), 32px air on the right */
 .pl-main{container-type:inline-size;display:flex;flex-direction:column;justify-content:center;min-width:0;padding:40px 32px var(--pl-fade) var(--pl-gut)}
-.pl-main h1{font-size:min(70px,12.4cqi);line-height:1.04;letter-spacing:-.04em;font-weight:650}   /* .pl-nowrap keeps «CTF-змагань» on one line (7.8em) */
+.pl-main h1{font-size:min(70px,12.4cqi);line-height:1.04;letter-spacing:-.04em;font-weight:650}   /* .pl-nowrap keeps the Ukrainian "CTF competitions" phrase on one line (7.8em) */
 .pl-nowrap{white-space:nowrap}
 .pl-sub{margin-top:26px;font-size:19px;line-height:1.5;color:var(--ib-body);max-width:34ch}   /* ≥ 7:1 on the page tone and on the dark pool */
 .pl-sub span{display:block}

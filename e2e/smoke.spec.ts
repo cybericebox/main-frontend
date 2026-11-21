@@ -22,7 +22,7 @@ test("typography: no dangling short words (nbsp)", () => {
   expect(nbsp("Полігон для CTF")).toBe("Полігон для\u00a0CTF")
   expect(nbsp("Так — середовища")).toBe("Так\u00a0— середовища")
   expect(nbsp("Від старту")).toBe("Від\u00a0старту") // case-insensitive
-  expect(nbsp("мійі слово")).toBe("мійі слово") // «і» inside a word is untouched
+  expect(nbsp("мійі слово")).toBe("мійі слово") // a one-letter conjunction inside a word is untouched
 })
 
 
@@ -33,12 +33,12 @@ test.describe("static landing — API down", () => {
     for (const id of ["labs", "faq"]) {
       await expect(page.locator(`#${id}`)).toHaveCount(1)
     }
-    // the probe settles to "down": «Увійти» is there at once (also with the API down), no avatar in the navbar
+    // the probe settles to "down": "Sign in" is there at once (also with the API down), no avatar in the navbar
     await expect(page.locator("html")).toHaveAttribute("data-api", "down", { timeout: 10_000 })
     const nav = page.locator(".ib-navbar")
     await expect(nav.getByRole("link", { name: "Увійти" })).toHaveCount(1)
     await expect(nav.locator(".ib-avatar-btn")).toHaveCount(0)
-    // hero: «Спробувати розминку» + «Лабораторії»; the warm-up card is closed until opened
+    // hero: "Try the warm-up" + "Labs"; the warm-up card is closed until opened
     await expect(page.locator(".pl-hero a:not(dialog a)")).toHaveCount(1)
     await expect(page.locator(".pl-hero").getByRole("link", { name: "Лабораторії" })).toHaveAttribute("href", "#labs")
     await expect(page.locator(".hc-win")).toHaveCount(1)
@@ -78,7 +78,7 @@ test.describe("static landing — API down", () => {
     await expect(dialog).toBeVisible({ timeout: 5000 }) // opens after a short pause; the card closes
     await expect(card).toHaveCount(0)
     await expect(dialog.locator(".pl-stats dd")).toHaveCount(3)
-    // no registration offer; the API is down in the static run, so no «Увійти» either — only «Закрити»
+    // no registration offer; the API is down in the static run, so no "Sign in" either — only "Close"
     await expect(dialog.getByRole("link", { name: "Зареєструватися" })).toHaveCount(0)
     await expect(dialog.getByRole("link", { name: "Увійти" })).toHaveCount(0)
     await expect(dialog.getByText("Закрити", { exact: true })).toBeVisible() // text button; the icon close shares the name
@@ -184,7 +184,7 @@ test.describe("static landing — API down", () => {
 })
 
 test.describe("with API — requires local dev-env", () => {
-  test.fixme("anonymous visitor sees one «Увійти» button", async ({ page, context }) => {
+  test.fixme("anonymous visitor sees one sign-in button", async ({ page, context }) => {
     await context.clearCookies()
     await page.goto("/")
     const nav = page.locator(".ib-navbar")

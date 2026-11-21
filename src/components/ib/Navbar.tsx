@@ -13,7 +13,7 @@ const SPY_LINE = 120
 export type NavLink = { href: string; label: string }
 
 // Port of IB.Navbar (ds-v2 patterns/navbar/navbar.js), platform variant.
-// Tabs that don't fit spill into «Ще ▾»; below 760 px (container query) the tabs
+// Tabs that don't fit spill into "More ▾"; below 760 px (container query) the tabs
 // hide and the menu button opens the panel. Panel links close the panel.
 // The overflow/panel state is DOM-driven like the original (measure → hide li),
 // React owns only the static markup; `actions` / `panelExtra` are free slots.

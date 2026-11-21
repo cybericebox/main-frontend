@@ -91,7 +91,7 @@ export function NotFoundPage({ mode }: { mode?: "page" | "block" }) {
   )
 }
 
-// «Повідомити деталі»: the feedback mailto prefilled with the page URL, time, the (trimmed) error message and the build version.
+// "Report details": the feedback mailto prefilled with the page URL, time, the (trimmed) error message and the build version.
 // Built after mount: the URL and time exist only in the browser.
 function ReportLink({ error }: { error?: unknown }) {
   const [href, setHref] = useState<string | null>(null)

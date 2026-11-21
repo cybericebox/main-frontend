@@ -112,7 +112,7 @@ test("the result dialog names the time only for a suspiciously fast solve, and s
   assert.match(hero, /const FAST_SOLVE_S = 30/)
   assert.match(hero, /if \(started > 0 && seconds <= FAST_SOLVE_S\) setFastSeconds\(seconds\)/)
   assert.match(hero, /fastSeconds === null \? t\("landing\.warmup\.modalText"\) : t\("landing\.warmup\.modalFast", \{ seconds: fastSeconds \}\)/)
-  assert.match(hero, /<RollStat from=\{0\} to=\{TOTAL - RANK\.place\} active=\{modal\} \/>/) // «обійшли» = the demo table itself
+  assert.match(hero, /<RollStat from=\{0\} to=\{TOTAL - RANK\.place\} active=\{modal\} \/>/) // the Ukrainian "overtook" word = the demo table itself
   assert.match(rating, /export function burst\(points: number\): Promise<void> \{\s*if \(reducedMotion\(\)\) return Promise\.resolve\(\)/) // no burst with reduced motion
   assert.match(hero, /setCard\(false\)\s*await burst\(WARM\.points\)\s*setModal\(true\)/) // one message: the card closes, then the dialog
   assert.doesNotMatch(rating, /Math\.random/)

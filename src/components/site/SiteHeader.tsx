@@ -30,18 +30,18 @@ const InboxButton = dynamic(() => import("@/components/site/InboxButton").then((
 })
 
 // Platform navbar. Actions depend on the API probe (lib/useApi): absent while
-// pending/down (their slot keeps its width), «Увійти» for anonymous visitors,
+// pending/down (their slot keeps its width), "Sign in" for anonymous visitors,
 // the avatar menu (lib/accountMenu: same entries, labels and icons in every app) for signed-in users.
 function avatarEntry(entry: AccountMenuEntry): AvatarMenuEntry {
   if (entry.kind === "divider") return "divider"
   const key = entry.kind === "link" ? entry.key : entry.kind
   const Icon = ACCOUNT_MENU_ICONS[key]
   const icon = <Icon {...ACCOUNT_MENU_ICON_PROPS} />
-  // «Файли cookie» is a link to the cookie policy that opens the consent panel instead (with JS).
+  // "Cookies" is a link to the cookie policy that opens the consent panel instead (with JS).
   if (entry.kind === "cookies") {
     return { href: "/cookies/", label: t(ACCOUNT_MENU_LABELS.cookies), ariaLabel: t(ACCOUNT_MENU_LABELS.cookiesAria), icon, onSelect: openConsentSettings }
   }
-  // «Вийти» calls the API directly (no confirmation page, no hop to the ID site); the notice shows on this page.
+  // "Sign out" calls the API directly (no confirmation page, no hop to the ID site); the notice shows on this page.
   if (entry.kind === "signOut") return { href: "#", label: t(ACCOUNT_MENU_LABELS[key]), icon, onSelect: () => { void signOutNow() } }
   return { href: entry.kind === "link" ? entry.href : "#", label: t(ACCOUNT_MENU_LABELS[key]), icon }
 }
@@ -51,7 +51,7 @@ export function SiteHeader({ home }: { home: boolean }) {
   const up = status === "up"
   const catalog = useCatalogAccess(me)
   const pathname = usePathname() || "/"
-  // «Увійти» is in the static HTML, which cannot know the page address: the return_to joins the link after mount.
+  // "Sign in" is in the static HTML, which cannot know the page address: the return_to joins the link after mount.
   const [signInHref, setSignInHref] = useState(() => new URL(SIGN_IN_URI, ID_ORIGIN).toString())
   useEffect(() => { setSignInHref(idUrl(SIGN_IN_URI)) }, [pathname])
   const entries = accountMenu(
@@ -62,7 +62,7 @@ export function SiteHeader({ home }: { home: boolean }) {
 
   const actions = (
     <div className="site-nav-slot">
-      {/* No session: «Увійти» is there at once (also while /auth/me is pending or the API is down). With the sign-in
+      {/* No session: "Sign in" is there at once (also while /auth/me is pending or the API is down). With the sign-in
           hint cookie the generic avatar stands in its place until /auth/me answers (html[data-signed-hint], site.css). */}
       {!me ? (
         <>

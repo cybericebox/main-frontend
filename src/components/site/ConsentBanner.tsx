@@ -28,11 +28,11 @@ const snapshot = () => {
 const serverSnapshot = () => "ssr"
 
 // Cookie consent in two layers, fixed to the bottom, non-blocking.
-// 1. Banner: a general line with the policy link and «Налаштувати» (opens the panel), then two equal buttons:
-//    «Лише необхідні» and «Прийняти всі» (refusing takes one step, like accepting).
-// 2. Panel: categories (Необхідні — always on; Функціональні and Аналітика — off by default; Аналітика only when GA is configured),
-//    «Зберегти вибір» and «Прийняти всі».
-// Shown when no choice exists; «Налаштування файлів cookie» opens the panel.
+// 1. Banner: a general line with the policy link and "Customize" (opens the panel), then two equal buttons:
+//    "Necessary only" and "Accept all" (refusing takes one step, like accepting).
+// 2. Panel: categories (Necessary — always on; Functional and Analytics — off by default; Analytics only when GA is configured),
+//    "Save choice" and "Accept all".
+// Shown when no choice exists; "Cookie settings" opens the panel.
 // Esc never counts as consent: it steps back from the panel, or closes a panel opened from settings.
 export function ConsentBanner({ gaId, policyHref }: { gaId?: string; policyHref: string }) {
   const stored = useSyncExternalStore(subscribe, snapshot, serverSnapshot)

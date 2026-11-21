@@ -81,7 +81,7 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
                     c === "name" ? (
                       <th key={c} scope="row">
                         {/* one <code> per cookie name: the list wraps between names, never inside one; a trailing
-                            «(сховище браузера)» marks a browser-storage entry and stays plain text */}
+                            "(browser storage)" suffix marks a browser-storage entry and stays plain text */}
                         {cookieName(t(`${k}.rows.${r}.${c}`)).names.map((name, j) => (
                           <React.Fragment key={name}>
                             {j > 0 && ", "}
@@ -107,11 +107,11 @@ function Section({ doc, n }: { doc: LegalDoc; n: number }) {
   )
 }
 
-// Legal document (Terms, Privacy, Cookies) from legal.<doc>.* keys: title, «Останнє оновлення»,
+// Legal document (Terms, Privacy, Cookies) from legal.<doc>.* keys: title, "Last updated",
 // intro, numbered sections with anchor ids; a section list (sticky on the left from 1024 px; below that collapsed
 // under the title and the date, before the text).
 // Navbar/Footer come from the (legal) route-group layout.
-// «a, b (сховище браузера)» → the names and the trailing parenthetical note, if any.
+// "a, b (browser storage)" → the names and the trailing parenthetical note, if any.
 function cookieName(text: string): { names: string[]; note: string | null } {
   const match = /^(.*?)(?: \(([^()]+)\))?$/.exec(text)
   return { names: (match?.[1] ?? text).split(", "), note: match?.[2] ?? null }

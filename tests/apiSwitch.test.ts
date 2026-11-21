@@ -35,6 +35,6 @@ test("the container and the Pages build both carry the variable; unset means ena
   assert.match(read("README.md"), /`NEXT_PUBLIC_API_ENABLED`/)
 })
 
-test("switched off: the navbar keeps no empty room for «Увійти»", () => {
+test("switched off: the navbar keeps no empty room for 'Sign in'", () => {
   assert.match(read("src/styles/site.css"), /\[data-api-enabled="false"\] \.site-nav-slot\{display:none\}/)
 })

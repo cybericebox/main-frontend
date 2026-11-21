@@ -8,7 +8,7 @@ data:
   # REQUIRED: the one base domain, a bare lowercase host name. Every host derives from it: DOMAIN, api./id./admin./exercises.DOMAIN,
   # event sites <tag>.DOMAIN, the cookie domain DOMAIN. There are no per-host settings.
   DOMAIN: ""
-  # REQUIRED: support mailbox of the «Надіслати відгук» (send feedback) link on every page.
+  # REQUIRED: support mailbox of the "Send feedback" (send feedback) link on every page.
   SUPPORT_EMAIL: ""
   # REQUIRED: footer, legal pages and security.txt mailboxes.
   CONTACT_EMAIL: ""

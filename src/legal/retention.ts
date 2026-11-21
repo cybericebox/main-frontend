@@ -5,7 +5,7 @@ import { t } from "@/i18n/t"
 import retentionData from "./retention.json"
 
 export type RetentionUnit = "days" | "months" | "years"
-/** How the Policy phrases the period: «через N» (after), «до N» (upTo), «понад N» (over), «ще N» after the event ends (plus), a bare «N» (for). */
+/** How the Policy phrases the period: "after N" (after), "up to N" (upTo), "over N" (over), "N more" after the event ends (plus), a bare "N" (for). */
 export type RetentionKind = "after" | "upTo" | "over" | "plus" | "for"
 export type RetentionPeriod = { value: number; unit: RetentionUnit; kind: RetentionKind }
 export type RetentionData = Record<string, RetentionPeriod>
@@ -18,7 +18,7 @@ export function pluralClass(count: number): "one" | "few" | "many" {
   return category === "one" || category === "few" ? category : "many"
 }
 
-/** «30 днів», «1 рік»; `genitive` is the form after «до» / «не довше» («1 дня», «3 років»). */
+/** "30 days", "1 year"; `genitive` is the form after "is before" / "no longer than" ("1 day" (genitive), "3 years"). */
 export function periodText(period: RetentionPeriod, genitive = false): string {
   return t(`legal.retention.${genitive ? "gen" : "nom"}.${period.unit}.${pluralClass(period.value)}`, { count: period.value })
 }
