@@ -22,12 +22,12 @@ export function ApiProvider({ children }: { children: ReactNode }) {
     const refresh = () => { void probeApi().then((s) => {
       if (cancelled) return
       document.documentElement.dataset.api = s.status
-      // a guest: the hint was stale. No answer in time: «Увійти» shows, the cookie stays. Either way the placeholder goes.
+      // a guest: the hint was stale. No answer in time: "Sign in" shows, the cookie stays. Either way the placeholder goes.
       if (!s.me) { if (s.status === "up") clearSignedHint(); else hideSignedHint() }
       setState(s)
     }) }
     refresh()
-    // «Вийти» finished: the navbar drops the user at once
+    // "Sign out" finished: the navbar drops the user at once
     const signedOut = () => setState({ status: "up", me: null })
     window.addEventListener(SIGNED_OUT_EVENT, signedOut)
     return () => { cancelled = true; window.removeEventListener(SIGNED_OUT_EVENT, signedOut) }

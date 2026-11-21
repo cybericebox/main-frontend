@@ -1,4 +1,4 @@
-// Site banner model (docs/BROADCASTS.md «Банери»): safe links, severity order, dismissal by ID:Version, storage failures.
+// Site banner model (docs/BROADCASTS.md "Banners"): safe links, severity order, dismissal by ID:Version, storage failures.
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"

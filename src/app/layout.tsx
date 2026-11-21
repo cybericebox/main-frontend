@@ -44,7 +44,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 {/* static constant, no user input — runs before paint to avoid a light flash */}
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
-                {/* static constant: picks the avatar placeholder or «Увійти» in the navbar before first paint */}
+                {/* static constant: picks the avatar placeholder or "Sign in" in the navbar before first paint */}
                 {/* eslint-disable-next-line @eslint-react/dom-no-dangerously-set-innerhtml */}
                 <script dangerouslySetInnerHTML={{ __html: SIGNED_HINT_BOOT_SCRIPT }} />
             </head>
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <a className="ib-skip" href="#main">{t("a11y.skip")}</a>
                 <ApiProvider>{children}</ApiProvider>
                 <SignedOutNotice />
-                {/* the consent panel is always mounted («Налаштування файлів cookie»); GA loads only when configured */}
+                {/* the consent panel is always mounted ("Cookie settings"); GA loads only when configured */}
                 <Analytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
                 {/* keeps ds tooltips inside the viewport on narrow screens */}
                 <TooltipClamp />

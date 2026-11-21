@@ -19,7 +19,7 @@ test("the inbox button itself keeps the bell icon while data loads", () => {
   assert.doesNotMatch(trigger, /BrandLoading|loading/)
 })
 
-test("«Вирішено» is positioned above the stretched card link", () => {
+test("'Resolved' is positioned above the stretched card link", () => {
   const inbox = read("src/components/site/InboxButton.tsx")
   const line = inbox.split("\n").find((l) => l.includes("canResolve(item) && <button")) ?? ""
   assert.match(inbox, /after:absolute after:inset-0/)

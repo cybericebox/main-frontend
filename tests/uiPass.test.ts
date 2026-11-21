@@ -37,7 +37,7 @@ test("TOC: the legal list marks the current link with aria-current=location", ()
   assert.match(toc, /aria-current=\{current === item\.id \? "location" : undefined\}/)
 })
 
-test("warm-up: the busy submit shows the crest and «Перевіряємо…» in both catalogs", () => {
+test("warm-up: the busy submit shows the crest and 'Checking' in both catalogs", () => {
   const src = read("src/components/landing/HeroChallenge.tsx")
   const button = src.slice(src.indexOf('<Button type="submit"'), src.indexOf("</Button>", src.indexOf('<Button type="submit"')))
   assert.match(button, /aria-busy=\{checking \|\| undefined\}/)

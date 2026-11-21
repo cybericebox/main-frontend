@@ -7,7 +7,7 @@
 .cb-consent__text{flex:1;min-width:0}
 /* phones show the short line (the hidden one is display:none, so out of the tab order too) */
 .cb-consent__short{display:none}
-/* «Політика файлів cookie · Налаштувати»: the button reads like the link beside it */
+/* "Cookie policy · Customize": the button reads like the link beside it */
 .cb-consent__sep{padding:0 6px;color:var(--ib-faint)}
 .cb-consent__more{display:inline;padding:0;border:0;background:none;color:var(--ib-ink);font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .cb-consent__more:focus-visible{outline:2px solid var(--ib-action);outline-offset:2px;border-radius:2px}
@@ -42,12 +42,12 @@
   .cb-consent__full{display:none}
   .cb-consent__short{display:inline}
   .cb-consent{padding:var(--ib-4)}
-  .cb-consent__text{font-size:var(--ib-fs-13)}   /* the short line plus «· Налаштувати» fits one line from 390 */
+  .cb-consent__text{font-size:var(--ib-fs-13)}   /* the short line plus "· Customize" fits one line from 390 */
 }
 /* touch: the panel buttons at 44px too */
 @media (pointer:coarse){.cb-consent .ib-btn{height:44px;padding:0 var(--ib-4)}}
 
-/* «Налаштування файлів cookie»: reads as a footer link */
+/* "Cookie settings": reads as a footer link */
 .cb-consent-link{display:inline-flex;align-items:center;min-height:24px;padding:0;border:0;background:none;color:var(--ib-dim);font:inherit;font-size:var(--ib-fs-14);cursor:pointer}
 @media (pointer:coarse){.cb-consent-link{min-height:44px}}
 .cb-consent-link:hover{color:var(--ib-ink)}

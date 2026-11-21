@@ -46,7 +46,7 @@ function scoped(tab: InboxTab, eventId: string | undefined, extra: Record<string
 function scopedSince(eventId: string | undefined, since: string): string {
   return scoped("all", eventId, { since })
 }
-// A link here with ?inbox opens the dropdown on arrival (the event site's «Ще N в інших заходах»).
+// A link here with ?inbox opens the dropdown on arrival (the event site's "N more in other events").
 const OPEN_PARAM = "inbox"
 
 export type InboxButtonProps = {
@@ -76,7 +76,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
   const [loadingOlder, setLoadingOlder] = useState(false)
   const [olderCursor, setOlderCursor] = useState<string | null>(null)
   const [unread, setUnread] = useState(0)
-  // null = the backend has no categories yet: the dropdown shows only «Усі».
+  // null = the backend has no categories yet: the dropdown shows only "All".
   const [counts, setCounts] = useState<InboxCounts | null>(null)
   const [otherEvents, setOtherEvents] = useState(0)
   const [error, setError] = useState("")
@@ -301,7 +301,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     window.location.assign(href)
   }
 
-  // «Вирішено» closes a «Лабораторія впала» request for every recipient (§8.2).
+  // "Resolved" closes a "Lab is down" request for every recipient (§8.2).
   async function resolve(item: Message) {
     setError("")
     setResolving(item.ID)
@@ -323,7 +323,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
     else pollNowRef.current()
   }
 
-  // «Позначити прочитаним» acts on the current tab only.
+  // "Mark as read" acts on the current tab only.
   async function readAll() {
     setError("")
     const current = tab
@@ -362,7 +362,7 @@ export function InboxButton({ defaultTab = "all", event }: InboxButtonProps = {}
             <Popover.Close aria-label={t("inbox.close")} className="flex rounded-md p-1 text-dim hover:bg-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-action"><Icon name="x" /></Popover.Close>
           </div>
         </div>
-        {/* The segmented control of the catalog's «Область» switch (exercises-frontend). */}
+        {/* The segmented control of the catalog's "Scope" switch (exercises-frontend). */}
         {tabs.length > 0 && <div className="shrink-0 border-b border-line px-3 pb-3">
           <div role="tablist" aria-label={t("inbox.tabs")} onKeyDown={(keyEvent) => {
             // WAI-ARIA tabs: arrows / Home / End move between the tabs (roving tabindex)

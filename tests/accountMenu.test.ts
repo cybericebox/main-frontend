@@ -1,4 +1,4 @@
-// The account menu: one order in every app (no «Головна»), the current app's link hidden,
+// The account menu: one order in every app (no "Home"), the current app's link hidden,
 // then the cookie settings and sign-out, each after a divider.
 import { test } from "node:test"
 import assert from "node:assert/strict"

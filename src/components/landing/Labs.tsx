@@ -5,7 +5,7 @@ import { t } from "@/i18n/t"
 import { LabDemo } from "./LabDemo"
 import { FEATURES, type Feature } from "./labScene"
 
-// «Лабораторії»: text + feature list beside the lab card (LabDemo). A feature row lights up its part of the scheme:
+// "Labs": text + feature list beside the lab card (LabDemo). A feature row lights up its part of the scheme:
 // - mouse: only while the pointer is over the row and has moved there on purpose: a row that scrolls under a resting
 //   cursor stays quiet (a click holds nothing, so the scheme never stays dimmed);
 // - keyboard: while the row has visible focus (not the focus a mouse click or a re-activated window leaves behind);

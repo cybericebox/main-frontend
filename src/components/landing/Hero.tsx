@@ -1,7 +1,7 @@
 import { preload } from "react-dom"
 import { HeroChallenge, WARMUP_COMMENT } from "./HeroChallenge"
 
-// Landing hero: left — headline, subhead, «Спробувати розминку» + «Лабораторії»; right — the event
+// Landing hero: left — headline, subhead, "Try the warm-up" + "Labs"; right — the event
 // app window; the warm-up challenge opens over it (the real flag form). Both columns: HeroChallenge.
 export function Hero() {
   // The hero waves (a CSS ::before background, see ds/base.css) are the LCP image: announce them in the

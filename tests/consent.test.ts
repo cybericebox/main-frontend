@@ -65,7 +65,7 @@ test("accept all grants analytics_storage only", () => {
   assert.deepEqual(consent.readConsent(), { analytics: true, functional: true })
 })
 
-test("«Лише необхідні» stores the same choice as saving the panel with analytics off", () => {
+test("'Necessary only' stores the same choice as saving the panel with analytics off", () => {
   assert.deepEqual(consent.NECESSARY_ONLY, { analytics: false, functional: false })
   const { calls, jar } = fakeBrowser()
   jar.set("_ga", "GA1.1.1")
@@ -77,14 +77,14 @@ test("«Лише необхідні» stores the same choice as saving the panel
   assert.equal(consent.shouldShowBanner(consent.readConsent()), false)
 })
 
-test("banner (variant B): text link «Налаштувати» opens the panel, then «Лише необхідні» and «Прийняти всі»", async () => {
+test("banner (variant B): text link 'Customize' opens the panel, then 'Necessary only' and 'Accept all'", async () => {
   const { readFileSync } = await import("node:fs")
   const src = readFileSync(new URL("../src/components/site/ConsentBanner.tsx", import.meta.url), "utf8")
   const banner = src.slice(src.indexOf('if (shown === "banner")'), src.indexOf("return (", src.indexOf('if (shown === "banner")') + 40))
   const more = banner.indexOf('className="cb-consent__more"')
   const necessary = banner.indexOf("choose(NECESSARY_ONLY)")
   const all = banner.indexOf("choose(ACCEPT_ALL)")
-  // DOM order = focus order: text link → «Лише необхідні» → «Прийняти всі»
+  // DOM order = focus order: text link → "Necessary only" → "Accept all"
   assert.ok(more > 0 && more < necessary && necessary < all)
   assert.match(banner.slice(more, necessary), /onClick=\{\(\) => setLayer\("panel"\)\}[\s\S]*t\("consent\.customize"\)/)
   // two equal buttons, both primary
@@ -213,7 +213,7 @@ test("the short phone line: its link name starts with the visible words, both ca
   assert.match(css, /@media \(max-width:640px\)\{[^}]*\}[^@]*\.cb-consent__full\{display:none\}\s*\.cb-consent__short\{display:inline\}/)
 })
 
-test("«Налаштування файлів cookie» link opens the panel instead of navigating", () => {
+test("'Cookie settings' link opens the panel instead of navigating", () => {
   const events: string[] = []
   const g = globalThis as Record<string, unknown>
   g.window = { dispatchEvent: (e: Event) => events.push(e.type) }

@@ -1,7 +1,7 @@
 /**
  * Sign-in hint: the `cib_signed_in=1` cookie (parent domain, readable by JS, no personal data) is set by the backend on a
  * successful sign-in. With it the navbar shows a generic avatar at once, before `/auth/me` answers; without it (or
- * once the check says «guest» / does not answer) the navbar shows «Увійти». The static HTML carries both and the
+ * once the check says "guest" / does not answer) the navbar shows "Sign in". The static HTML carries both and the
  * `data-signed-hint` attribute on <html> picks one before first paint (SIGNED_HINT_BOOT_SCRIPT, see site.css).
  */
 
@@ -15,7 +15,7 @@ export function hasSignedHint(): boolean {
   return typeof document !== "undefined" && new RegExp(`(?:^|; )${COOKIE_SIGNED_IN}=1`).test(document.cookie)
 }
 
-/** The check said «guest» or did not answer in time: the avatar placeholder gives way to «Увійти» (the cookie stays). */
+/** The check said "guest" or did not answer in time: the avatar placeholder gives way to "Sign in" (the cookie stays). */
 export function hideSignedHint(): void {
   if (typeof document !== "undefined") document.documentElement.removeAttribute("data-signed-hint")
 }

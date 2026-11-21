@@ -76,7 +76,7 @@ test("error and global-error use the error page, retry the segment and log only 
   assert.match(source("src/app/not-found.tsx"), /<NotFoundPage \/>/)
 })
 
-test("only the 500 page offers «Повідомити деталі»: URL, time, message trimmed to 200, version", () => {
+test("only the 500 page offers 'Report details': URL, time, message trimmed to 200, version", () => {
   const code = source("src/components/site/ErrorPage.tsx")
   assert.equal(code.match(/<ReportLink /g)?.length, 1)
   assert.ok(code.indexOf("<ReportLink ") > code.indexOf("export function ServerErrorPage"))
