@@ -28,7 +28,7 @@ Text is Ukrainian by default, with English available. The theme and cookie-conse
 
 ## Run it locally
 
-Node.js 26 or newer (see `.nvmrc`).
+Tools are pinned in `mise.toml`: `mise install` puts Node.js in place, `mise tasks` lists the commands.
 
 ```bash
 npm install

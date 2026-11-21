@@ -3,7 +3,7 @@
 //   node scripts/sync-ds.mjs --check   exit 1 on drift (CI)
 // The DS is copied, never imported. The DS folder is not in this repository, so the check has two levels:
 //   1. always: every copy still has the sha256 recorded in manifest.json (no hand edits, no half-synced files);
-//   2. when the DS source is reachable (DS_DIR, ../docs/design-system in the monorepo checkout, ds-source/):
+//   2. when the DS source is reachable (DS_DIR, ../../docs/internal-docs/design-system in the workspace, ds-source/):
 //      every copy equals what the sync would write from it.
 import { createHash } from "node:crypto"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
@@ -16,7 +16,7 @@ const manifestPath = join(out, "manifest.json")
 const check = process.argv.includes("--check")
 const sha = (text) => createHash("sha256").update(text).digest("hex")
 
-const candidates = [process.env.DS_DIR, join(root, "../docs/design-system"), join(root, "../../docs/design-system"), join(root, "../../../docs/design-system"), join(root, "ds-source")].filter(Boolean)
+const candidates = [process.env.DS_DIR, join(root, "../../docs/internal-docs/design-system"), join(root, "ds-source")].filter(Boolean)
 const src = candidates.find((d) => existsSync(join(d, "tokens.css")))
 
 // target file → source file in the DS.
