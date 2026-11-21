@@ -1,6 +1,7 @@
 name: Deploy landing to GitHub Pages
 
-# Static export (out/) → GitHub Pages. Runs only from promote.yml, after the pre-release checks, for the release commit.
+# Static export (out/) → GitHub Pages. Runs only from promote.yml (on main), after the release vX.Y.Z is published, for the released
+# commit. The environment github-pages must allow the branch main (its deployment branch policy).
 # Custom domain is set in Settings → Pages (Actions deployments ignore a CNAME file).
 # The landing renders without the API, so Pages keeps serving it while the platform is down.
 on:
