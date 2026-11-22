@@ -1,3 +1,10 @@
+"use client"
+
+// A client component on purpose: the JSON is longer than 1024 characters, so as a server prop it would go into the RSC
+// payload as a length-prefixed text row. The image build bakes the hosts as placeholders and the container substitutes
+// them with sed, which changes the text but not its length prefix: the browser then fails with React error #412. As a
+// client component the JSON is built from the bundle (substituted like every other file) and the payload holds only a
+// reference to it. scripts/rsc-placeholders.mjs fails the image build when a placeholder lands in such a row again.
 import { t } from "@/i18n/t"
 import { MAIN_HOST, SOURCE_URL } from "@/lib/links"
 import { FAQ_COUNT } from "./Faq"

@@ -21,7 +21,8 @@ ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID="__NEXT_PUBLIC_GOOGLE_ANALYTICS_ID__"
 # Warm-up flag is NOT a build input here: the build bakes a hash placeholder and the entrypoint
 # derives the hash + hint file from WARMUP_FLAG at container start (see scripts/warmup.mjs).
 ENV WARMUP_PLACEHOLDER=1
-RUN npm run build && node scripts/csp-inline.mjs
+# rsc-placeholders.mjs: no placeholder may sit in a length-prefixed text row of the RSC payload (its substitution breaks the page).
+RUN npm run build && node scripts/csp-inline.mjs && node scripts/rsc-placeholders.mjs
 
 FROM mirror.gcr.io/library/nginx:1.31.9-alpine-slim@sha256:5bfced78d24d644270bedb0a9968697042e38d5c03fb6354603df025279c1cbe AS runner
 COPY --from=build /app/out /usr/share/nginx/html
