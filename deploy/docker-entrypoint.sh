@@ -20,10 +20,9 @@ for key in NEXT_PUBLIC_SUPPORT_EMAIL NEXT_PUBLIC_CONTACT_EMAIL NEXT_PUBLIC_PRIVA
 done
 # Optional values and their defaults (an empty value counts as unset).
 : "${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID:=}"
-: "${NEXT_PUBLIC_SHOW_PARTNERS:=true}"
 : "${NEXT_PUBLIC_API_ENABLED:=true}"
 : "${NEXT_PUBLIC_SOURCE_URL:=https://github.com/cybericebox}"
-export NEXT_PUBLIC_GOOGLE_ANALYTICS_ID NEXT_PUBLIC_SHOW_PARTNERS NEXT_PUBLIC_API_ENABLED NEXT_PUBLIC_SOURCE_URL
+export NEXT_PUBLIC_GOOGLE_ANALYTICS_ID NEXT_PUBLIC_API_ENABLED NEXT_PUBLIC_SOURCE_URL
 
 # One pass: a single sed script with an expression per NEXT_PUBLIC_* variable, run once over each
 # file that holds a placeholder (in parallel: busybox sed is slow on the minified bundles). Only the

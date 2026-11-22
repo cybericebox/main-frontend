@@ -6,7 +6,7 @@ import { SIGNED_OUT_EVENT, SIGN_OUT_FAILED_EVENT } from "@/lib/signOut"
 
 const SHOW_MS = 4000
 
-// The short notice after «Вийти»: «Ви вийшли» (or the failure), a status line that disappears by itself.
+// The short notice after "Sign out": "You have signed out" (or the failure), a status line that disappears by itself.
 export function SignedOutNotice() {
   const [kind, setKind] = useState<"done" | "failed" | null>(null)
 

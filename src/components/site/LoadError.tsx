@@ -6,7 +6,7 @@ import { errorCode } from "@/components/site/ErrorPage"
 import { t } from "@/i18n/t"
 
 // The only load-error state inside a page or block: the warning mark at block
-// scale, a title (the context message), one line of help and «Спробувати ще раз». Same size
+// scale, a title (the context message), one line of help and "Try again". Same size
 // and centering as EmptyState, so loading → error never jumps. A dead route uses ErrorPage.
 export function LoadError({ message = t("error.load.title"), onRetry, error, compact = false, className }: {
   message?: string

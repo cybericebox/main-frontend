@@ -1,6 +1,6 @@
 // The landing lab demo: two schemes on one base. The shared part stays in place and shows the two separate ways in:
 // the VPN (your PC → vpn-gw → r1 → the whole network) and external access (browser → access → one host directly,
-// never through the VPN gateway or the router); «Змагання» adds a DMZ and an internal network to attack, «Навчання» adds one server to set up and
+// never through the VPN gateway or the router); "Competition" adds a DMZ and an internal network to attack, "Training" adds one server to set up and
 // the automatic checker. Pure data and state here (no React, no DOM), so node --test reads it directly.
 
 export type Mode = "ctf" | "learn"
@@ -128,7 +128,7 @@ export const TALL: Scheme = {
   }),
 }
 
-/* a feature row of the «Лабораторії» list lights up its part of the scheme */
+/* a feature row of the "Labs" list lights up its part of the scheme */
 export const FEATURES = ["wg", "net", "hosts", "proxy"] as const
 export type Feature = (typeof FEATURES)[number]
 export const LIT: Record<Feature, string[]> = {
@@ -257,7 +257,7 @@ export function story(mode: Mode): Step[] {
   ]
 }
 
-/* a slice of the event rating for «Змагання»: the visitor's team climbs from 5th to 3rd with the flag */
+/* a slice of the event rating for "Competition": the visitor's team climbs from 5th to 3rd with the flag */
 export const SLICE = [
   { id: "charlie", points: 1650 },
   { id: "delta", points: 1500 },

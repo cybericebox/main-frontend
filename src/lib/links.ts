@@ -40,13 +40,9 @@ export const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL || "https://github.
 export const PARTNER_ICE_NURE_URL = "https://ice.nure.ua/ua/"
 export const PARTNER_NURE_URL = "https://nure.ua"
 
-// The partner block is shown unless NEXT_PUBLIC_SHOW_PARTNERS is "false". The value stays a runtime value of the static export (the
-// container substitutes it in the HTML), so the footer carries it as an attribute and the stylesheet hides the block.
-export const SHOW_PARTNERS = process.env.NEXT_PUBLIC_SHOW_PARTNERS || "true"
-
 // The site talks to the platform API unless NEXT_PUBLIC_API_ENABLED is "false". With "false" it sends no request to the
 // API at all (no probe, no notifications): for a static copy that stays online while the platform itself is switched
-// off, so the browser console shows no failed requests. Like SHOW_PARTNERS it stays a runtime value of the static
+// off, so the browser console shows no failed requests. It stays a runtime value of the static
 // export: the root layout carries it as <html data-api-enabled>, and the code reads the attribute (never the constant,
 // which a minifier would fold at build time).
 export const API_ENABLED = process.env.NEXT_PUBLIC_API_ENABLED || "true"

@@ -1,4 +1,4 @@
-/* HeroChallenge — the event app window (challenges board) and the «Розминка» challenge card that opens
+/* HeroChallenge — the event app window (challenges board) and the "Warm-up" challenge card that opens
    over it (closed by default). DS tokens only (light = light surfaces, dark = dark surfaces), no shadows.
    The board, the tiles and the card mirror the participant UI of the event app, so the landing shows the real thing:
    event-frontend styles/challenge-tile.css, challenge-board.css, challenge-modal.css, segmented.css, tag.css.
@@ -55,7 +55,7 @@
 .hc-tile.is-hit{background:var(--ib-brand-active);border-color:var(--ib-brand-points)}
 /* …a tile we solved too stays green (dark text on the brand fill would be unreadable): only the green deepens */
 .hc-tile.is-solved.is-hit{background:color-mix(in srgb,var(--ib-ok-bg),var(--ib-ok) 16%);border-color:var(--ib-ok)}
-/* the «Розминка» tile is a real button: it opens the card. A ring sets it apart from the illustration around it. */
+/* the "Warm-up" tile is a real button: it opens the card. A ring sets it apart from the illustration around it. */
 button.hc-tile{cursor:pointer}
 .hc-tile.is-warm{outline:2px solid var(--ib-action);outline-offset:2px}
 .hc-tile.is-warm.is-solved{outline-color:var(--ib-ok)}
@@ -134,7 +134,7 @@ button.hc-tile:focus-visible{outline:2px solid var(--ib-action);outline-offset:3
 .hc-card__field-error{margin:6px 0 0;font-size:var(--ib-fs-13);font-weight:var(--ib-w-medium);color:var(--ib-danger)}
 .hc-card__form .ib-input{width:100%;min-width:0;height:40px;font-size:var(--ib-fs-15)}
 .hc-card__form .ib-btn{width:100%;height:40px}
-/* «Надіслати» / «Перевіряємо…» stacked in one cell: the busy label never resizes the button */
+/* "Send" / "Checking" stacked in one cell: the busy label never resizes the button */
 .hc-card__submit{display:grid}
 .hc-card__submit>span{grid-area:1/1;display:inline-flex;align-items:center;justify-content:center;gap:var(--ib-2)}
 .hc-card__submit>.is-off{visibility:hidden}

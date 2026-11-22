@@ -19,7 +19,7 @@ main:focus{outline:none}
 @keyframes site-loading-pulse{50%{opacity:.45;transform:scale(.94)}}
 @media(prefers-reduced-motion:reduce){.site-loading__logo{animation:none}}
 
-/* navbar actions slot: reserves the «Увійти» width so nothing shifts when the API answers */
+/* navbar actions slot: reserves the "Sign in" width so nothing shifts when the API answers */
 .site-nav-slot{display:flex;align-items:center;justify-content:flex-end;gap:var(--ib-2);min-width:88px;min-height:var(--ib-control-h-lg)}
 /* the platform is switched off for this copy of the site (NEXT_PUBLIC_API_ENABLED=false): nothing will ever arrive, so no room is kept */
 [data-api-enabled="false"] .site-nav-slot{display:none}
@@ -27,7 +27,7 @@ main:focus{outline:none}
 /* platform navbar is always a SOLID bar over any hero (no transparency / blur), both themes */
 .ib-navbar.ib-navbar--platform{background:var(--ib-surface);border-bottom:1px solid var(--ib-line);backdrop-filter:none}
 
-/* platform navbar: brand left; section links pushed right, next to the action («Увійти» / profile) */
+/* platform navbar: brand left; section links pushed right, next to the action ("Sign in" / profile) */
 .ib-navbar.ib-navbar--platform .ib-navbar__nav{justify-content:flex-end}
 .ib-navbar.ib-navbar--platform .ib-navbar__tabs{gap:4px}
 .ib-navbar.ib-navbar--platform .ib-navbar__bar{gap:var(--ib-4)}
@@ -71,13 +71,13 @@ main:focus{outline:none}
 }
 .ib-navbar.is-open::after{content:"";position:absolute;top:calc(100% + 1px);left:0;right:0;height:100vh;z-index:-1;background:color-mix(in srgb,var(--ib-ink) 40%,transparent)}
 
-/* sign-in hint: the generic avatar stands in for «Увійти» until /auth/me answers (html[data-signed-hint] comes from the boot script) */
+/* sign-in hint: the generic avatar stands in for "Sign in" until /auth/me answers (html[data-signed-hint] comes from the boot script) */
 .site-avatar-hint{display:none;padding:4px}
 html[data-signed-hint] .site-signin{display:none}
 html[data-signed-hint] .site-avatar-hint{display:inline-flex}
 .site-avatar-hint .ib-icon{width:18px;height:18px}
 
-/* «Ви вийшли»: a short status line under the navbar */
+/* "You have signed out": a short status line under the navbar */
 .site-notice-region{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:200;max-width:calc(100vw - 32px);pointer-events:none}
 .site-notice{margin:0;padding:10px 16px;border:1px solid var(--ib-line);border-radius:var(--ib-r);background:var(--ib-surface);color:var(--ib-ink);font-size:var(--ib-fs-14)}
 .site-notice--danger{border-color:var(--ib-danger);color:var(--ib-danger)}

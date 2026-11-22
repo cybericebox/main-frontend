@@ -20,10 +20,10 @@ import { TEAMS, burst, fly, useDemoRating, useRoll } from "./heroRating"
 import { FLAG as DEMO_FLAG } from "./labScene"
 import { STORAGE_WARMUP_SOLVED } from "@/lib/storageKeys"
 
-// Hero content (both columns). Left: headline, subhead, «Спробувати розминку» + «Лабораторії».
+// Hero content (both columns). Left: headline, subhead, "Try the warm-up" + "Labs".
 // The card is an overlay anchored to the window: opening/closing never shifts the layout.
-// Right: an event app window with the challenges board. The «Розминка» challenge opens as a card over
-// the board (from the left button or the «Розминка» tile), like a challenge in the event app; it holds
+// Right: an event app window with the challenges board. The "Warm-up" challenge opens as a card over
+// the board (from the left button or the "Warm-up" tile), like a challenge in the event app; it holds
 // the real warm-up form. The flag never ships: it is set at build time (scripts/warmup.mjs) and the page
 // only knows its SHA-256. Trail: the HTML comment in the hero → robots.txt → /.well-known/ice/warmup.txt.
 // A correct flag marks the tile solved, remembers it for the session (sessionStorage) and, after a short
@@ -233,7 +233,7 @@ export function HeroChallenge() {
   }
 
   const closeModal = () => setModal(false)
-  // «Увійти» only when the API answered and nobody is signed in — the next step after the
+  // "Sign in" only when the API answered and nobody is signed in — the next step after the
   // warm-up is real events, which need an account.
   const api = useApi()
   const canSignIn = api.status === "up" && !api.me
@@ -351,7 +351,7 @@ export function HeroChallenge() {
 
       <div className="pl-side">
         <div ref={hcRef} className={"hc" + (done ? " is-solved" : "") + (card ? " is-open" : "")}>
-          {/* the event app: an illustration, except the «Розминка» tile, which opens the card */}
+          {/* the event app: an illustration, except the "Warm-up" tile, which opens the card */}
           <div
             className="hc-win"
             onClick={(e) => {
@@ -500,7 +500,7 @@ export function HeroChallenge() {
             <span>{t("landing.ch.solvedNext")}</span>
           </>
         }
-        // the card is closed by now — focus goes back to «Розминку пройдено»
+        // the card is closed by now — focus goes back to "Warm-up done"
         returnFocus={() => tryRef.current}
         actions={
           <>

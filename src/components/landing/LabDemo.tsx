@@ -12,10 +12,10 @@ import {
   type Feature, type Label, type Mode, type Scene, type Scheme,
 } from "./labScene"
 
-// The lab card of «Лабораторії»: a terminal that drives the scheme. The lab starts, a command is typed, and only then
+// The lab card of "Labs": a terminal that drives the scheme. The lab starts, a command is typed, and only then
 // the route draws and a packet travels. Two modes on one base network, switched by the tabs (they alternate by
-// themselves until the visitor picks one): «Змагання» = attack, pivot, flag, a step up in the rating;
-// «Навчання» = one server to fix, the automatic checker knocks on it and ticks the steps.
+// themselves until the visitor picks one): "Competition" = attack, pivot, flag, a step up in the rating;
+// "Training" = one server to fix, the automatic checker knocks on it and ticks the steps.
 // The story runs only while the card is on screen; off screen and with reduced motion it shows its last frame.
 const TYPE_MS = 26
 const DRAW_MS = 700
@@ -94,7 +94,7 @@ function SchemeSvg({ spec, scene, lit }: { spec: Scheme; scene: Scene; lit: stri
   )
 }
 
-/* «Змагання»: the flag, its price and a slice of the rating where the team climbs */
+/* "Competition": the flag, its price and a slice of the rating where the team climbs */
 function CtfOutcome({ scene, left }: { scene: Scene; left: number }) {
   const rows = slice(scene.won)
   const place = useRoll(rows.find((r) => r.id === "own")!.place, scene.wonNow, 900)
@@ -133,7 +133,7 @@ function CtfOutcome({ scene, left }: { scene: Scene; left: number }) {
   )
 }
 
-/* «Навчання»: the steps the checker ticks, the progress and a hint */
+/* "Training": the steps the checker ticks, the progress and a hint */
 function LearnOutcome({ scene }: { scene: Scene }) {
   return (
     <div className="ld-out__learn">
@@ -173,7 +173,7 @@ export function LabDemo({ lit }: { lit: Feature | null }) {
     return () => io.disconnect()
   }, [])
 
-  /* the event clock of «Змагання» */
+  /* the event clock of "Competition" */
   useEffect(() => {
     if (!visible || mode !== "ctf" || reducedMotion()) return
     const id = window.setInterval(() => setLeft((s) => (s > 0 ? s - 1 : CLOCK_START)), 1000)

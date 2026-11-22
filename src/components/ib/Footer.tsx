@@ -4,21 +4,21 @@ import { ThemeSwitch } from "./ThemeSwitch"
 import { Tooltip } from "./Tooltip"
 import type { NavLink } from "./Navbar"
 import { t, tSegments } from "@/i18n/t"
-import { PARTNER_ICE_NURE_URL, PARTNER_NURE_URL, SHOW_PARTNERS } from "@/lib/links"
+import { PARTNER_ICE_NURE_URL, PARTNER_NURE_URL } from "@/lib/links"
 import "@/styles/ds/components/footer.css"
 
 // ds-v2 platform footer on the brand mass (both themes) over a faint ice-cube lattice:
-// «За підтримки кафедри …, ХНУРЕ» + «Написати нам» / GitHub, then a bar with
+// "With the support of the department …, KhNURE" + "Contact us" / GitHub, then a bar with
 // «© year Cyber ICE Box», the legal links and the theme switch.
 const YEAR = new Date().getFullYear()
 
-// `extra` ends the legal list, one item each («Налаштування файлів cookie» opens the consent panel; «Надіслати відгук»).
+// `extra` ends the legal list, one item each ("Cookie settings" opens the consent panel; "Send feedback").
 export function Footer({ email, sourceUrl, legal, extra }: { email: string; sourceUrl: string; legal: NavLink[]; extra?: ReactNode[] }) {
   return (
     <footer className="ib-footer ib-footer--mass ib-mass">
       <div className="ib-footer__inner">
         <div className="ib-footer__top">
-          <p className="ib-footer__credit" data-show-partners={SHOW_PARTNERS}>
+          <p className="ib-footer__credit">
             {tSegments(
               "landing.footer.credit",
               {
