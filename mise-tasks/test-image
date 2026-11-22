@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#MISE description="The Docker image path: build deploy/Dockerfile (or use IMAGE=<ref>), start it with test values for the placeholders and check in Chromium that every page loads and hydrates without a page error (e2e/image.spec.ts). Needs Docker and the Playwright Chromium"
+# The image bakes NEXT_PUBLIC_* as placeholders that the entrypoint substitutes at start (deploy/docker-entrypoint.sh), so
+# what the browser gets differs from what the build rendered; the static export with real values never shows that path.
+set -euo pipefail
+cd "${MISE_PROJECT_ROOT:?run through mise}"
+for tool in docker npx; do command -v "$tool" >/dev/null || { echo "$tool is required" >&2; exit 2; }; done
+
+TAG=${IMAGE:-main-frontend-image-test:$$}
+NAME=main-frontend-image-test-$$
+cleanup() {
+  docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [[ -n "${IMAGE:-}" ]] || docker rmi -f "$TAG" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+if [[ -z "${IMAGE:-}" ]]; then
+  echo "== build $TAG"
+  docker build -q -f deploy/Dockerfile -t "$TAG" . >/dev/null
+fi
+
+# Values of other lengths than their placeholders, as a real deploy has.
+ENVS=(-e NEXT_PUBLIC_DOMAIN=test.example.com -e "WARMUP_FLAG=ICE{image_test}")
+for name in SUPPORT CONTACT PRIVACY SECURITY; do ENVS+=(-e "NEXT_PUBLIC_${name}_EMAIL=$(tr '[:upper:]' '[:lower:]' <<<"$name")@test.example.com"); done
+docker run -d --name "$NAME" -p 127.0.0.1::8080 "${ENVS[@]}" "$TAG" >/dev/null
+for _ in $(seq 1 40); do
+  [[ "$(docker inspect -f '{{.State.Running}}' "$NAME")" == true ]] || { docker logs "$NAME" >&2; exit 1; }
+  docker logs "$NAME" 2>&1 | grep -q 'start worker process' && break
+  sleep 0.5
+done
+port=$(docker port "$NAME" 8080/tcp | head -1 | sed 's/.*://')
+
+echo "== e2e/image.spec.ts against http://127.0.0.1:$port"
+E2E_BASE_URL="http://127.0.0.1:$port" npx playwright test e2e/image.spec.ts

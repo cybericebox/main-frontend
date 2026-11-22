@@ -98,10 +98,36 @@ jobs:
       - name: Build the image and test the nginx contract (listeners, TLS, trailing slash)
         run: bash scripts/test-nginx-tls.sh
 
+  # The image bakes NEXT_PUBLIC_* as placeholders that the entrypoint substitutes at start: the pages of a started image must
+  # load and hydrate without a page error (React #412 came from a substituted placeholder in the RSC payload).
+  render:
+    name: Image renders
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the pinned tools (mise.toml)
+        uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
+      - name: npm cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        run: mise run install
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Build the image, start it with test values and load every page (mise run test-image)
+        run: mise run test-image
+
   passed:
     name: Check passed
     if: ${{ always() }}
-    needs: [changes, test, image, container]
+    needs: [changes, test, image, container, render]
     runs-on: ubuntu-latest
     steps:
       - name: Every check passed

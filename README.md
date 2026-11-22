@@ -70,6 +70,10 @@ any environment. A missing required value fails the build or the container start
 | `npm run sync:errors` | Adds new backend error codes to `messages/errors.*.json` (needs a `daemon` checkout at `../daemon`) |
 
 `scripts/test-nginx-tls.sh` checks the container's TLS and client-certificate modes (needs Docker).
+`mise run test-image` builds the image, starts it with test values for the placeholders and checks in Chromium that every page
+loads and hydrates without a page error (needs Docker and `npx playwright install chromium`). The image build itself fails when a
+placeholder lands in a length-prefixed text row of the RSC payload (`scripts/rsc-placeholders.mjs`): its substitution at start
+would break the page with React error #412.
 
 ## Rules for changes
 
